@@ -37,6 +37,7 @@ const SOURCE_KEY = "camino-a-los-85-source";
 const GOAL_KEY = "camino-a-los-85-goal";
 let rows = [];
 let goalWeight = Number(localStorage.getItem(GOAL_KEY)) || 85;
+let selectedContextMonth = "";
 
 const configUrl = window.WEIGHT_DASHBOARD_CONFIG?.sheetApiUrl?.trim() || "";
 const savedUrl = localStorage.getItem(SOURCE_KEY) || "";
@@ -233,12 +234,23 @@ function renderContextAnalysis() {
   const contextAverage = average(enriched.map(row => row.score));
   const progress = Math.round((contextAverage || 0) * 100);
   const impact = impactSummary(enriched);
-  const months = monthlyContext(enriched).reverse();
+  const months = monthlyContext(enriched);
+  if (!selectedContextMonth || !months.some(month => month.key === selectedContextMonth)) {
+    selectedContextMonth = months.at(-1).key;
+  }
+  const selectedMonth = months.find(month => month.key === selectedContextMonth);
 
   container.innerHTML = `
     <div class="panel-headline">
-      <p class="eyebrow">Contexto y composición</p>
-      <h2>Análisis por meses</h2>
+      <div>
+        <p class="eyebrow">Contexto y composición</p>
+        <h2>Análisis por mes</h2>
+      </div>
+      <label class="month-picker">Mes
+        <select id="contextMonthSelect">
+          ${months.map(month => `<option value="${month.key}" ${month.key === selectedContextMonth ? "selected" : ""}>${month.label}</option>`).join("")}
+        </select>
+      </label>
     </div>
     <div class="context-layout">
     <article class="plan-panel wide">
@@ -280,40 +292,17 @@ function renderContextAnalysis() {
     </div>
     <article class="plan-list wide">
       <div>
-        <p class="eyebrow">Mes a mes</p>
-        <h2>Medias mensuales y cambio de composición</h2>
+        <p class="eyebrow">Mes seleccionado</p>
+        <h2>${selectedMonth.label}</h2>
       </div>
-      ${months.map(month => `
-        <div class="week-strip">
-          <div class="week-head">
-            <strong>${month.label}</strong>
-            <b class="plan-badge ${month.netGood ? "yes" : "no"}">${month.netGood ? "Buen mes" : "Revisar"}</b>
-          </div>
-          <div class="bar-row">
-            <span>Nutrición</span>
-            <div class="mini-bar"><i style="width:${percentage(month.nutricion, 10)}%"></i></div>
-            <b>${formatPlain(month.nutricion, 1)}/10</b>
-          </div>
-          <div class="bar-row">
-            <span>Deporte</span>
-            <div class="mini-bar sport"><i style="width:${percentage(month.deporte, 7)}%"></i></div>
-            <b>${formatPlain(month.deporte, 1)}/7</b>
-          </div>
-          <div class="bar-row">
-            <span>Emocional</span>
-            <div class="mini-bar emotion"><i style="width:${percentage(month.emocional, 10)}%"></i></div>
-            <b>${formatPlain(month.emocional, 1)}/10</b>
-          </div>
-          <div class="week-foot">
-            <span>${month.count} mediciones</span>
-            <span>Peso ${formatSigned(month.peso, METRICS[0])}</span>
-            <span>Grasa ${formatSigned(month.grasa, METRICS[3])}</span>
-            <span>Músculo ${formatSigned(month.musculo, METRICS[2])}</span>
-          </div>
-        </div>
-      `).join("")}
+      ${renderMonthDetail(selectedMonth)}
     </article>
   `;
+
+  document.getElementById("contextMonthSelect").addEventListener("change", event => {
+    selectedContextMonth = event.target.value;
+    renderContextAnalysis();
+  });
 }
 
 function monthlyContext(enriched) {
@@ -326,21 +315,78 @@ function monthlyContext(enriched) {
   return Object.entries(groups).map(([key, group]) => {
     const first = group[0];
     const last = group.at(-1);
-    const peso = last.peso - first.peso;
-    const grasa = Number.isFinite(last.grasa) && Number.isFinite(first.grasa) ? last.grasa - first.grasa : null;
-    const musculo = Number.isFinite(last.musculo) && Number.isFinite(first.musculo) ? last.musculo - first.musculo : null;
+    const baseline = rows.filter(row => new Date(row.fecha) < new Date(first.fecha)).at(-1) || first;
+    const peso = last.peso - baseline.peso;
+    const grasa = Number.isFinite(last.grasa) && Number.isFinite(baseline.grasa) ? last.grasa - baseline.grasa : null;
+    const musculo = Number.isFinite(last.musculo) && Number.isFinite(baseline.musculo) ? last.musculo - baseline.musculo : null;
     return {
+      key,
       label: new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" }).format(new Date(`${key}-01T00:00:00`)),
       count: group.length,
+      baseline,
+      first,
+      last,
       nutricion: average(group.map(row => row.nutricion)),
       deporte: average(group.map(row => row.deporte)),
       emocional: average(group.map(row => row.emocional)),
+      pesoMedio: average(group.map(row => row.peso)),
+      grasaMedia: average(group.map(row => row.grasa)),
+      musculoMedio: average(group.map(row => row.musculo)),
       peso,
       grasa,
       musculo,
       netGood: (peso <= 0 && (grasa === null || grasa <= 0)) || (musculo !== null && musculo > 0)
     };
   });
+}
+
+function renderMonthDetail(month) {
+  return `
+    <div class="month-summary-grid">
+      <div class="month-tile">
+        <span>Peso medio</span>
+        <strong>${format(month.pesoMedio, METRICS[0])}</strong>
+        <p>Cambio vs medición anterior: ${formatSigned(month.peso, METRICS[0])}</p>
+      </div>
+      <div class="month-tile">
+        <span>Grasa media</span>
+        <strong>${format(month.grasaMedia, METRICS[3])}</strong>
+        <p>Cambio vs medición anterior: ${formatSigned(month.grasa, METRICS[3])}</p>
+      </div>
+      <div class="month-tile">
+        <span>Músculo medio</span>
+        <strong>${format(month.musculoMedio, METRICS[2])}</strong>
+        <p>Cambio vs medición anterior: ${formatSigned(month.musculo, METRICS[2])}</p>
+      </div>
+    </div>
+    <div class="week-strip">
+      <div class="week-head">
+        <strong>${month.count} mediciones en el mes</strong>
+        <b class="plan-badge ${month.netGood ? "yes" : "no"}">${month.netGood ? "Buen mes" : "Revisar"}</b>
+      </div>
+      <div class="bar-row">
+        <span>Nutrición</span>
+        <div class="mini-bar"><i style="width:${percentage(month.nutricion, 10)}%"></i></div>
+        <b>${formatPlain(month.nutricion, 1)}/10</b>
+      </div>
+      <div class="bar-row">
+        <span>Deporte</span>
+        <div class="mini-bar sport"><i style="width:${percentage(month.deporte, 7)}%"></i></div>
+        <b>${formatPlain(month.deporte, 1)}/7</b>
+      </div>
+      <div class="bar-row">
+        <span>Emocional</span>
+        <div class="mini-bar emotion"><i style="width:${percentage(month.emocional, 10)}%"></i></div>
+        <b>${formatPlain(month.emocional, 1)}/10</b>
+      </div>
+      <div class="week-foot">
+        <span>Desde ${formatDate(month.baseline.fecha)}</span>
+        <span>Hasta ${formatDate(month.last.fecha)}</span>
+        <span>Peso ${formatSigned(month.peso, METRICS[0])}</span>
+        <span>Grasa ${formatSigned(month.grasa, METRICS[3])}</span>
+      </div>
+    </div>
+  `;
 }
 
 function contextScore(row) {

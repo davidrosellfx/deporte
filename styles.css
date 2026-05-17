@@ -282,8 +282,31 @@ button {
 }
 
 .panel-headline {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.month-picker {
   display: grid;
   gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+select {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 8px 12px;
+  font: inherit;
+  min-width: 220px;
 }
 
 .context-layout {
@@ -399,6 +422,37 @@ button {
   background: #f8faf7;
   padding: 10px;
   font-weight: 800;
+}
+
+.month-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.month-tile {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8faf7;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.month-tile span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.month-tile strong {
+  font-size: 24px;
+}
+
+.month-tile p {
+  color: var(--muted);
+  line-height: 1.35;
 }
 
 .week-strip {
@@ -637,6 +691,7 @@ th {
   .context-layout,
   .context-grid,
   .impact-grid,
+  .month-summary-grid,
   .week-foot,
   .charts,
   .highlights {
