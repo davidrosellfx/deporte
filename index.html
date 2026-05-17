@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Camino a los 85</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">DAVID ROSELL</p>
+        <h1>Camino a los 85</h1>
+        <p class="mantra" id="motivationalQuote">Si lo hiciste una vez, lo harás otra vez.</p>
+      </div>
+      <div class="hero-panel">
+        <span>Último peso</span>
+        <strong id="heroWeight">--</strong>
+        <small id="heroDate">Conecta tu Google Sheet para sincronizar datos.</small>
+      </div>
+    </section>
+
+    <section class="setup" id="setupPanel">
+      <div>
+        <h2>Sincronización con Google Sheets</h2>
+        <p>Pega aquí la URL del Web App de Apps Script. También puedes fijarla en <code>config.js</code> antes de subirlo a GitHub.</p>
+      </div>
+      <form id="sourceForm">
+        <input type="url" id="sourceUrl" placeholder="https://script.google.com/macros/s/..." autocomplete="off">
+        <button type="submit">Conectar</button>
+      </form>
+      <button class="ghost" type="button" id="clearSource">Quitar conexión local</button>
+    </section>
+
+    <section class="metrics" id="metricCards"></section>
+
+    <section class="story">
+      <div>
+        <p class="eyebrow">Evolución real</p>
+        <h2>Tu composición, métrica por métrica</h2>
+      </div>
+      <div class="status" id="statusText">Preparando datos...</div>
+    </section>
+
+    <section class="charts" id="chartsGrid"></section>
+
+    <section class="highlights">
+      <div class="panel">
+        <h2>Mejores marcas</h2>
+        <div id="recordsGrid" class="records"></div>
+      </div>
+      <div class="panel">
+        <h2>Historial</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Peso</th>
+                <th>IMC</th>
+                <th>Músculo</th>
+                <th>Grasa</th>
+                <th>G. visceral</th>
+                <th>Calorías</th>
+              </tr>
+            </thead>
+            <tbody id="historyTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Camino a los 85</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211c;
+      --muted: #62706a;
+      --line: #dce4df;
+      --panel: #ffffff;
+      --soft: #f5f8f6;
+      --blue: #246bfe;
+      --green: #15845a;
+      --amber: #b26a00;
+      --rose: #c93f5b;
+      --teal: #0d7f8d;
+      --violet: #7257d6;
+      --shadow: 0 14px 40px rgba(23, 33, 28, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #edf2ef;
+      color: var(--ink);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: #16251e;
+      color: #f8fffb;
+      padding: 28px 22px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 8px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #b9cac2;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav a {
+      border: 0;
+      color: #dbe8e2;
+      background: transparent;
+      text-decoration: none;
+      padding: 11px 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .tab-panel {
+      display: none;
+      gap: 24px;
+    }
+
+    .tab-panel.active {
+      display: grid;
+    }
+
+    .sidebar-card {
+      margin-top: auto;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      padding: 14px;
+      color: #dcebe4;
+      font-size: 13px;
+      line-height: 1.45;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    main {
+      padding: 30px;
+      display: grid;
+      gap: 24px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--green);
+      font-weight: 750;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .profile-name {
+      display: block;
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: 0.95;
+      letter-spacing: 0;
+      outline: none;
+    }
+
+    .goal-line {
+      display: block;
+      color: var(--green);
+      margin-top: 8px;
+    }
+
+    .quote {
+      margin-top: 14px;
+      color: #34443c;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .topbar p {
+      margin: 10px 0 0;
+      max-width: 780px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 40px;
+      border-radius: 8px;
+      padding: 0 14px;
+      background: #17211c;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .btn.secondary {
+      background: #ffffff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .btn.danger {
+      background: #fff4f4;
+      color: #a72737;
+      border: 1px solid #f0c3ca;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .summary {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metric-card,
+    .panel,
+    .stat-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric-card {
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+      min-height: 138px;
+    }
+
+    .metric-card .label,
+    .stat-card .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .metric-card .value {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .metric-card .delta {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .trend-up {
+      color: var(--rose);
+      font-weight: 750;
+    }
+
+    .trend-down {
+      color: var(--green);
+      font-weight: 750;
+    }
+
+    .panel {
+      padding: 20px;
+      min-width: 0;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 13px;
+      user-select: none;
+    }
+
+    .chip input {
+      accent-color: var(--green);
+      margin: 0;
+    }
+
+    .chart-wrap {
+      width: 100%;
+      height: 260px;
+      background: linear-gradient(180deg, #fbfdfc 0%, #f3f7f5 100%);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      position: relative;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .chart-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .chart-card h4 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    .chart-card .chart-wrap {
+      height: 220px;
+      box-shadow: none;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .stat-card {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .stat-card h4 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .extremes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .extreme {
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .extreme b {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .extreme span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(110px, 1fr)) auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      text-transform: uppercase;
+    }
+
+    input[type="date"],
+    input[type="number"],
+    input[type="text"],
+    input[type="month"],
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      min-height: 40px;
+      padding: 8px 10px;
+      color: var(--ink);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      max-height: 480px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: right;
+      font-size: 14px;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+      position: sticky;
+      left: 0;
+      background: inherit;
+    }
+
+    th {
+      background: #f2f6f4;
+      color: #405048;
+      font-size: 12px;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    td input {
+      width: 100%;
+      min-width: 82px;
+      border: 1px solid transparent;
+      background: transparent;
+      text-align: right;
+      padding: 6px;
+      border-radius: 6px;
+    }
+
+    td:first-child input {
+      text-align: left;
+      min-width: 130px;
+    }
+
+    td input:focus {
+      outline: 2px solid rgba(36, 107, 254, 0.18);
+      border-color: #98b8ff;
+      background: #ffffff;
+    }
+
+    .row-delete {
+      color: #a72737;
+      background: #fff4f4;
+      border: 1px solid #f0c3ca;
+      border-radius: 8px;
+      min-width: 34px;
+      min-height: 34px;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 10px 0 0;
+    }
+
+    .calendar-tools {
+      display: flex;
+      gap: 10px;
+      align-items: end;
+      flex-wrap: wrap;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .weekday {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .day-card {
+      min-height: 118px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 9px;
+      display: grid;
+      align-content: start;
+      gap: 7px;
+    }
+
+    .day-card.empty {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .day-number {
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .day-card.done {
+      border-color: rgba(21, 132, 90, 0.35);
+      background: #f0faf5;
+    }
+
+    .day-pill {
+      display: inline-flex;
+      width: fit-content;
+      border-radius: 999px;
+      padding: 4px 7px;
+      background: #eef4ff;
+      color: #214fbb;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .day-text {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 84px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      font: inherit;
+    }
+
+    .log-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .log-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--soft);
+      display: grid;
+      gap: 6px;
+    }
+
+    .steps-summary {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .quote-board {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-quote {
+      border-radius: 8px;
+      padding: 28px;
+      color: #ffffff;
+      background: #17211c;
+      display: grid;
+      gap: 12px;
+      min-height: 180px;
+      align-content: center;
+    }
+
+    .hero-quote blockquote {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.1;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .hero-quote span {
+      color: #bad5ca;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1120px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        height: auto;
+        position: static;
+      }
+
+      .summary,
+      .stats-grid,
+      .charts-grid,
+      .steps-summary,
+      .two-col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .form-grid {
+        grid-template-columns: repeat(3, minmax(130px, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        padding: 18px;
+      }
+
+      .topbar,
+      .panel-head {
+        display: grid;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .summary,
+      .stats-grid,
+      .charts-grid,
+      .form-grid,
+      .steps-summary,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .calendar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .chart-wrap {
+        height: 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Seguimiento corporal</h1>
+        <p>Historial, deporte y pasos en un solo panel local.</p>
+      </div>
+      <nav class="nav" aria-label="Secciones">
+        <a href="#peso" class="active" data-tab-button="peso">Peso y composición</a>
+        <a href="#deporte" data-tab-button="deporte">Calendario de deporte</a>
+        <a href="#pasos" data-tab-button="pasos">Pasos diarios</a>
+        <a href="#frases" data-tab-button="frases">Frases motivadoras</a>
+      </nav>
+      <div class="sidebar-card" id="rangeCard"></div>
+    </aside>
+
+    <main>
+      <div class="tab-panel active" data-tab-panel="peso">
+        <section class="topbar" id="resumen">
+          <div>
+            <p class="eyebrow">Camino a los 85</p>
+            <h2><span class="profile-name" id="profileName" contenteditable="true" spellcheck="false">DAVID ROSELL</span><span class="goal-line">Camino a los 85</span></h2>
+            <p class="quote">Si lo hiciste una vez, lo harás otra vez.</p>
+            <p>Los datos se guardan en este navegador. Puedes añadir entradas nuevas, editar cualquier celda y volver al historial original cuando lo necesites.</p>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" type="button" id="exportCsv">Exportar CSV</button>
+            <button class="btn secondary" type="button" id="exportJson">Exportar JSON</button>
+            <button class="btn danger" type="button" id="resetData">Restaurar historial</button>
+          </div>
+        </section>
+
+        <section class="grid summary" id="summaryCards" aria-label="Resumen de métricas"></section>
+
+        <section class="panel" id="graficas">
+          <div class="panel-head">
+            <h3 class="panel-title">Evolución</h3>
+          </div>
+          <div class="charts-grid" id="chartsGrid"></div>
+          <p class="note">Cada gráfica usa sus unidades reales para que puedas leer los valores sin mezclar escalas.</p>
+        </section>
+
+        <section class="panel" id="maximos-minimos">
+          <div class="panel-head">
+            <h3 class="panel-title">Máximos y mínimos</h3>
+          </div>
+          <div class="grid stats-grid" id="extremeCards"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h3 class="panel-title">Nueva entrada</h3>
+          </div>
+          <form class="form-grid" id="entryForm">
+            <label>Fecha
+              <input type="date" name="fecha" required>
+            </label>
+            <label>Peso
+              <input type="number" name="peso" step="0.1" required>
+            </label>
+            <label>IMC
+              <input type="number" name="imc" step="0.1" required>
+            </label>
+            <label>Músculo
+              <input type="number" name="musculo" step="0.1" required>
+            </label>
+            <label>Grasa
+              <input type="number" name="grasa" step="0.1" required>
+            </label>
+            <label>G. visceral
+              <input type="number" name="visceral" step="0.1" required>
+            </label>
+            <label>Calorías
+              <input type="number" name="calorias" step="1" required>
+            </label>
+            <button class="btn" type="submit">Añadir</button>
+          </form>
+        </section>
+
+        <section class="panel" id="datos">
+          <div class="panel-head">
+            <h3 class="panel-title">Historial editable</h3>
+            <div class="filters">
+              <label>Orden
+                <select id="sortMode">
+                  <option value="asc">Fecha ascendente</option>
+                  <option value="desc">Fecha descendente</option>
+                  <option value="excel">Orden original / entrada</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Peso</th>
+                  <th>IMC</th>
+                  <th>Músculo</th>
+                  <th>Grasa</th>
+                  <th>G. visceral</th>
+                  <th>Calorías</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="dataTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <div class="tab-panel" data-tab-panel="deporte">
+        <section class="topbar">
+          <div>
+            <p class="eyebrow">Calendario de deporte</p>
+            <h2>Qué hice y qué logré cada día</h2>
+            <p>Registra entrenamientos, sensaciones, logros y cualquier avance que quieras recordar.</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h3 class="panel-title">Añadir deporte</h3>
+          </div>
+          <form class="form-grid" id="sportForm">
+            <label>Fecha
+              <input type="date" name="fecha" required>
+            </label>
+            <label>Actividad
+              <input type="text" name="actividad" placeholder="Gimnasio, correr..." required>
+            </label>
+            <label>Logro
+              <input type="text" name="logro" placeholder="Más peso, más tiempo...">
+            </label>
+            <label>Notas
+              <textarea name="notas" placeholder="Cómo fue el entrenamiento"></textarea>
+            </label>
+            <button class="btn" type="submit">Guardar</button>
+          </form>
+        </section>
+
+        <section class="two-col">
+          <div class="panel">
+            <div class="panel-head">
+              <h3 class="panel-title">Calendario</h3>
+              <div class="calendar-tools">
+                <label>Mes
+                  <input type="month" id="sportMonth">
+                </label>
+              </div>
+            </div>
+            <div class="calendar-grid" id="sportCalendar"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <h3 class="panel-title">Últimos registros</h3>
+            </div>
+            <div class="log-list" id="sportList"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="tab-panel" data-tab-panel="pasos">
+        <section class="topbar">
+          <div>
+            <p class="eyebrow">Objetivo diario</p>
+            <h2>10.000 pasos al día</h2>
+            <p>Marca los días conseguidos y, si quieres, apunta el número exacto de pasos.</p>
+          </div>
+        </section>
+
+        <section class="grid steps-summary" id="stepsSummary"></section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h3 class="panel-title">Marcar pasos</h3>
+          </div>
+          <form class="form-grid" id="stepsForm">
+            <label>Fecha
+              <input type="date" name="fecha" required>
+            </label>
+            <label>Pasos
+              <input type="number" name="pasos" step="1" min="0" placeholder="10000">
+            </label>
+            <label>¿Logrado?
+              <select name="logrado">
+                <option value="auto">Automático por pasos</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </label>
+            <button class="btn" type="submit">Guardar</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h3 class="panel-title">Calendario de pasos</h3>
+            <div class="calendar-tools">
+              <label>Mes
+                <input type="month" id="stepsMonth">
+              </label>
+            </div>
+          </div>
+          <div class="calendar-grid" id="stepsCalendar"></div>
+        </section>
+      </div>
+
+      <div class="tab-panel" data-tab-panel="frases">
+        <section class="topbar">
+          <div>
+            <p class="eyebrow">Motivación</p>
+            <h2>Frases para volver al camino</h2>
+            <p>Un espacio rápido para guardar frases tuyas, recordatorios y mensajes que te empujen cuando toque entrenar o cuidar el día.</p>
+          </div>
+        </section>
+
+        <section class="quote-board">
+          <div class="hero-quote">
+            <span>Frase destacada</span>
+            <blockquote id="featuredQuote">Si lo hiciste una vez, lo harás otra vez.</blockquote>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <h3 class="panel-title">Añadir frase</h3>
+            </div>
+            <form class="form-grid" id="quoteForm">
+              <label>Frase
+                <input type="text" name="frase" placeholder="Escribe una frase motivadora" required>
+              </label>
+              <button class="btn" type="submit">Guardar</button>
+              <button class="btn secondary" type="button" id="randomQuote">Otra destacada</button>
+            </form>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <h3 class="panel-title">Mis frases</h3>
+            </div>
+            <div class="log-list" id="quoteList"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "seguimiento-peso-dashboard-v1";
+    const SPORT_KEY = "seguimiento-peso-deporte-v1";
+    const STEPS_KEY = "seguimiento-peso-pasos-v1";
+    const QUOTES_KEY = "seguimiento-peso-frases-v1";
+    const PROFILE_KEY = "seguimiento-peso-nombre-v1";
+    const originalData = [
+      { fecha: "2024-12-15", peso: 93.8, imc: 29.1, musculo: 35.2, grasa: 24.5, visceral: 11, calorias: 1934 },
+      { fecha: "2024-12-17", peso: 92.8, imc: 28.8, musculo: 36.3, grasa: 24, visceral: 11, calorias: 1919 },
+      { fecha: "2024-12-20", peso: 90.4, imc: 28.1, musculo: 35, grasa: 26.5, visceral: 11, calorias: 1882 },
+      { fecha: "2025-01-11", peso: 94.1, imc: 29.2, musculo: 35.8, grasa: 24.9, visceral: 12, calorias: 1935 },
+      { fecha: "2025-02-12", peso: 93.1, imc: 28.9, musculo: 36.1, grasa: 23.5, visceral: 11, calorias: 1922 },
+      { fecha: "2025-03-05", peso: 94, imc: 29.2, musculo: 35.4, grasa: 25.6, visceral: 12, calorias: 1933 },
+      { fecha: "2025-03-25", peso: 94.4, imc: 29.3, musculo: 36, grasa: 24.6, visceral: 12, calorias: 1940 },
+      { fecha: "2025-03-28", peso: 93.1, imc: 28.9, musculo: 35.9, grasa: 24.9, visceral: 11, calorias: 1922 },
+      { fecha: "2025-04-02", peso: 91.5, imc: 28.4, musculo: 36.4, grasa: 24, visceral: 11, calorias: 1902 },
+      { fecha: "2025-04-09", peso: 92, imc: 28.6, musculo: 35, grasa: 26.5, visceral: 11, calorias: 1904 },
+      { fecha: "2025-05-01", peso: 88.3, imc: 27.4, musculo: 35.1, grasa: 26.2, visceral: 10, calorias: 1853 },
+      { fecha: "2025-07-18", peso: 87.6, imc: 27.2, musculo: 36.2, grasa: 24.3, visceral: 10, calorias: 1850 },
+      { fecha: "2025-08-02", peso: 88.6, imc: 27.5, musculo: 36.4, grasa: 24, visceral: 10, calorias: 1862 },
+      { fecha: "2025-08-10", peso: 89.6, imc: 27.8, musculo: 37, grasa: 22.8, visceral: 10, calorias: 1877 },
+      { fecha: "2025-08-16", peso: 89, imc: 27.6, musculo: 36.5, grasa: 23.7, visceral: 10, calorias: 1868 },
+      { fecha: "2025-09-01", peso: 92.4, imc: 28.7, musculo: 35.9, grasa: 24.8, visceral: 11, calorias: 1913 },
+      { fecha: "2025-09-20", peso: 93, imc: 28.9, musculo: 36.1, grasa: 24.5, visceral: 11, calorias: 1921 },
+      { fecha: "2025-09-26", peso: 92.1, imc: 28.6, musculo: 36.6, grasa: 23.6, visceral: 11, calorias: 1910 },
+      { fecha: "2025-10-13", peso: 93.4, imc: 29, musculo: 37.2, grasa: 22.4, visceral: 11, calorias: 1928 },
+      { fecha: "2025-10-25", peso: 92.2, imc: 28.6, musculo: 36.4, grasa: 23.9, visceral: 11, calorias: 1911 },
+      { fecha: "2025-10-29", peso: 91.3, imc: 28.3, musculo: 36.7, grasa: 23.4, visceral: 11, calorias: 1900 },
+      { fecha: "2025-11-20", peso: 91.9, imc: 28.1, musculo: 36.6, grasa: 23.5, visceral: 11, calorias: 1907 },
+      { fecha: "2025-12-05", peso: 91.7, imc: 28.5, musculo: 36.6, grasa: 23.5, visceral: 11, calorias: 1905 },
+      { fecha: "2025-12-27", peso: 93.4, imc: 29, musculo: 35.7, grasa: 25.2, visceral: 12, calorias: 1926 },
+      { fecha: "2025-01-06", peso: 94.6, imc: 29.4, musculo: 36.1, grasa: 24.5, visceral: 12, calorias: 1942 },
+      { fecha: "2026-01-14", peso: 93.2, imc: 28.9, musculo: 36.6, grasa: 23.6, visceral: 11, calorias: 1925 },
+      { fecha: "2026-01-19", peso: 92.9, imc: 28.8, musculo: 36.7, grasa: 23.4, visceral: 11, calorias: 1921 },
+      { fecha: "2026-02-02", peso: 90.3, imc: 28, musculo: 35.7, grasa: 25.1, visceral: 11, calorias: 1883 },
+      { fecha: "2026-02-23", peso: 91.8, imc: 28.5, musculo: 36.5, grasa: 23.7, visceral: 11, calorias: 1906 },
+      { fecha: "2026-04-03", peso: 91.7, imc: 28.5, musculo: 35, grasa: 26.5, visceral: 11, calorias: 1901 },
+      { fecha: "2026-04-17", peso: 92.4, imc: 28.7, musculo: 36.1, grasa: 24.4, visceral: 11, calorias: 1913 }
+    ].map((row, index) => ({ ...row, id: crypto.randomUUID(), order: index }));
+
+    const metrics = [
+      { key: "peso", label: "Peso", unit: "kg", color: "#246bfe", decimals: 1, lowerIsGood: true },
+      { key: "imc", label: "IMC", unit: "", color: "#7257d6", decimals: 1, lowerIsGood: true },
+      { key: "musculo", label: "Músculo", unit: "%", color: "#15845a", decimals: 1, lowerIsGood: false },
+      { key: "grasa", label: "Grasa", unit: "%", color: "#c93f5b", decimals: 1, lowerIsGood: true },
+      { key: "visceral", label: "G. visceral", unit: "", color: "#b26a00", decimals: 0, lowerIsGood: true },
+      { key: "calorias", label: "Calorías", unit: "kcal", color: "#0d7f8d", decimals: 0, lowerIsGood: false }
+    ];
+
+    const defaultQuotes = [
+      "Si lo hiciste una vez, lo harás otra vez.",
+      "Camino a los 85: cada día cuenta.",
+      "No tienes que hacerlo perfecto, tienes que volver.",
+      "La constancia pesa más que la motivación.",
+      "Hoy también suma."
+    ].map((text, index) => ({ id: crypto.randomUUID(), text, order: index }));
+
+    let data = loadData();
+    let sportLogs = loadCollection(SPORT_KEY, []);
+    let stepsData = loadCollection(STEPS_KEY, []);
+    let quotes = loadCollection(QUOTES_KEY, defaultQuotes);
+    let sortMode = "asc";
+    let featuredQuoteIndex = 0;
+
+    const summaryCards = document.getElementById("summaryCards");
+    const extremeCards = document.getElementById("extremeCards");
+    const dataTable = document.getElementById("dataTable");
+    const chartsGrid = document.getElementById("chartsGrid");
+    const form = document.getElementById("entryForm");
+    const sportForm = document.getElementById("sportForm");
+    const stepsForm = document.getElementById("stepsForm");
+    const quoteForm = document.getElementById("quoteForm");
+    const profileName = document.getElementById("profileName");
+
+    function loadData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return structuredClone(originalData);
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return structuredClone(originalData);
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadCollection(key, fallback) {
+      const saved = localStorage.getItem(key);
+      if (!saved) return structuredClone(fallback);
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return structuredClone(fallback);
+      }
+    }
+
+    function saveCollection(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function todayIso() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function monthIso(date = new Date()) {
+      return date.toISOString().slice(0, 7);
+    }
+
+    function orderedData(mode = sortMode) {
+      const copy = [...data];
+      if (mode === "excel") return copy.sort((a, b) => a.order - b.order);
+      return copy.sort((a, b) => mode === "desc"
+        ? new Date(b.fecha) - new Date(a.fecha)
+        : new Date(a.fecha) - new Date(b.fecha));
+    }
+
+    function formatDate(value) {
+      return new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(value + "T00:00:00"));
+    }
+
+    function formatValue(value, metric) {
+      return `${Number(value).toLocaleString("es-ES", {
+        minimumFractionDigits: metric.decimals,
+        maximumFractionDigits: metric.decimals
+      })}${metric.unit ? " " + metric.unit : ""}`;
+    }
+
+    function getMetricStats(metric) {
+      const valid = orderedData("asc").filter(row => Number.isFinite(Number(row[metric.key])));
+      const values = valid.map(row => Number(row[metric.key]));
+      const minValue = Math.min(...values);
+      const maxValue = Math.max(...values);
+      const minRow = valid.find(row => Number(row[metric.key]) === minValue);
+      const maxRow = valid.find(row => Number(row[metric.key]) === maxValue);
+      const first = valid[0];
+      const last = valid[valid.length - 1];
+      const change = Number(last[metric.key]) - Number(first[metric.key]);
+      return { minValue, maxValue, minRow, maxRow, first, last, change };
+    }
+
+    function renderRange() {
+      const rows = orderedData("asc");
+      const first = rows[0];
+      const last = rows[rows.length - 1];
+      document.getElementById("rangeCard").innerHTML = `
+        <strong>${rows.length} registros cargados</strong><br>
+        Desde ${formatDate(first.fecha)} hasta ${formatDate(last.fecha)}.<br>
+        Último peso: ${formatValue(last.peso, metrics[0])}.
+      `;
+    }
+
+    function renderSummary() {
+      const rows = orderedData("asc");
+      const first = rows[0];
+      const last = rows[rows.length - 1];
+      const cards = [
+        { title: "Peso actual", metric: metrics[0], value: last.peso, change: last.peso - first.peso },
+        { title: "Músculo actual", metric: metrics[2], value: last.musculo, change: last.musculo - first.musculo },
+        { title: "Grasa actual", metric: metrics[3], value: last.grasa, change: last.grasa - first.grasa },
+        { title: "Último registro", text: formatDate(last.fecha), sub: `${rows.length} entradas en total` }
+      ];
+
+      summaryCards.innerHTML = cards.map(card => {
+        if (card.text) {
+          return `<article class="metric-card">
+            <div class="label">${card.title}</div>
+            <div class="value">${card.text}</div>
+            <div class="delta">${card.sub}</div>
+          </article>`;
+        }
+        const trendClass = card.metric.lowerIsGood
+          ? card.change <= 0 ? "trend-down" : "trend-up"
+          : card.change >= 0 ? "trend-down" : "trend-up";
+        const sign = card.change > 0 ? "+" : "";
+        return `<article class="metric-card">
+          <div class="label">${card.title}</div>
+          <div class="value">${formatValue(card.value, card.metric)}</div>
+          <div class="delta"><span class="${trendClass}">${sign}${formatValue(card.change, card.metric)}</span> desde el primer registro</div>
+        </article>`;
+      }).join("");
+    }
+
+    function renderExtremes() {
+      extremeCards.innerHTML = metrics.map(metric => {
+        const stats = getMetricStats(metric);
+        return `<article class="stat-card">
+          <div>
+            <div class="label">${metric.label}</div>
+            <h4>Rango histórico</h4>
+          </div>
+          <div class="extremes">
+            <div class="extreme">
+              <span>Mínimo</span>
+              <b>${formatValue(stats.minValue, metric)}</b>
+              <span>${formatDate(stats.minRow.fecha)}</span>
+            </div>
+            <div class="extreme">
+              <span>Máximo</span>
+              <b>${formatValue(stats.maxValue, metric)}</b>
+              <span>${formatDate(stats.maxRow.fecha)}</span>
+            </div>
+          </div>
+        </article>`;
+      }).join("");
+    }
+
+    function renderTable() {
+      dataTable.innerHTML = orderedData().map(row => `
+        <tr data-id="${row.id}">
+          <td><input type="date" data-key="fecha" value="${row.fecha}"></td>
+          <td><input type="number" step="0.1" data-key="peso" value="${row.peso}"></td>
+          <td><input type="number" step="0.1" data-key="imc" value="${row.imc}"></td>
+          <td><input type="number" step="0.1" data-key="musculo" value="${row.musculo}"></td>
+          <td><input type="number" step="0.1" data-key="grasa" value="${row.grasa}"></td>
+          <td><input type="number" step="0.1" data-key="visceral" value="${row.visceral}"></td>
+          <td><input type="number" step="1" data-key="calorias" value="${row.calorias}"></td>
+          <td><button class="row-delete" type="button" title="Eliminar">×</button></td>
+        </tr>
+      `).join("");
+
+      dataTable.querySelectorAll("input").forEach(input => {
+        input.addEventListener("change", event => {
+          const tr = event.target.closest("tr");
+          const row = data.find(item => item.id === tr.dataset.id);
+          const key = event.target.dataset.key;
+          row[key] = key === "fecha" ? event.target.value : Number(event.target.value);
+          saveData();
+          render();
+        });
+      });
+
+      dataTable.querySelectorAll(".row-delete").forEach(button => {
+        button.addEventListener("click", event => {
+          const id = event.target.closest("tr").dataset.id;
+          data = data.filter(row => row.id !== id);
+          saveData();
+          render();
+        });
+      });
+    }
+
+    function fitCanvas(canvas, ctx) {
+      const ratio = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.floor(rect.width * ratio);
+      canvas.height = Math.floor(rect.height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      return rect;
+    }
+
+    function renderCharts() {
+      chartsGrid.innerHTML = metrics.map(metric => `
+        <article class="chart-card">
+          <h4 style="color:${metric.color}">${metric.label}</h4>
+          <div class="chart-wrap">
+            <canvas data-chart="${metric.key}" aria-label="Evolución de ${metric.label}"></canvas>
+          </div>
+        </article>
+      `).join("");
+      drawCharts();
+    }
+
+    function drawCharts() {
+      metrics.forEach(metric => {
+        const canvas = chartsGrid.querySelector(`[data-chart="${metric.key}"]`);
+        if (!canvas) return;
+        drawMetricChart(canvas, metric);
+      });
+    }
+
+    function drawMetricChart(canvas, metric) {
+      const ctx = canvas.getContext("2d");
+      const rect = fitCanvas(canvas, ctx);
+      const width = rect.width;
+      const height = rect.height;
+      const pad = { left: 66, right: 18, top: 18, bottom: 40 };
+      const rows = orderedData("asc");
+      const values = rows.map(row => Number(row[metric.key]));
+      const rawMin = Math.min(...values);
+      const rawMax = Math.max(...values);
+      const spread = rawMax - rawMin || 1;
+      const min = rawMin - spread * 0.12;
+      const max = rawMax + spread * 0.12;
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#fbfdfc";
+      ctx.fillRect(0, 0, width, height);
+
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+
+      ctx.strokeStyle = "#dce4df";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#62706a";
+      ctx.font = "12px Inter, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i <= 4; i++) {
+        const y = pad.top + plotH * (i / 4);
+        const value = max - (max - min) * (i / 4);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(width - pad.right, y);
+        ctx.stroke();
+        ctx.fillText(formatValue(value, metric), pad.left - 10, y);
+      }
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      const labelIndexes = [...new Set([0, Math.floor((rows.length - 1) / 2), rows.length - 1])];
+      labelIndexes.forEach(index => {
+        const x = pad.left + (plotW * index) / Math.max(rows.length - 1, 1);
+        ctx.fillText(formatDate(rows[index].fecha).slice(3), x, height - pad.bottom + 16);
+      });
+
+      ctx.strokeStyle = metric.color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      values.forEach((value, index) => {
+        const x = pad.left + (plotW * index) / Math.max(values.length - 1, 1);
+        const y = pad.top + plotH - ((value - min) / (max - min)) * plotH;
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      values.forEach((value, index) => {
+        const x = pad.left + (plotW * index) / Math.max(values.length - 1, 1);
+        const y = pad.top + plotH - ((value - min) / (max - min)) * plotH;
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = metric.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+
+      ctx.fillStyle = "#17211c";
+      ctx.font = "700 12px Inter, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText(`Último: ${formatValue(values[values.length - 1], metric)}`, pad.left, 8);
+    }
+
+    function renderCalendar(target, monthValue, renderDay) {
+      const container = document.getElementById(target);
+      const [year, month] = monthValue.split("-").map(Number);
+      const first = new Date(year, month - 1, 1);
+      const days = new Date(year, month, 0).getDate();
+      const start = (first.getDay() + 6) % 7;
+      const weekdays = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+      const blanks = Array.from({ length: start }, () => `<div class="day-card empty"></div>`);
+      const dayCards = Array.from({ length: days }, (_, index) => {
+        const day = index + 1;
+        const iso = `${monthValue}-${String(day).padStart(2, "0")}`;
+        return renderDay(iso, day);
+      });
+      container.innerHTML = [
+        ...weekdays.map(day => `<div class="weekday">${day}</div>`),
+        ...blanks,
+        ...dayCards
+      ].join("");
+    }
+
+    function renderSport() {
+      const monthInput = document.getElementById("sportMonth");
+      if (!monthInput.value) monthInput.value = monthIso();
+      renderCalendar("sportCalendar", monthInput.value, (iso, day) => {
+        const items = sportLogs.filter(log => log.fecha === iso);
+        return `<div class="day-card ${items.length ? "done" : ""}">
+          <div class="day-number">${day}</div>
+          ${items.slice(0, 2).map(item => `
+            <span class="day-pill">${item.actividad}</span>
+            <div class="day-text">${item.logro || item.notas || ""}</div>
+          `).join("")}
+          ${items.length > 2 ? `<div class="day-text">+${items.length - 2} más</div>` : ""}
+        </div>`;
+      });
+
+      const sorted = [...sportLogs].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+      document.getElementById("sportList").innerHTML = sorted.length ? sorted.slice(0, 12).map(item => `
+        <article class="log-item">
+          <strong>${formatDate(item.fecha)} · ${item.actividad}</strong>
+          ${item.logro ? `<span>Logro: ${item.logro}</span>` : ""}
+          ${item.notas ? `<span>${item.notas}</span>` : ""}
+          <button class="row-delete" type="button" data-sport-delete="${item.id}" title="Eliminar">×</button>
+        </article>
+      `).join("") : `<div class="note">Aún no hay entrenamientos guardados.</div>`;
+
+      document.querySelectorAll("[data-sport-delete]").forEach(button => {
+        button.addEventListener("click", () => {
+          sportLogs = sportLogs.filter(item => item.id !== button.dataset.sportDelete);
+          saveCollection(SPORT_KEY, sportLogs);
+          renderSport();
+        });
+      });
+    }
+
+    function renderSteps() {
+      const monthInput = document.getElementById("stepsMonth");
+      if (!monthInput.value) monthInput.value = monthIso();
+      const monthRows = stepsData.filter(item => item.fecha.startsWith(monthInput.value));
+      const done = monthRows.filter(item => item.logrado).length;
+      const total = monthRows.length;
+      const best = monthRows.reduce((max, item) => Math.max(max, Number(item.pasos || 0)), 0);
+
+      document.getElementById("stepsSummary").innerHTML = [
+        { label: "Días logrados", value: `${done}/${total || 0}`, sub: "en el mes visible" },
+        { label: "Mejor día", value: best.toLocaleString("es-ES"), sub: "pasos registrados" },
+        { label: "Objetivo", value: "10.000", sub: "pasos diarios" }
+      ].map(card => `<article class="metric-card">
+        <div class="label">${card.label}</div>
+        <div class="value">${card.value}</div>
+        <div class="delta">${card.sub}</div>
+      </article>`).join("");
+
+      renderCalendar("stepsCalendar", monthInput.value, (iso, day) => {
+        const item = stepsData.find(row => row.fecha === iso);
+        return `<div class="day-card ${item?.logrado ? "done" : ""}">
+          <div class="day-number">${day}</div>
+          ${item ? `<span class="day-pill">${item.logrado ? "Logrado" : "Pendiente"}</span>
+          <div class="day-text">${Number(item.pasos || 0).toLocaleString("es-ES")} pasos</div>` : ""}
+        </div>`;
+      });
+    }
+
+    function renderQuotes() {
+      if (!quotes.length) quotes = structuredClone(defaultQuotes);
+      featuredQuoteIndex = featuredQuoteIndex % quotes.length;
+      document.getElementById("featuredQuote").textContent = quotes[featuredQuoteIndex].text;
+      document.getElementById("quoteList").innerHTML = quotes.map(item => `
+        <article class="log-item">
+          <strong>${item.text}</strong>
+          <button class="row-delete" type="button" data-quote-delete="${item.id}" title="Eliminar">×</button>
+        </article>
+      `).join("");
+      document.querySelectorAll("[data-quote-delete]").forEach(button => {
+        button.addEventListener("click", () => {
+          quotes = quotes.filter(item => item.id !== button.dataset.quoteDelete);
+          saveCollection(QUOTES_KEY, quotes);
+          featuredQuoteIndex = 0;
+          renderQuotes();
+        });
+      });
+    }
+
+    function render() {
+      if (!data.length) data = structuredClone(originalData);
+      renderRange();
+      renderSummary();
+      renderExtremes();
+      renderTable();
+      renderCharts();
+      renderSport();
+      renderSteps();
+      renderQuotes();
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      data.push({
+        id: crypto.randomUUID(),
+        order: Math.max(...data.map(row => row.order), 0) + 1,
+        fecha: formData.get("fecha"),
+        peso: Number(formData.get("peso")),
+        imc: Number(formData.get("imc")),
+        musculo: Number(formData.get("musculo")),
+        grasa: Number(formData.get("grasa")),
+        visceral: Number(formData.get("visceral")),
+        calorias: Number(formData.get("calorias"))
+      });
+      saveData();
+      form.reset();
+      render();
+    });
+
+    sportForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const formData = new FormData(sportForm);
+      sportLogs.push({
+        id: crypto.randomUUID(),
+        fecha: formData.get("fecha"),
+        actividad: formData.get("actividad").trim(),
+        logro: formData.get("logro").trim(),
+        notas: formData.get("notas").trim()
+      });
+      saveCollection(SPORT_KEY, sportLogs);
+      sportForm.reset();
+      sportForm.elements.fecha.value = todayIso();
+      renderSport();
+    });
+
+    stepsForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const formData = new FormData(stepsForm);
+      const fecha = formData.get("fecha");
+      const pasos = Number(formData.get("pasos") || 0);
+      const mode = formData.get("logrado");
+      const logrado = mode === "si" ? true : mode === "no" ? false : pasos >= 10000;
+      const existing = stepsData.find(item => item.fecha === fecha);
+      if (existing) {
+        existing.pasos = pasos;
+        existing.logrado = logrado;
+      } else {
+        stepsData.push({ id: crypto.randomUUID(), fecha, pasos, logrado });
+      }
+      saveCollection(STEPS_KEY, stepsData);
+      stepsForm.reset();
+      stepsForm.elements.fecha.value = todayIso();
+      renderSteps();
+    });
+
+    quoteForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const formData = new FormData(quoteForm);
+      quotes.push({
+        id: crypto.randomUUID(),
+        text: formData.get("frase").trim(),
+        order: quotes.length
+      });
+      featuredQuoteIndex = quotes.length - 1;
+      saveCollection(QUOTES_KEY, quotes);
+      quoteForm.reset();
+      renderQuotes();
+    });
+
+    document.getElementById("randomQuote").addEventListener("click", () => {
+      featuredQuoteIndex = (featuredQuoteIndex + 1) % quotes.length;
+      renderQuotes();
+    });
+
+    document.getElementById("sportMonth").addEventListener("change", renderSport);
+    document.getElementById("stepsMonth").addEventListener("change", renderSteps);
+
+    document.querySelectorAll("[data-tab-button]").forEach(button => {
+      button.addEventListener("click", event => {
+        event.preventDefault();
+        const tab = button.dataset.tabButton;
+        document.querySelectorAll("[data-tab-button]").forEach(item => item.classList.toggle("active", item === button));
+        document.querySelectorAll("[data-tab-panel]").forEach(panel => panel.classList.toggle("active", panel.dataset.tabPanel === tab));
+        if (tab === "peso") drawCharts();
+      });
+    });
+
+    profileName.textContent = localStorage.getItem(PROFILE_KEY) || "DAVID ROSELL";
+    profileName.addEventListener("blur", () => {
+      const value = profileName.textContent.trim() || "DAVID ROSELL";
+      profileName.textContent = value;
+      localStorage.setItem(PROFILE_KEY, value);
+    });
+
+    form.elements.fecha.value = todayIso();
+    sportForm.elements.fecha.value = todayIso();
+    stepsForm.elements.fecha.value = todayIso();
+    document.getElementById("sportMonth").value = monthIso();
+    document.getElementById("stepsMonth").value = monthIso();
+
+    document.getElementById("sortMode").addEventListener("change", event => {
+      sortMode = event.target.value;
+      renderTable();
+    });
+
+    document.getElementById("resetData").addEventListener("click", () => {
+      data = structuredClone(originalData);
+      saveData();
+      render();
+    });
+
+    document.getElementById("exportJson").addEventListener("click", () => {
+      downloadFile("seguimiento-peso.json", JSON.stringify(orderedData("asc"), null, 2), "application/json");
+    });
+
+    document.getElementById("exportCsv").addEventListener("click", () => {
+      const header = ["Fecha", "Peso", "IMC", "Musculo", "Grasa", "G.Visceral", "Calorias"];
+      const rows = orderedData("asc").map(row => [row.fecha, row.peso, row.imc, row.musculo, row.grasa, row.visceral, row.calorias]);
+      const csv = [header, ...rows].map(cols => cols.join(";")).join("\n");
+      downloadFile("seguimiento-peso.csv", csv, "text/csv");
+    });
+
+    function downloadFile(name, content, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.addEventListener("resize", drawCharts);
+    render();
+  </script>
+</body>
+</html>
