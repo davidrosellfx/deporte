@@ -1,14 +1,14 @@
 const SAMPLE_DATA = [
-  { fecha: "2024-12-15", peso: 93.8, imc: 29.1, musculo: 35.2, grasa: 24.5, visceral: 11, calorias: 1934, nutricion: 7, deporte: 4, emocional: "Bien" },
-  { fecha: "2024-12-17", peso: 92.8, imc: 28.8, musculo: 36.3, grasa: 24, visceral: 11, calorias: 1919, nutricion: 8, deporte: 5, emocional: "Bien" },
-  { fecha: "2024-12-20", peso: 90.4, imc: 28.1, musculo: 35, grasa: 26.5, visceral: 11, calorias: 1882, nutricion: 5, deporte: 2, emocional: "Regular" },
-  { fecha: "2025-03-25", peso: 94.4, imc: 29.3, musculo: 36, grasa: 24.6, visceral: 12, calorias: 1940, nutricion: 4, deporte: 1, emocional: "Mal" },
-  { fecha: "2025-07-18", peso: 87.6, imc: 27.2, musculo: 36.2, grasa: 24.3, visceral: 10, calorias: 1850, nutricion: 8, deporte: 5, emocional: "Bien" },
-  { fecha: "2025-08-10", peso: 89.6, imc: 27.8, musculo: 37, grasa: 22.8, visceral: 10, calorias: 1877, nutricion: 7, deporte: 4, emocional: "Bien" },
-  { fecha: "2025-10-13", peso: 93.4, imc: 29, musculo: 37.2, grasa: 22.4, visceral: 11, calorias: 1928, nutricion: 8, deporte: 5, emocional: "Regular" },
-  { fecha: "2026-01-19", peso: 92.9, imc: 28.8, musculo: 36.7, grasa: 23.4, visceral: 11, calorias: 1921, nutricion: 6, deporte: 3, emocional: "Regular" },
-  { fecha: "2026-02-23", peso: 91.8, imc: 28.5, musculo: 36.5, grasa: 23.7, visceral: 11, calorias: 1906, nutricion: 7, deporte: 4, emocional: "Bien" },
-  { fecha: "2026-04-17", peso: 92.4, imc: 28.7, musculo: 36.1, grasa: 24.4, visceral: 11, calorias: 1913, nutricion: 8, deporte: 2, emocional: "Regular" }
+  { fecha: "2024-12-15", peso: 93.8, imc: 29.1, musculo: 35.2, grasa: 24.5, visceral: 11, calorias: 1934, nutricion: 7, deporte: 4, emocional: 8 },
+  { fecha: "2024-12-17", peso: 92.8, imc: 28.8, musculo: 36.3, grasa: 24, visceral: 11, calorias: 1919, nutricion: 8, deporte: 5, emocional: 8 },
+  { fecha: "2024-12-20", peso: 90.4, imc: 28.1, musculo: 35, grasa: 26.5, visceral: 11, calorias: 1882, nutricion: 5, deporte: 2, emocional: 5 },
+  { fecha: "2025-03-25", peso: 94.4, imc: 29.3, musculo: 36, grasa: 24.6, visceral: 12, calorias: 1940, nutricion: 4, deporte: 1, emocional: 2 },
+  { fecha: "2025-07-18", peso: 87.6, imc: 27.2, musculo: 36.2, grasa: 24.3, visceral: 10, calorias: 1850, nutricion: 8, deporte: 5, emocional: 8 },
+  { fecha: "2025-08-10", peso: 89.6, imc: 27.8, musculo: 37, grasa: 22.8, visceral: 10, calorias: 1877, nutricion: 7, deporte: 4, emocional: 8 },
+  { fecha: "2025-10-13", peso: 93.4, imc: 29, musculo: 37.2, grasa: 22.4, visceral: 11, calorias: 1928, nutricion: 8, deporte: 5, emocional: 6 },
+  { fecha: "2026-01-19", peso: 92.9, imc: 28.8, musculo: 36.7, grasa: 23.4, visceral: 11, calorias: 1921, nutricion: 6, deporte: 3, emocional: 5 },
+  { fecha: "2026-02-23", peso: 91.8, imc: 28.5, musculo: 36.5, grasa: 23.7, visceral: 11, calorias: 1906, nutricion: 7, deporte: 4, emocional: 8 },
+  { fecha: "2026-04-17", peso: 92.4, imc: 28.7, musculo: 36.1, grasa: 24.4, visceral: 11, calorias: 1913, nutricion: 8, deporte: 2, emocional: 5 }
 ];
 
 const METRICS = [
@@ -117,7 +117,7 @@ function normalizeRows(input) {
       calorias: number(row.calorias || row.Calorias || row["Calorías"]),
       nutricion: boundedNumber(firstValue(row.nutricion, row.Nutricion, row["Nutrición"], row["Nutrición (1-10)"]), 0, 10),
       deporte: boundedNumber(firstValue(row.deporte, row.Deporte, row["Deporte"], row["Deporte (días)"], row["Deporte dias"]), 0, 7),
-      emocional: emotionalValue(firstValue(row.emocional, row.Emocional))
+      emocional: emotionalValue(firstValue(row.emocional, row.Emocional, row["Emocional (0-10)"]))
     }))
     .filter(row => row.fecha && Number.isFinite(row.peso));
 }
@@ -147,11 +147,13 @@ function boundedNumber(value, min, max) {
 
 function emotionalValue(value) {
   if (value === "" || value === null || value === undefined) return null;
+  const parsed = number(value);
+  if (Number.isFinite(parsed)) return Math.min(10, Math.max(0, parsed));
   const normalized = String(value).trim().toLowerCase();
-  if (["bien", "bueno", "good"].includes(normalized)) return "Bien";
-  if (["regular", "medio", "ok"].includes(normalized)) return "Regular";
-  if (["mal", "malo", "bad"].includes(normalized)) return "Mal";
-  return String(value).trim();
+  if (["bien", "bueno", "good"].includes(normalized)) return 8;
+  if (["regular", "medio", "ok"].includes(normalized)) return 5;
+  if (["mal", "malo", "bad"].includes(normalized)) return 2;
+  return null;
 }
 
 function average(values) {
@@ -160,17 +162,9 @@ function average(values) {
   return valid.reduce((sum, value) => sum + value, 0) / valid.length;
 }
 
-function commonEmotion(values) {
-  const valid = values.filter(Boolean);
-  if (!valid.length) return null;
-  return valid.sort((a, b) =>
-    valid.filter(value => value === b).length - valid.filter(value => value === a).length
-  )[0];
-}
-
 function emotionClass(value) {
-  if (value === "Bien") return "yes";
-  if (value === "Mal") return "no";
+  if (value >= 7) return "yes";
+  if (value <= 3) return "no";
   return null;
 }
 
@@ -184,38 +178,161 @@ function render() {
 }
 
 function renderWeeklyPlan() {
-  const plannedRows = rows.filter(row => row.nutricion !== null || row.deporte !== null || row.emocional);
+  const plannedRows = rows.filter(row => row.nutricion !== null || row.deporte !== null || row.emocional !== null);
   const container = document.getElementById("weeklyPlan");
   if (!plannedRows.length) {
     container.innerHTML = "";
     return;
   }
 
+  const enriched = plannedRows.map(row => {
+    const previous = rows[rows.indexOf(row) - 1];
+    return {
+      ...row,
+      score: contextScore(row),
+      previous,
+      pesoDelta: previous ? row.peso - previous.peso : null,
+      grasaDelta: previous && Number.isFinite(row.grasa) && Number.isFinite(previous.grasa) ? row.grasa - previous.grasa : null,
+      musculoDelta: previous && Number.isFinite(row.musculo) && Number.isFinite(previous.musculo) ? row.musculo - previous.musculo : null
+    };
+  });
   const nutritionAverage = average(plannedRows.map(row => row.nutricion));
   const sportAverage = average(plannedRows.map(row => row.deporte));
-  const emotion = commonEmotion(plannedRows.map(row => row.emocional));
-  const progress = Math.round((((nutritionAverage || 0) / 10) * 0.55 + ((sportAverage || 0) / 7) * 0.45) * 100);
-  const latest = [...plannedRows].reverse().slice(0, 5);
+  const emotionalAverage = average(plannedRows.map(row => row.emocional));
+  const contextAverage = average(enriched.map(row => row.score));
+  const progress = Math.round((contextAverage || 0) * 100);
+  const impact = impactSummary(enriched);
+  const latest = [...enriched].reverse().slice(0, 8);
 
   container.innerHTML = `
-    <article class="plan-panel">
-      <p class="eyebrow">Contexto semanal</p>
-      <h2>Nutrición ${formatPlain(nutritionAverage, 1)}/10 · Deporte ${formatPlain(sportAverage, 1)}/7</h2>
-      <p>Estos datos explican la semana detrás del peso: cómo fue la nutrición, cuántos días entrenaste y cómo estabas emocionalmente.</p>
+    <article class="plan-panel wide">
+      <div>
+        <p class="eyebrow">Contexto semanal</p>
+        <h2>La semana detrás del peso</h2>
+        <p>Nutrición, deporte y estado emocional ayudan a interpretar la composición: no explican todo, pero sí muestran patrones.</p>
+      </div>
+      <div class="context-grid">
+        <div class="context-card">
+          <span>Nutrición media</span>
+          <strong>${formatPlain(nutritionAverage, 1)}/10</strong>
+          <div class="mini-bar"><i style="width:${percentage(nutritionAverage, 10)}%"></i></div>
+        </div>
+        <div class="context-card">
+          <span>Deporte medio</span>
+          <strong>${formatPlain(sportAverage, 1)}/7</strong>
+          <div class="mini-bar"><i style="width:${percentage(sportAverage, 7)}%"></i></div>
+        </div>
+        <div class="context-card">
+          <span>Emocional medio</span>
+          <strong>${formatPlain(emotionalAverage, 1)}/10</strong>
+          <div class="mini-bar emotion"><i style="width:${percentage(emotionalAverage, 10)}%"></i></div>
+        </div>
+      </div>
       <div class="plan-bar" style="--progress:${progress}%"><span></span></div>
-      <p>Estado más repetido: <strong>${emotion || "--"}</strong></p>
+      <p>Índice global de contexto: <strong>${progress}%</strong></p>
     </article>
-    <article class="plan-list">
+    <article class="impact-card">
+      <p class="eyebrow">Impacto observado</p>
+      <h2>${impact.title}</h2>
+      <p>${impact.text}</p>
+      <div class="impact-grid">
+        <span>Peso ${formatSigned(impact.peso, METRICS[0])}</span>
+        <span>Grasa ${formatSigned(impact.grasa, METRICS[3])}</span>
+        <span>Músculo ${formatSigned(impact.musculo, METRICS[2])}</span>
+      </div>
+    </article>
+    <article class="plan-list wide">
+      <div>
+        <p class="eyebrow">Últimas semanas</p>
+        <h2>Contexto vs composición</h2>
+      </div>
       ${latest.map(row => `
-        <div class="plan-week">
-          <strong>${formatDate(row.fecha).slice(0, 5)}</strong>
-          <span>N ${formatPlain(row.nutricion, 0)}/10 · D ${formatPlain(row.deporte, 0)}/7</span>
-          <b class="plan-badge ${emotionClass(row.emocional) || ""}">${row.emocional || "--"}</b>
+        <div class="week-strip">
+          <div class="week-head">
+            <strong>${formatDate(row.fecha)}</strong>
+            <b class="plan-badge ${impactClass(row)}">${impactLabel(row)}</b>
+          </div>
+          <div class="bar-row">
+            <span>Nutrición</span>
+            <div class="mini-bar"><i style="width:${percentage(row.nutricion, 10)}%"></i></div>
+            <b>${formatPlain(row.nutricion, 0)}/10</b>
+          </div>
+          <div class="bar-row">
+            <span>Deporte</span>
+            <div class="mini-bar sport"><i style="width:${percentage(row.deporte, 7)}%"></i></div>
+            <b>${formatPlain(row.deporte, 0)}/7</b>
+          </div>
+          <div class="bar-row">
+            <span>Emocional</span>
+            <div class="mini-bar emotion"><i style="width:${percentage(row.emocional, 10)}%"></i></div>
+            <b>${formatPlain(row.emocional, 0)}/10</b>
+          </div>
+          <div class="week-foot">
+            <span class="emotion-dot ${emotionClass(row.emocional) || ""}">Emocional ${formatPlain(row.emocional, 0)}/10</span>
+            <span>Peso ${formatSigned(row.pesoDelta, METRICS[0])}</span>
+            <span>Grasa ${formatSigned(row.grasaDelta, METRICS[3])}</span>
+            <span>Músculo ${formatSigned(row.musculoDelta, METRICS[2])}</span>
+          </div>
         </div>
       `).join("")}
     </article>
   `;
 }
+
+function contextScore(row) {
+  const nutrition = Number.isFinite(row.nutricion) ? row.nutricion / 10 : null;
+  const sport = Number.isFinite(row.deporte) ? row.deporte / 7 : null;
+  const emotional = Number.isFinite(row.emocional) ? row.emocional / 10 : null;
+  const parts = [
+    nutrition === null ? null : { value: nutrition, weight: 0.45 },
+    sport === null ? null : { value: sport, weight: 0.35 },
+    emotional === null ? null : { value: emotional, weight: 0.2 }
+  ].filter(Boolean);
+  if (!parts.length) return null;
+  return parts.reduce((sum, part) => sum + part.value * part.weight, 0) / parts.reduce((sum, part) => sum + part.weight, 0);
+}
+
+function impactSummary(enriched) {
+  const comparable = enriched.filter(row => row.previous && row.score !== null);
+  if (!comparable.length) {
+    return { title: "Aún falta historial", text: "Con unas semanas más podré comparar contexto y cambios de composición.", peso: null, grasa: null, musculo: null };
+  }
+  const strong = comparable.filter(row => row.score >= 0.68);
+  const base = strong.length >= 2 ? strong : comparable;
+  const peso = average(base.map(row => row.pesoDelta));
+  const grasa = average(base.map(row => row.grasaDelta));
+  const musculo = average(base.map(row => row.musculoDelta));
+  const improved = (peso !== null && peso < 0) || (grasa !== null && grasa < 0) || (musculo !== null && musculo > 0);
+  return {
+    title: improved ? "Las mejores semanas coinciden con mejora" : "El patrón aún no es claro",
+    text: strong.length >= 2
+      ? "En semanas con mejor contexto global, estos fueron los cambios medios frente a la medición anterior."
+      : "Todavía hay pocas semanas fuertes registradas; muestro la media disponible como referencia, no como conclusión cerrada.",
+    peso,
+    grasa,
+    musculo
+  };
+}
+
+function impactLabel(row) {
+  if (!row.previous) return "Inicio";
+  if ((row.grasaDelta !== null && row.grasaDelta < -0.2) || (row.pesoDelta !== null && row.pesoDelta < -0.4 && (row.musculoDelta === null || row.musculoDelta >= -0.2))) return "Mejoró";
+  if ((row.grasaDelta !== null && row.grasaDelta > 0.3) || (row.pesoDelta !== null && row.pesoDelta > 0.5 && row.musculoDelta !== null && row.musculoDelta < 0)) return "Retroceso";
+  return "Estable";
+}
+
+function impactClass(row) {
+  const label = impactLabel(row);
+  if (label === "Mejoró") return "yes";
+  if (label === "Retroceso") return "no";
+  return "";
+}
+
+function percentage(value, max) {
+  if (!Number.isFinite(Number(value))) return 0;
+  return Math.max(0, Math.min(100, (Number(value) / max) * 100));
+}
+
 
 function renderHero() {
   const last = rows.at(-1);
@@ -381,7 +498,7 @@ function renderTable() {
       <td>${format(row.calorias, METRICS[5])}</td>
       <td>${formatPlain(row.nutricion, 0)}</td>
       <td>${formatPlain(row.deporte, 0)}</td>
-      <td>${row.emocional || "--"}</td>
+      <td>${formatPlain(row.emocional, 0)}/10</td>
     </tr>
   `).join("");
 }
@@ -393,6 +510,12 @@ function format(value, metric) {
     maximumFractionDigits: metric.decimals
   });
   return `${formatted}${metric.unit ? ` ${metric.unit}` : ""}`;
+}
+
+function formatSigned(value, metric) {
+  if (!Number.isFinite(Number(value))) return "--";
+  const sign = Number(value) > 0 ? "+" : "";
+  return `${sign}${format(value, metric)}`;
 }
 
 function formatPlain(value, decimals) {

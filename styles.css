@@ -229,8 +229,12 @@ button {
 
 .weekly-plan {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
   gap: 14px;
+}
+
+.wide {
+  min-width: 0;
 }
 
 .plan-panel {
@@ -249,6 +253,33 @@ button {
   line-height: 1.5;
 }
 
+.context-grid,
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.context-card {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  display: grid;
+  gap: 8px;
+}
+
+.context-card span {
+  color: #c7d6ce;
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.context-card strong {
+  font-size: 28px;
+}
+
 .plan-bar {
   height: 14px;
   background: rgba(255, 255, 255, 0.15);
@@ -263,6 +294,36 @@ button {
   background: var(--lime);
 }
 
+.mini-bar {
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(207, 232, 106, 0.22);
+  overflow: hidden;
+}
+
+.mini-bar i {
+  display: block;
+  height: 100%;
+  background: var(--lime);
+  border-radius: inherit;
+}
+
+.mini-bar.sport {
+  background: rgba(45, 108, 223, 0.15);
+}
+
+.mini-bar.sport i {
+  background: var(--blue);
+}
+
+.mini-bar.emotion {
+  background: rgba(22, 120, 79, 0.16);
+}
+
+.mini-bar.emotion i {
+  background: var(--green);
+}
+
 .plan-list {
   border-radius: 8px;
   border: 1px solid var(--line);
@@ -271,6 +332,85 @@ button {
   padding: 16px;
   display: grid;
   gap: 10px;
+}
+
+.impact-card {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+}
+
+.impact-card p {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.impact-grid span {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8faf7;
+  padding: 10px;
+  font-weight: 800;
+}
+
+.week-strip {
+  display: grid;
+  gap: 9px;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+
+.week-strip:last-child {
+  border-bottom: 0;
+}
+
+.week-head,
+.week-foot,
+.bar-row {
+  display: grid;
+  gap: 10px;
+  align-items: center;
+}
+
+.week-head {
+  grid-template-columns: 1fr auto;
+}
+
+.bar-row {
+  grid-template-columns: 88px minmax(0, 1fr) 42px;
+}
+
+.bar-row span,
+.week-foot span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.week-foot {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.emotion-dot {
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #f2f5f2;
+  color: var(--muted) !important;
+  font-weight: 800;
+  width: fit-content;
+}
+
+.emotion-dot.yes {
+  background: #e8f7ed;
+  color: var(--green) !important;
+}
+
+.emotion-dot.no {
+  background: #fff0f2;
+  color: var(--red) !important;
 }
 
 .plan-week {
@@ -448,6 +588,9 @@ th {
   .setup,
   .metrics,
   .weekly-plan,
+  .context-grid,
+  .impact-grid,
+  .week-foot,
   .charts,
   .highlights {
     grid-template-columns: 1fr;

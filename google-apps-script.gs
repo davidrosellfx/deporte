@@ -45,7 +45,7 @@ function getRows() {
         calorias: number(item.calorias),
         nutricion: boundedNumber(firstValue(item.nutricion, item.nutricion110), 0, 10),
         deporte: boundedNumber(firstValue(item.deporte, item.deporteds, item.deportedias), 0, 7),
-        emocional: emotionalValue(item.emocional)
+        emocional: emotionalValue(firstValue(item.emocional, item.emocional010))
       };
     })
     .filter(row => row.fecha && row.peso !== null);
@@ -93,9 +93,11 @@ function boundedNumber(value, min, max) {
 
 function emotionalValue(value) {
   if (value === "" || value === null || value === undefined) return null;
+  const parsed = number(value);
+  if (parsed !== null) return Math.min(10, Math.max(0, parsed));
   const normalized = String(value).trim().toLowerCase();
-  if (["bien", "bueno", "good"].indexOf(normalized) !== -1) return "Bien";
-  if (["regular", "medio", "ok"].indexOf(normalized) !== -1) return "Regular";
-  if (["mal", "malo", "bad"].indexOf(normalized) !== -1) return "Mal";
-  return String(value).trim();
+  if (["bien", "bueno", "good"].indexOf(normalized) !== -1) return 8;
+  if (["regular", "medio", "ok"].indexOf(normalized) !== -1) return 5;
+  if (["mal", "malo", "bad"].indexOf(normalized) !== -1) return 2;
+  return null;
 }

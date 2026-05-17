@@ -25,9 +25,9 @@ La primera fila debe tener estos encabezados, con o sin acentos:
 
 Opcionalmente puedes añadir estas columnas de contexto semanal:
 
-`Nutrición (1-10)`, `Deporte (días)`, `Emocional`
+`Nutricion (1-10)`, `Deporte (dias)`, `Emocional (0-10)`
 
-`Nutrición (1-10)` mide calidad de dieta de 0 a 10. `Deporte (días)` mide entrenamientos de 0 a 7. `Emocional` acepta `Bien`, `Regular` o `Mal`.
+`Nutricion (1-10)` mide calidad de dieta de 0 a 10. `Deporte (dias)` mide entrenamientos de 0 a 7. `Emocional (0-10)` mide estado emocional, donde 10 es muy bien y 0 es muy mal.
 
 ## Subir a GitHub Pages
 
