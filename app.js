@@ -179,9 +179,9 @@ function renderWeeklyPlan() {
         <p>Media de las mediciones de la última semana registrada, sin tapar las gráficas principales.</p>
       </div>
       <div class="compact-context">
-        <div><span>Nutrición</span><strong class="${thresholdClass(latestWeek.nutricion, 6)}">${formatPlain(latestWeek.nutricion, 1)}/10</strong></div>
-        <div><span>Deporte</span><strong class="${thresholdClass(latestWeek.deporte, 4)}">${formatPlain(latestWeek.deporte, 1)}/7</strong></div>
-        <div><span>Emocional</span><strong class="${thresholdClass(latestWeek.emocional, 5)}">${formatPlain(latestWeek.emocional, 1)}/10</strong></div>
+        <div><span>Nutrición</span><strong class="${thresholdClass(latestWeek.nutricion, 6)}">${formatPlain(latestWeek.nutricion, 0)}/10</strong></div>
+        <div><span>Deporte</span><strong class="${thresholdClass(latestWeek.deporte, 4)}">${formatPlain(latestWeek.deporte, 0)}/7</strong></div>
+        <div><span>Emocional</span><strong class="${thresholdClass(latestWeek.emocional, 5)}">${formatPlain(latestWeek.emocional, 0)}/10</strong></div>
         <div><span>Resultado</span><strong class="${impactClass(latest)}">${impactLabel(latest)}</strong></div>
       </div>
       <div class="weekly-deltas">
