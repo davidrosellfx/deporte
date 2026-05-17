@@ -25,6 +25,46 @@
 
     <section class="weekly-plan" id="weeklyPlan"></section>
 
+    <section class="panel entry-panel">
+      <details>
+        <summary>Añadir medición semanal</summary>
+        <form id="entryForm" class="entry-form">
+          <label>Fecha
+            <input type="date" name="fecha" required>
+          </label>
+          <label>Peso
+            <input type="number" name="peso" step="0.1" required>
+          </label>
+          <label>IMC
+            <input type="number" name="imc" step="0.1">
+          </label>
+          <label>Músculo
+            <input type="number" name="musculo" step="0.1">
+          </label>
+          <label>Grasa
+            <input type="number" name="grasa" step="0.1">
+          </label>
+          <label>G. visceral
+            <input type="number" name="visceral" step="1">
+          </label>
+          <label>Calorías
+            <input type="number" name="calorias" step="1">
+          </label>
+          <label>Nutrición
+            <input type="number" name="nutricion" min="0" max="10" step="1">
+          </label>
+          <label>Deporte
+            <input type="number" name="deporte" min="0" max="7" step="1">
+          </label>
+          <label>Emocional
+            <input type="number" name="emocional" min="0" max="10" step="1">
+          </label>
+          <button type="submit">Guardar en Sheet</button>
+        </form>
+        <p class="entry-status" id="entryStatus"></p>
+      </details>
+    </section>
+
     <section class="story">
       <div>
         <p class="eyebrow">Evolución real</p>

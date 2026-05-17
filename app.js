@@ -44,6 +44,7 @@ const savedUrl = localStorage.getItem(SOURCE_KEY) || "";
 const activeUrl = savedUrl || configUrl;
 
 window.addEventListener("resize", () => drawAllCharts());
+setupEntryForm();
 setRandomQuote();
 load(activeUrl);
 
@@ -85,6 +86,55 @@ function loadJsonp(url) {
       script.remove();
     }
   });
+}
+
+function setupEntryForm() {
+  const form = document.getElementById("entryForm");
+  if (!form) return;
+  form.elements.fecha.value = new Date().toISOString().slice(0, 10);
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const status = document.getElementById("entryStatus");
+    if (!activeUrl) {
+      status.textContent = "No hay URL de Google Apps Script configurada.";
+      return;
+    }
+    const formData = new FormData(form);
+    status.textContent = "Guardando medición...";
+    try {
+      await writeMeasurement(Object.fromEntries(formData.entries()));
+      status.textContent = "Medición guardada y Sheet ordenada por fecha.";
+      await load(activeUrl);
+    } catch (error) {
+      console.error(error);
+      status.textContent = "No se pudo guardar. Revisa el despliegue del Apps Script.";
+    }
+  });
+}
+
+function writeMeasurement(values) {
+  const params = {
+    action: "upsert",
+    fecha: values.fecha,
+    peso: values.peso,
+    imc: values.imc,
+    musculo: values.musculo,
+    grasa: values.grasa,
+    visceral: values.visceral,
+    calorias: values.calorias,
+    nutricion: values.nutricion,
+    deporte: values.deporte,
+    emocional: values.emocional
+  };
+  return loadJsonp(withParams(activeUrl, params));
+}
+
+function withParams(url, params) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) query.set(key, value);
+  });
+  return `${url}${url.includes("?") ? "&" : "?"}${query.toString()}`;
 }
 
 function normalizeRows(input) {

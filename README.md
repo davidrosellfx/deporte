@@ -29,6 +29,16 @@ Opcionalmente puedes añadir estas columnas de contexto semanal:
 
 `Nutricion (1-10)` mide calidad de dieta de 0 a 10. `Deporte (dias)` mide entrenamientos de 0 a 7. `Emocional (0-10)` mide estado emocional, donde 10 es muy bien y 0 es muy mal.
 
+## Añadir datos desde la web
+
+El dashboard incluye un formulario desplegable de **Añadir medición semanal**. Al guardar:
+
+- Si la fecha ya existe, actualiza esa fila.
+- Si la fecha no existe, añade una fila nueva.
+- Después ordena la tabla por fecha.
+
+Para que funcione, pega la versión actual de `google-apps-script.gs` y vuelve a desplegar el Web App.
+
 ## Subir a GitHub Pages
 
 Sube `index.html`, `styles.css`, `app.js`, `config.js` y `google-apps-script.gs` al repositorio. Después activa GitHub Pages desde la rama principal.
