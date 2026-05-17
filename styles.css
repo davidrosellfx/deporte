@@ -14,6 +14,15 @@
   --shadow: 0 24px 70px rgba(17, 25, 21, 0.12);
 }
 
+body[data-theme="dark"] {
+  --ink: #eff7f2;
+  --muted: #aab8b0;
+  --paper: #0e1512;
+  --panel: #17211c;
+  --line: #2b3a32;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -41,6 +50,17 @@ button {
   padding: 24px 0 48px;
   display: grid;
   gap: 22px;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
 }
 
 .hero {
@@ -123,6 +143,10 @@ h2 {
   padding: 24px;
   display: grid;
   gap: 10px;
+}
+
+body[data-theme="dark"] .hero-panel {
+  background: rgba(23, 33, 28, 0.92);
 }
 
 .hero-weight-grid {
@@ -208,6 +232,12 @@ details summary {
 .hero-panel strong {
   font-size: 56px;
   line-height: 1;
+  white-space: nowrap;
+}
+
+#heroWeight {
+  display: block;
+  font-size: 54px;
 }
 
 .hero-goal {
@@ -217,20 +247,22 @@ details summary {
 }
 
 .hero-goal input {
-  width: 116px;
+  width: 72px;
   border: 0;
   border-bottom: 2px solid var(--line);
   background: transparent;
   padding: 0;
   min-height: auto;
-  font-size: 56px;
+  font-size: 36px;
   line-height: 1;
-  font-weight: 850;
+  font-weight: 650;
   color: var(--ink);
 }
 
 .hero-goal b {
-  font-size: 24px;
+  font-size: 18px;
+  font-weight: 650;
+  color: var(--muted);
 }
 
 .hero-panel small {
@@ -270,6 +302,13 @@ input {
   border-radius: 8px;
   padding: 10px 12px;
   color: var(--ink);
+}
+
+body[data-theme="dark"] input,
+body[data-theme="dark"] select {
+  background: #101814;
+  color: var(--ink);
+  border-color: var(--line);
 }
 
 button {
@@ -717,6 +756,14 @@ select {
   padding: 10px;
 }
 
+body[data-theme="dark"] .chart-frame,
+body[data-theme="dark"] table,
+body[data-theme="dark"] .record,
+body[data-theme="dark"] .month-tile,
+body[data-theme="dark"] .impact-grid span {
+  background: #101814;
+}
+
 canvas {
   width: 100%;
   height: 100%;
@@ -789,6 +836,11 @@ th {
   color: #536159;
   font-size: 12px;
   text-transform: uppercase;
+}
+
+body[data-theme="dark"] th {
+  background: #1d2a23;
+  color: #c7d6ce;
 }
 
 @media (max-width: 980px) {

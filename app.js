@@ -35,6 +35,7 @@ const MOTIVATIONAL_QUOTES = [
 
 const SOURCE_KEY = "camino-a-los-85-source";
 const GOAL_KEY = "camino-a-los-85-goal";
+const THEME_KEY = "camino-a-los-85-theme";
 let rows = [];
 let goalWeight = Number(localStorage.getItem(GOAL_KEY)) || 85;
 let selectedContextMonth = "";
@@ -44,6 +45,7 @@ const savedUrl = localStorage.getItem(SOURCE_KEY) || "";
 const activeUrl = savedUrl || configUrl;
 
 window.addEventListener("resize", () => drawAllCharts());
+setupTheme();
 setupEntryForm();
 setRandomQuote();
 load(activeUrl);
@@ -51,6 +53,22 @@ load(activeUrl);
 function setRandomQuote() {
   const quote = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
   document.getElementById("motivationalQuote").textContent = quote;
+}
+
+function setupTheme() {
+  const savedTheme = localStorage.getItem(THEME_KEY) || "light";
+  document.body.dataset.theme = savedTheme;
+  updateThemeButton();
+  document.getElementById("themeToggle").addEventListener("click", () => {
+    document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, document.body.dataset.theme);
+    updateThemeButton();
+    drawAllCharts();
+  });
+}
+
+function updateThemeButton() {
+  document.getElementById("themeToggle").textContent = document.body.dataset.theme === "dark" ? "Modo claro" : "Modo oscuro";
 }
 
 async function load(url) {
@@ -581,12 +599,13 @@ function drawChart(canvas, metric) {
   const max = rawMax + spread * 0.14;
   const plotW = width - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
+  const dark = document.body.dataset.theme === "dark";
 
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = "#fbfcfa";
+  ctx.fillStyle = dark ? "#101814" : "#fbfcfa";
   ctx.fillRect(0, 0, width, height);
-  ctx.strokeStyle = "#dfe6df";
-  ctx.fillStyle = "#66736d";
+  ctx.strokeStyle = dark ? "#2b3a32" : "#dfe6df";
+  ctx.fillStyle = dark ? "#aab8b0" : "#66736d";
   ctx.lineWidth = 1;
   ctx.font = "12px Inter, sans-serif";
   ctx.textAlign = "right";
