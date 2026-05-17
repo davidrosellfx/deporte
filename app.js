@@ -173,6 +173,7 @@ function render() {
   renderCards();
   renderWeeklyPlan();
   renderCharts();
+  renderContextAnalysis();
   renderRecords();
   renderTable();
 }
@@ -185,7 +186,27 @@ function renderWeeklyPlan() {
     return;
   }
 
-  const enriched = plannedRows.map(row => {
+  const enriched = getContextRows(plannedRows);
+  const latest = enriched.at(-1);
+  container.innerHTML = `
+    <article class="plan-panel compact">
+      <div>
+        <p class="eyebrow">Última semana</p>
+        <h2>${formatDate(latest.fecha)}</h2>
+        <p>Contexto de la última medición, sin tapar las gráficas principales.</p>
+      </div>
+      <div class="compact-context">
+        <div><span>Nutrición</span><strong>${formatPlain(latest.nutricion, 0)}/10</strong></div>
+        <div><span>Deporte</span><strong>${formatPlain(latest.deporte, 0)}/7</strong></div>
+        <div><span>Emocional</span><strong>${formatPlain(latest.emocional, 0)}/10</strong></div>
+        <div><span>Resultado</span><strong>${impactLabel(latest)}</strong></div>
+      </div>
+    </article>
+  `;
+}
+
+function getContextRows(sourceRows) {
+  return sourceRows.map(row => {
     const previous = rows[rows.indexOf(row) - 1];
     return {
       ...row,
@@ -196,20 +217,35 @@ function renderWeeklyPlan() {
       musculoDelta: previous && Number.isFinite(row.musculo) && Number.isFinite(previous.musculo) ? row.musculo - previous.musculo : null
     };
   });
+}
+
+function renderContextAnalysis() {
+  const plannedRows = rows.filter(row => row.nutricion !== null || row.deporte !== null || row.emocional !== null);
+  const container = document.getElementById("contextAnalysis");
+  if (!plannedRows.length) {
+    container.innerHTML = "";
+    return;
+  }
+  const enriched = getContextRows(plannedRows);
   const nutritionAverage = average(plannedRows.map(row => row.nutricion));
   const sportAverage = average(plannedRows.map(row => row.deporte));
   const emotionalAverage = average(plannedRows.map(row => row.emocional));
   const contextAverage = average(enriched.map(row => row.score));
   const progress = Math.round((contextAverage || 0) * 100);
   const impact = impactSummary(enriched);
-  const latest = [...enriched].reverse().slice(0, 8);
+  const months = monthlyContext(enriched).reverse();
 
   container.innerHTML = `
+    <div class="panel-headline">
+      <p class="eyebrow">Contexto y composición</p>
+      <h2>Análisis por meses</h2>
+    </div>
+    <div class="context-layout">
     <article class="plan-panel wide">
       <div>
-        <p class="eyebrow">Contexto semanal</p>
-        <h2>La semana detrás del peso</h2>
-        <p>Nutrición, deporte y estado emocional ayudan a interpretar la composición: no explican todo, pero sí muestran patrones.</p>
+        <p class="eyebrow">Media general</p>
+        <h2>Contexto acumulado</h2>
+        <p>Resumen de todas las semanas con datos de nutrición, deporte y emocional.</p>
       </div>
       <div class="context-grid">
         <div class="context-card">
@@ -241,42 +277,70 @@ function renderWeeklyPlan() {
         <span>Músculo ${formatSigned(impact.musculo, METRICS[2])}</span>
       </div>
     </article>
+    </div>
     <article class="plan-list wide">
       <div>
-        <p class="eyebrow">Últimas semanas</p>
-        <h2>Contexto vs composición</h2>
+        <p class="eyebrow">Mes a mes</p>
+        <h2>Medias mensuales y cambio de composición</h2>
       </div>
-      ${latest.map(row => `
+      ${months.map(month => `
         <div class="week-strip">
           <div class="week-head">
-            <strong>${formatDate(row.fecha)}</strong>
-            <b class="plan-badge ${impactClass(row)}">${impactLabel(row)}</b>
+            <strong>${month.label}</strong>
+            <b class="plan-badge ${month.netGood ? "yes" : "no"}">${month.netGood ? "Buen mes" : "Revisar"}</b>
           </div>
           <div class="bar-row">
             <span>Nutrición</span>
-            <div class="mini-bar"><i style="width:${percentage(row.nutricion, 10)}%"></i></div>
-            <b>${formatPlain(row.nutricion, 0)}/10</b>
+            <div class="mini-bar"><i style="width:${percentage(month.nutricion, 10)}%"></i></div>
+            <b>${formatPlain(month.nutricion, 1)}/10</b>
           </div>
           <div class="bar-row">
             <span>Deporte</span>
-            <div class="mini-bar sport"><i style="width:${percentage(row.deporte, 7)}%"></i></div>
-            <b>${formatPlain(row.deporte, 0)}/7</b>
+            <div class="mini-bar sport"><i style="width:${percentage(month.deporte, 7)}%"></i></div>
+            <b>${formatPlain(month.deporte, 1)}/7</b>
           </div>
           <div class="bar-row">
             <span>Emocional</span>
-            <div class="mini-bar emotion"><i style="width:${percentage(row.emocional, 10)}%"></i></div>
-            <b>${formatPlain(row.emocional, 0)}/10</b>
+            <div class="mini-bar emotion"><i style="width:${percentage(month.emocional, 10)}%"></i></div>
+            <b>${formatPlain(month.emocional, 1)}/10</b>
           </div>
           <div class="week-foot">
-            <span class="emotion-dot ${emotionClass(row.emocional) || ""}">Emocional ${formatPlain(row.emocional, 0)}/10</span>
-            <span>Peso ${formatSigned(row.pesoDelta, METRICS[0])}</span>
-            <span>Grasa ${formatSigned(row.grasaDelta, METRICS[3])}</span>
-            <span>Músculo ${formatSigned(row.musculoDelta, METRICS[2])}</span>
+            <span>${month.count} mediciones</span>
+            <span>Peso ${formatSigned(month.peso, METRICS[0])}</span>
+            <span>Grasa ${formatSigned(month.grasa, METRICS[3])}</span>
+            <span>Músculo ${formatSigned(month.musculo, METRICS[2])}</span>
           </div>
         </div>
       `).join("")}
     </article>
   `;
+}
+
+function monthlyContext(enriched) {
+  const groups = enriched.reduce((acc, row) => {
+    const key = row.fecha.slice(0, 7);
+    acc[key] ||= [];
+    acc[key].push(row);
+    return acc;
+  }, {});
+  return Object.entries(groups).map(([key, group]) => {
+    const first = group[0];
+    const last = group.at(-1);
+    const peso = last.peso - first.peso;
+    const grasa = Number.isFinite(last.grasa) && Number.isFinite(first.grasa) ? last.grasa - first.grasa : null;
+    const musculo = Number.isFinite(last.musculo) && Number.isFinite(first.musculo) ? last.musculo - first.musculo : null;
+    return {
+      label: new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" }).format(new Date(`${key}-01T00:00:00`)),
+      count: group.length,
+      nutricion: average(group.map(row => row.nutricion)),
+      deporte: average(group.map(row => row.deporte)),
+      emocional: average(group.map(row => row.emocional)),
+      peso,
+      grasa,
+      musculo,
+      netGood: (peso <= 0 && (grasa === null || grasa <= 0)) || (musculo !== null && musculo > 0)
+    };
+  });
 }
 
 function contextScore(row) {

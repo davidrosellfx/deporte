@@ -228,9 +228,7 @@ button {
 }
 
 .weekly-plan {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
-  gap: 14px;
+  display: block;
 }
 
 .wide {
@@ -245,6 +243,52 @@ button {
   box-shadow: var(--shadow);
   padding: 22px;
   display: grid;
+  gap: 14px;
+}
+
+.plan-panel.compact {
+  grid-template-columns: minmax(0, 0.8fr) minmax(420px, 1fr);
+  align-items: center;
+}
+
+.compact-context {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.compact-context div {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  display: grid;
+  gap: 5px;
+}
+
+.compact-context span {
+  color: #c7d6ce;
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.compact-context strong {
+  font-size: 22px;
+}
+
+.context-analysis {
+  gap: 16px;
+}
+
+.panel-headline {
+  display: grid;
+  gap: 6px;
+}
+
+.context-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.8fr);
   gap: 14px;
 }
 
@@ -588,6 +632,9 @@ th {
   .setup,
   .metrics,
   .weekly-plan,
+  .plan-panel.compact,
+  .compact-context,
+  .context-layout,
   .context-grid,
   .impact-grid,
   .week-foot,
