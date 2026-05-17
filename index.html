@@ -60,8 +60,11 @@
           <label>G. visceral
             <input type="number" name="visceral" step="1">
           </label>
-          <label>Calorías
+          <label>Cal. necesarias
             <input type="number" name="calorias" step="1">
+          </label>
+          <label>Cal. quemadas
+            <input type="number" name="caloriasQuemadas" step="1">
           </label>
           <label>Nutrición
             <input type="number" name="nutricion" min="0" max="10" step="1">
@@ -71,6 +74,9 @@
           </label>
           <label>Emocional
             <input type="number" name="emocional" min="0" max="10" step="1">
+          </label>
+          <label>Km semana
+            <input type="number" name="kmSemana" min="0" step="0.1">
           </label>
           <button type="submit">Guardar en Sheet</button>
         </form>
@@ -104,10 +110,12 @@
                 <th>Músculo</th>
                 <th>Grasa</th>
                 <th>G. visceral</th>
-                <th>Calorías</th>
+                <th>Cal. necesarias</th>
+                <th>Cal. quemadas</th>
                 <th>Nutrición</th>
                 <th>Deporte</th>
                 <th>Emocional</th>
+                <th>Km semana</th>
               </tr>
             </thead>
             <tbody id="historyTable"></tbody>

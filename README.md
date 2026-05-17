@@ -21,13 +21,13 @@ Solo necesitas poner `SHEET_ID` manualmente si creas el Apps Script fuera de la 
 
 La primera fila debe tener estos encabezados, con o sin acentos:
 
-`Fecha`, `Peso`, `IMC`, `Musculo`, `Grasa`, `G.Visceral`, `Calorías`
+`Fecha`, `Peso`, `IMC`, `Musculo`, `Grasa`, `G.Visceral`, `Calorías`, `Calorías quemadas`
 
 Opcionalmente puedes añadir estas columnas de contexto semanal:
 
-`Nutricion (1-10)`, `Deporte (dias)`, `Emocional (0-10)`
+`Nutricion (0-10)`, `Deporte (dias)`, `Emocional (0-10)`, `Km semana`
 
-`Nutricion (1-10)` mide calidad de dieta de 0 a 10. `Deporte (dias)` mide entrenamientos de 0 a 7. `Emocional (0-10)` mide estado emocional, donde 10 es muy bien y 0 es muy mal.
+`Calorías quemadas` es la media semanal que te da Garmin. `Nutricion (0-10)` mide calidad de dieta de 0 a 10. `Deporte (dias)` mide entrenamientos de 0 a 7. `Emocional (0-10)` mide estado emocional, donde 10 es muy bien y 0 es muy mal. `Km semana` mide la carga total de movimiento de esa semana.
 
 ## Añadir datos desde la web
 

@@ -507,6 +507,22 @@ select {
   background: var(--green);
 }
 
+.mini-bar.burned {
+  background: rgba(224, 123, 57, 0.16);
+}
+
+.mini-bar.burned i {
+  background: #e07b39;
+}
+
+.mini-bar.km {
+  background: rgba(31, 159, 181, 0.16);
+}
+
+.mini-bar.km i {
+  background: #1f9fb5;
+}
+
 .plan-list {
   border-radius: 8px;
   border: 1px solid var(--line);
@@ -595,7 +611,7 @@ select {
 }
 
 .bar-row {
-  grid-template-columns: 88px minmax(0, 1fr) 42px;
+  grid-template-columns: 88px minmax(0, 1fr) 68px;
 }
 
 .bar-row span,
@@ -746,6 +762,15 @@ select {
 
 .chart-card h3 {
   font-size: 19px;
+}
+
+.activity-chart-card {
+  grid-column: 1 / -1;
+}
+
+.chart-note {
+  color: var(--muted);
+  line-height: 1.45;
 }
 
 .chart-frame {

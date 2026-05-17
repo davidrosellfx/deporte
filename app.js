@@ -17,8 +17,15 @@ const METRICS = [
   { key: "musculo", label: "Músculo", unit: "%", color: "#16784f", decimals: 1, lowerIsGood: false },
   { key: "grasa", label: "Grasa", unit: "%", color: "#d64b63", decimals: 1, lowerIsGood: true },
   { key: "visceral", label: "G. visceral", unit: "", color: "#b77717", decimals: 0, lowerIsGood: true },
-  { key: "calorias", label: "Calorías", unit: "kcal", color: "#0b7c8d", decimals: 0, lowerIsGood: false }
+  { key: "calorias", label: "Cal. necesarias", unit: "kcal", color: "#0b7c8d", decimals: 0, lowerIsGood: false }
 ];
+
+const ACTIVITY_METRICS = [
+  { key: "caloriasQuemadas", label: "Cal. quemadas", unit: "kcal", color: "#e07b39", decimals: 0, lowerIsGood: false },
+  { key: "kmSemana", label: "Km semana", unit: "km", color: "#1f9fb5", decimals: 1, lowerIsGood: false }
+];
+
+const CHART_METRICS = [...METRICS];
 
 const MOTIVATIONAL_QUOTES = [
   "Si lo hiciste una vez, lo harás otra vez.",
@@ -140,9 +147,11 @@ function writeMeasurement(values) {
     grasa: values.grasa,
     visceral: values.visceral,
     calorias: values.calorias,
+    caloriasQuemadas: values.caloriasQuemadas,
     nutricion: values.nutricion,
     deporte: values.deporte,
-    emocional: values.emocional
+    emocional: values.emocional,
+    kmSemana: values.kmSemana
   };
   return loadJsonp(withParams(activeUrl, params));
 }
@@ -165,9 +174,11 @@ function normalizeRows(input) {
       grasa: number(row.grasa || row.Grasa),
       visceral: number(row.visceral || row["G.Visceral"] || row["G. visceral"] || row["Grasa visceral"]),
       calorias: number(row.calorias || row.Calorias || row["Calorías"]),
+      caloriasQuemadas: number(firstValue(row.caloriasQuemadas, row.CaloriasQuemadas, row["Calorías quemadas"], row["Calorias quemadas"], row["Cal. quemadas"])),
       nutricion: boundedNumber(firstValue(row.nutricion, row.Nutricion, row["Nutrición"], row["Nutrición (0-10)"], row["Nutrición (1-10)"]), 0, 10),
       deporte: boundedNumber(firstValue(row.deporte, row.Deporte, row["Deporte"], row["Deporte (días)"], row["Deporte dias"]), 0, 7),
-      emocional: emotionalValue(firstValue(row.emocional, row.Emocional, row["Emocional (0-10)"]))
+      emocional: emotionalValue(firstValue(row.emocional, row.Emocional, row["Emocional (0-10)"])),
+      kmSemana: number(firstValue(row.kmSemana, row.KmSemana, row["Km semana"], row["KM semana"], row["Kilómetros semana"]))
     }))
     .filter(row => row.fecha && Number.isFinite(row.peso));
 }
@@ -289,6 +300,8 @@ function renderContextAnalysis() {
   const nutritionAverage = average(plannedRows.map(row => row.nutricion));
   const sportAverage = average(plannedRows.map(row => row.deporte));
   const emotionalAverage = average(plannedRows.map(row => row.emocional));
+  const burnedAverage = average(rows.map(row => row.caloriasQuemadas));
+  const kmAverage = average(rows.map(row => row.kmSemana));
   const contextAverage = average(contextRows.map(row => row.score));
   const progress = Math.round((contextAverage || 0) * 100);
   const impact = impactSummary(contextRows);
@@ -332,6 +345,16 @@ function renderContextAnalysis() {
           <span>Emocional medio</span>
           <strong class="${thresholdClass(emotionalAverage, 5)}">${formatPlain(emotionalAverage, 1)}/10</strong>
           <div class="mini-bar emotion"><i style="width:${percentage(emotionalAverage, 10)}%"></i></div>
+        </div>
+        <div class="context-card">
+          <span>Cal. quemadas media</span>
+          <strong>${formatPlain(burnedAverage, 0)} kcal</strong>
+          <p>Referencia Garmin semanal</p>
+        </div>
+        <div class="context-card">
+          <span>Km medios</span>
+          <strong>${formatPlain(kmAverage, 1)} km</strong>
+          <p>Carga de movimiento</p>
         </div>
       </div>
       <div class="plan-bar" style="--progress:${progress}%"><span></span></div>
@@ -388,6 +411,8 @@ function monthlyContext(enriched) {
       nutricion: average(group.map(row => row.nutricion)),
       deporte: average(group.map(row => row.deporte)),
       emocional: average(group.map(row => row.emocional)),
+      caloriasQuemadas: average(group.map(row => row.caloriasQuemadas)),
+      kmSemana: average(group.map(row => row.kmSemana)),
       pesoMedio: average(group.map(row => row.peso)),
       grasaMedia: average(group.map(row => row.grasa)),
       musculoMedio: average(group.map(row => row.musculo)),
@@ -458,6 +483,16 @@ function renderMonthDetail(month) {
         <div class="mini-bar emotion"><i style="width:${percentage(month.emocional, 10)}%"></i></div>
         <b class="${thresholdClass(month.emocional, 5)}">${formatPlain(month.emocional, 1)}/10</b>
       </div>
+      <div class="bar-row">
+        <span>Cal. quem.</span>
+        <div class="mini-bar burned"><i style="width:${burnedWidth(month.caloriasQuemadas)}%"></i></div>
+        <b>${formatPlain(month.caloriasQuemadas, 0)}</b>
+      </div>
+      <div class="bar-row">
+        <span>Km</span>
+        <div class="mini-bar km"><i style="width:${kmWidth(month.kmSemana)}%"></i></div>
+        <b>${formatPlain(month.kmSemana, 1)}</b>
+      </div>
       <div class="week-foot">
         <span>Desde ${formatDate(month.baseline.fecha)}</span>
         <span>Hasta ${formatDate(month.last.fecha)}</span>
@@ -522,6 +557,14 @@ function percentage(value, max) {
   return Math.max(0, Math.min(100, (Number(value) / max) * 100));
 }
 
+function burnedWidth(value) {
+  return percentage(value, 3000);
+}
+
+function kmWidth(value) {
+  return percentage(value, 70);
+}
+
 
 function renderHero() {
   const last = rows.at(-1);
@@ -562,21 +605,113 @@ function renderCards() {
 }
 
 function renderCharts() {
-  document.getElementById("chartsGrid").innerHTML = METRICS.map(metric => `
+  document.getElementById("chartsGrid").innerHTML = [
+    ...CHART_METRICS.map(metric => `
     <article class="chart-card">
       <h3 style="color:${metric.color}">${metric.label}</h3>
       <div class="chart-frame">
         <canvas data-chart="${metric.key}"></canvas>
       </div>
-    </article>
-  `).join("");
+    </article>`),
+    `<article class="chart-card activity-chart-card">
+      <h3>Actividad semanal</h3>
+      <div class="chart-frame">
+        <canvas id="activityChart"></canvas>
+      </div>
+      <p class="chart-note">Compara tendencia normalizada: calorías quemadas Garmin, días de deporte y km semanales.</p>
+    </article>`
+  ].join("");
   drawAllCharts();
 }
 
 function drawAllCharts() {
-  METRICS.forEach(metric => {
+  CHART_METRICS.forEach(metric => {
     const canvas = document.querySelector(`[data-chart="${metric.key}"]`);
     if (canvas) drawChart(canvas, metric);
+  });
+  const activityCanvas = document.getElementById("activityChart");
+  if (activityCanvas) drawActivityChart(activityCanvas);
+}
+
+function drawActivityChart(canvas) {
+  const series = [
+    { key: "caloriasQuemadas", label: "Cal. quemadas", color: "#e07b39" },
+    { key: "deporte", label: "Deporte", color: "#2d6cdf" },
+    { key: "kmSemana", label: "Km", color: "#1f9fb5" }
+  ].map(item => ({
+    ...item,
+    values: rows.map(row => Number(row[item.key])).map(value => Number.isFinite(value) ? value : null)
+  }));
+  drawNormalizedMultiChart(canvas, series);
+}
+
+function drawNormalizedMultiChart(canvas, series) {
+  const ctx = canvas.getContext("2d");
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * ratio;
+  canvas.height = rect.height * ratio;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+  const width = rect.width;
+  const height = rect.height;
+  const pad = { left: 54, right: 18, top: 24, bottom: 42 };
+  const plotW = width - pad.left - pad.right;
+  const plotH = height - pad.top - pad.bottom;
+  const dark = document.body.dataset.theme === "dark";
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = dark ? "#101814" : "#fbfcfa";
+  ctx.fillRect(0, 0, width, height);
+  ctx.strokeStyle = dark ? "#2b3a32" : "#dfe6df";
+  ctx.fillStyle = dark ? "#aab8b0" : "#66736d";
+  ctx.font = "12px Inter, sans-serif";
+
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + plotH * (i / 4);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(width - pad.right, y);
+    ctx.stroke();
+  }
+
+  series.forEach(item => {
+    const valid = item.values.filter(Number.isFinite);
+    if (!valid.length) return;
+    const min = Math.min(...valid);
+    const max = Math.max(...valid);
+    const spread = max - min || 1;
+    ctx.strokeStyle = item.color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    item.values.forEach((value, index) => {
+      if (!Number.isFinite(value)) return;
+      const x = pad.left + (plotW * index) / Math.max(rows.length - 1, 1);
+      const y = pad.top + plotH - ((value - min) / spread) * plotH;
+      if (index === 0 || !Number.isFinite(item.values[index - 1])) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  });
+
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  let x = pad.left;
+  series.forEach(item => {
+    ctx.fillStyle = item.color;
+    ctx.fillRect(x, 8, 10, 10);
+    ctx.fillStyle = dark ? "#eff7f2" : "#111915";
+    ctx.fillText(item.label, x + 16, 13);
+    x += ctx.measureText(item.label).width + 42;
+  });
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  ctx.fillStyle = dark ? "#aab8b0" : "#66736d";
+  const labels = [0, Math.floor((rows.length - 1) / 2), rows.length - 1];
+  [...new Set(labels)].forEach(index => {
+    const labelX = pad.left + (plotW * index) / Math.max(rows.length - 1, 1);
+    ctx.fillText(formatDate(rows[index].fecha).slice(3), labelX, height - pad.bottom + 14);
   });
 }
 
@@ -683,9 +818,11 @@ function renderTable() {
       <td>${format(row.grasa, METRICS[3])}</td>
       <td>${format(row.visceral, METRICS[4])}</td>
       <td>${format(row.calorias, METRICS[5])}</td>
+      <td>${format(row.caloriasQuemadas, ACTIVITY_METRICS[0])}</td>
       <td>${formatPlain(row.nutricion, 0)}</td>
       <td>${formatPlain(row.deporte, 0)}</td>
       <td>${formatPlain(row.emocional, 0)}</td>
+      <td>${format(row.kmSemana, ACTIVITY_METRICS[1])}</td>
     </tr>
   `).join("");
 }

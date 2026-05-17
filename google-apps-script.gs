@@ -3,7 +3,7 @@ const SHEET_ID = "";
 const SHEET_NAME = "";
 
 // Estructura real de tu hoja:
-// Fecha | Peso | IMC | Musculo | Grasa | G.Visceral | Calorias | Nutricion (0-10) | Deporte (dias) | Emocional
+// Fecha | Peso | IMC | Musculo | Grasa | G.Visceral | Calorias | Calorias quemadas | Nutricion (0-10) | Deporte (dias) | Emocional | Km semana
 const REQUIRED_HEADERS = [
   "Fecha",
   "Peso",
@@ -12,9 +12,11 @@ const REQUIRED_HEADERS = [
   "Grasa",
   "G.Visceral",
   "Calorias",
+  "Calorias quemadas",
   "Nutricion (0-10)",
   "Deporte (dias)",
-  "Emocional"
+  "Emocional",
+  "Km semana"
 ];
 
 const FIELD_ALIASES = {
@@ -25,9 +27,11 @@ const FIELD_ALIASES = {
   grasa: ["grasa"],
   visceral: ["gvisceral", "visceral", "grasavisceral"],
   calorias: ["calorias"],
+  caloriasQuemadas: ["caloriasquemadas", "calquemadas", "caloriasgarmin", "garmin"],
   nutricion: ["nutricion010", "nutricion110", "nutricion"],
   deporte: ["deportedias", "deporte"],
-  emocional: ["emocional", "emocional010"]
+  emocional: ["emocional", "emocional010"],
+  kmSemana: ["kmsemana", "kilometrossemana", "kmssemana", "kms", "km"]
 };
 
 function doGet(e) {
@@ -96,6 +100,8 @@ function hasAliasForRequired(normalizedHeaders, required) {
   if (required === "deportedias") return normalizedHeaders.indexOf("deporte") !== -1;
   if (required === "emocional") return normalizedHeaders.indexOf("emocional010") !== -1;
   if (required === "gvisceral") return normalizedHeaders.indexOf("visceral") !== -1 || normalizedHeaders.indexOf("grasavisceral") !== -1;
+  if (required === "caloriasquemadas") return normalizedHeaders.indexOf("calquemadas") !== -1 || normalizedHeaders.indexOf("caloriasgarmin") !== -1;
+  if (required === "kmsemana") return normalizedHeaders.indexOf("kilometrossemana") !== -1 || normalizedHeaders.indexOf("kms") !== -1 || normalizedHeaders.indexOf("km") !== -1;
   return false;
 }
 
@@ -120,9 +126,11 @@ function rowToObject(row, index) {
     grasa: number(getValue(row, index, "grasa")),
     visceral: number(getValue(row, index, "visceral")),
     calorias: number(getValue(row, index, "calorias")),
+    caloriasQuemadas: number(getValue(row, index, "caloriasQuemadas")),
     nutricion: boundedNumber(getValue(row, index, "nutricion"), 0, 10),
     deporte: boundedNumber(getValue(row, index, "deporte"), 0, 7),
-    emocional: emotionalValue(getValue(row, index, "emocional"))
+    emocional: emotionalValue(getValue(row, index, "emocional")),
+    kmSemana: number(getValue(row, index, "kmSemana"))
   };
 }
 
@@ -146,9 +154,11 @@ function upsertMeasurement(params) {
   setValue(row, info.index, "grasa", number(params.grasa));
   setValue(row, info.index, "visceral", number(params.visceral));
   setValue(row, info.index, "calorias", number(params.calorias));
+  setValue(row, info.index, "caloriasQuemadas", number(params.caloriasQuemadas));
   setValue(row, info.index, "nutricion", boundedNumber(params.nutricion, 0, 10));
   setValue(row, info.index, "deporte", boundedNumber(params.deporte, 0, 7));
   setValue(row, info.index, "emocional", boundedNumber(params.emocional, 0, 10));
+  setValue(row, info.index, "kmSemana", number(params.kmSemana));
 
   info.sheet.getRange(targetRow, 1, 1, row.length).setValues([row]);
   sortDataByDate(info);
@@ -201,6 +211,7 @@ function normalizeHeader(value) {
 
 function formatDate(value) {
   if (!value) return "";
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
   if (Object.prototype.toString.call(value) === "[object Date]") {
     return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy-MM-dd");
   }
