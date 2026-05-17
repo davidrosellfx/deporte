@@ -34,7 +34,9 @@ const MOTIVATIONAL_QUOTES = [
 ];
 
 const SOURCE_KEY = "camino-a-los-85-source";
+const GOAL_KEY = "camino-a-los-85-goal";
 let rows = [];
+let goalWeight = Number(localStorage.getItem(GOAL_KEY)) || 85;
 let selectedContextMonth = "";
 
 const configUrl = window.WEIGHT_DASHBOARD_CONFIG?.sheetApiUrl?.trim() || "";
@@ -503,8 +505,17 @@ function percentage(value, max) {
 
 function renderHero() {
   const last = rows.at(-1);
+  const diff = last.peso - goalWeight;
   document.getElementById("heroWeight").textContent = format(last.peso, METRICS[0]);
-  document.getElementById("heroDate").textContent = `Última medición: ${formatDate(last.fecha)} · Objetivo 85 kg`;
+  document.getElementById("heroDate").textContent = `A fecha de ${formatDate(last.fecha)}`;
+  document.getElementById("heroGoalDiff").innerHTML = `Diferencia con objetivo: <b class="${diff <= 0 ? "good" : "bad"}">${formatSigned(diff, METRICS[0])}</b>`;
+  const goalInput = document.getElementById("heroGoalInput");
+  goalInput.value = goalWeight;
+  goalInput.onchange = event => {
+    goalWeight = Number(event.target.value) || 85;
+    localStorage.setItem(GOAL_KEY, String(goalWeight));
+    renderHero();
+  };
 }
 
 function renderCards() {

@@ -15,9 +15,21 @@
         <p class="mantra" id="motivationalQuote">Si lo hiciste una vez, lo harás otra vez.</p>
       </div>
       <div class="hero-panel">
-        <span>Último peso</span>
-        <strong id="heroWeight">--</strong>
+        <div class="hero-weight-grid">
+          <div>
+            <span>Último peso</span>
+            <strong id="heroWeight">--</strong>
+          </div>
+          <div>
+            <span>Peso objetivo</span>
+            <div class="hero-goal">
+              <input id="heroGoalInput" type="number" step="0.1" value="85">
+              <b>kg</b>
+            </div>
+          </div>
+        </div>
         <small id="heroDate">Conecta tu Google Sheet para sincronizar datos.</small>
+        <small id="heroGoalDiff"></small>
       </div>
     </section>
 

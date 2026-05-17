@@ -125,6 +125,13 @@ h2 {
   gap: 10px;
 }
 
+.hero-weight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
 .hero-panel span,
 .metric-card span,
 .record span {
@@ -201,6 +208,29 @@ details summary {
 .hero-panel strong {
   font-size: 56px;
   line-height: 1;
+}
+
+.hero-goal {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.hero-goal input {
+  width: 116px;
+  border: 0;
+  border-bottom: 2px solid var(--line);
+  background: transparent;
+  padding: 0;
+  min-height: auto;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 850;
+  color: var(--ink);
+}
+
+.hero-goal b {
+  font-size: 24px;
 }
 
 .hero-panel small {
@@ -764,6 +794,7 @@ th {
 @media (max-width: 980px) {
   .hero,
   .setup,
+  .hero-weight-grid,
   .metrics,
   .entry-form,
   .weekly-plan,
