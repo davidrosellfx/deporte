@@ -189,17 +189,18 @@ function renderWeeklyPlan() {
 
   const enriched = getContextRows(plannedRows);
   const latest = enriched.at(-1);
+  const latestWeek = weekSummary(enriched, latest.fecha);
   container.innerHTML = `
     <article class="plan-panel compact">
       <div>
         <p class="eyebrow">Última semana</p>
-        <h2>${formatDate(latest.fecha)}</h2>
-        <p>Contexto de la última medición, sin tapar las gráficas principales.</p>
+        <h2>${latestWeek.label}</h2>
+        <p>Media de las mediciones de la última semana registrada, sin tapar las gráficas principales.</p>
       </div>
       <div class="compact-context">
-        <div><span>Nutrición</span><strong>${formatPlain(latest.nutricion, 0)}/10</strong></div>
-        <div><span>Deporte</span><strong>${formatPlain(latest.deporte, 0)}/7</strong></div>
-        <div><span>Emocional</span><strong>${formatPlain(latest.emocional, 0)}/10</strong></div>
+        <div><span>Nutrición</span><strong>${formatPlain(latestWeek.nutricion, 1)}/10</strong></div>
+        <div><span>Deporte</span><strong>${formatPlain(latestWeek.deporte, 1)}/7</strong></div>
+        <div><span>Emocional</span><strong>${formatPlain(latestWeek.emocional, 1)}/10</strong></div>
         <div><span>Resultado</span><strong>${impactLabel(latest)}</strong></div>
       </div>
     </article>
@@ -338,6 +339,26 @@ function monthlyContext(enriched) {
       netGood: (peso <= 0 && (grasa === null || grasa <= 0)) || (musculo !== null && musculo > 0)
     };
   });
+}
+
+function weekSummary(enriched, dateValue) {
+  const target = weekKey(dateValue);
+  const group = enriched.filter(row => weekKey(row.fecha) === target);
+  const firstDate = group[0].fecha;
+  const lastDate = group.at(-1).fecha;
+  return {
+    label: firstDate === lastDate ? formatDate(firstDate) : `${formatDate(firstDate)} - ${formatDate(lastDate)}`,
+    nutricion: average(group.map(row => row.nutricion)),
+    deporte: average(group.map(row => row.deporte)),
+    emocional: average(group.map(row => row.emocional))
+  };
+}
+
+function weekKey(dateValue) {
+  const date = new Date(`${dateValue}T00:00:00`);
+  const day = (date.getDay() + 6) % 7;
+  date.setDate(date.getDate() - day);
+  return date.toISOString().slice(0, 10);
 }
 
 function renderMonthDetail(month) {
