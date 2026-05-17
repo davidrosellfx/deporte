@@ -300,8 +300,6 @@ function renderContextAnalysis() {
   const nutritionAverage = average(plannedRows.map(row => row.nutricion));
   const sportAverage = average(plannedRows.map(row => row.deporte));
   const emotionalAverage = average(plannedRows.map(row => row.emocional));
-  const burnedAverage = average(rows.map(row => row.caloriasQuemadas));
-  const kmAverage = average(rows.map(row => row.kmSemana));
   const contextAverage = average(contextRows.map(row => row.score));
   const progress = Math.round((contextAverage || 0) * 100);
   const impact = impactSummary(contextRows);
@@ -345,16 +343,6 @@ function renderContextAnalysis() {
           <span>Emocional medio</span>
           <strong class="${thresholdClass(emotionalAverage, 5)}">${formatPlain(emotionalAverage, 1)}/10</strong>
           <div class="mini-bar emotion"><i style="width:${percentage(emotionalAverage, 10)}%"></i></div>
-        </div>
-        <div class="context-card">
-          <span>Cal. quemadas media</span>
-          <strong>${formatPlain(burnedAverage, 0)} kcal</strong>
-          <p>Referencia Garmin semanal</p>
-        </div>
-        <div class="context-card">
-          <span>Km medios</span>
-          <strong>${formatPlain(kmAverage, 1)} km</strong>
-          <p>Carga de movimiento</p>
         </div>
       </div>
       <div class="plan-bar" style="--progress:${progress}%"><span></span></div>
@@ -483,16 +471,6 @@ function renderMonthDetail(month) {
         <div class="mini-bar emotion"><i style="width:${percentage(month.emocional, 10)}%"></i></div>
         <b class="${thresholdClass(month.emocional, 5)}">${formatPlain(month.emocional, 1)}/10</b>
       </div>
-      <div class="bar-row">
-        <span>Cal. quem.</span>
-        <div class="mini-bar burned"><i style="width:${burnedWidth(month.caloriasQuemadas)}%"></i></div>
-        <b>${formatPlain(month.caloriasQuemadas, 0)}</b>
-      </div>
-      <div class="bar-row">
-        <span>Km</span>
-        <div class="mini-bar km"><i style="width:${kmWidth(month.kmSemana)}%"></i></div>
-        <b>${formatPlain(month.kmSemana, 1)}</b>
-      </div>
       <div class="week-foot">
         <span>Desde ${formatDate(month.baseline.fecha)}</span>
         <span>Hasta ${formatDate(month.last.fecha)}</span>
@@ -557,15 +535,6 @@ function percentage(value, max) {
   return Math.max(0, Math.min(100, (Number(value) / max) * 100));
 }
 
-function burnedWidth(value) {
-  return percentage(value, 3000);
-}
-
-function kmWidth(value) {
-  return percentage(value, 70);
-}
-
-
 function renderHero() {
   const last = rows.at(-1);
   const diff = last.peso - goalWeight;
@@ -618,7 +587,7 @@ function renderCharts() {
       <div class="chart-frame">
         <canvas id="activityChart"></canvas>
       </div>
-      <p class="chart-note">Compara tendencia normalizada: calorías quemadas Garmin, días de deporte y km semanales.</p>
+      <p class="chart-note">Compara tendencia normalizada desde la primera semana con datos de actividad: calorías quemadas Garmin, días de deporte y km semanales.</p>
     </article>`
   ].join("");
   drawAllCharts();
@@ -634,18 +603,22 @@ function drawAllCharts() {
 }
 
 function drawActivityChart(canvas) {
+  const firstActivityIndex = rows.findIndex(row => Number.isFinite(row.caloriasQuemadas) || Number.isFinite(row.kmSemana));
+  const sourceRows = firstActivityIndex === -1
+    ? rows.filter(row => Number.isFinite(row.deporte))
+    : rows.slice(firstActivityIndex).filter(row => Number.isFinite(row.caloriasQuemadas) || Number.isFinite(row.deporte) || Number.isFinite(row.kmSemana));
   const series = [
     { key: "caloriasQuemadas", label: "Cal. quemadas", color: "#e07b39" },
     { key: "deporte", label: "Deporte", color: "#2d6cdf" },
     { key: "kmSemana", label: "Km", color: "#1f9fb5" }
   ].map(item => ({
     ...item,
-    values: rows.map(row => Number(row[item.key])).map(value => Number.isFinite(value) ? value : null)
+    values: sourceRows.map(row => Number(row[item.key])).map(value => Number.isFinite(value) ? value : null)
   }));
-  drawNormalizedMultiChart(canvas, series);
+  drawNormalizedMultiChart(canvas, series, sourceRows);
 }
 
-function drawNormalizedMultiChart(canvas, series) {
+function drawNormalizedMultiChart(canvas, series, sourceRows) {
   const ctx = canvas.getContext("2d");
   const ratio = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
@@ -667,6 +640,13 @@ function drawNormalizedMultiChart(canvas, series) {
   ctx.fillStyle = dark ? "#aab8b0" : "#66736d";
   ctx.font = "12px Inter, sans-serif";
 
+  if (!sourceRows.length) {
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Añade calorías quemadas o km semanales para ver esta actividad.", width / 2, height / 2);
+    return;
+  }
+
   for (let i = 0; i <= 4; i++) {
     const y = pad.top + plotH * (i / 4);
     ctx.beginPath();
@@ -686,7 +666,7 @@ function drawNormalizedMultiChart(canvas, series) {
     ctx.beginPath();
     item.values.forEach((value, index) => {
       if (!Number.isFinite(value)) return;
-      const x = pad.left + (plotW * index) / Math.max(rows.length - 1, 1);
+      const x = pad.left + (plotW * index) / Math.max(sourceRows.length - 1, 1);
       const y = pad.top + plotH - ((value - min) / spread) * plotH;
       if (index === 0 || !Number.isFinite(item.values[index - 1])) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
@@ -708,10 +688,10 @@ function drawNormalizedMultiChart(canvas, series) {
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
   ctx.fillStyle = dark ? "#aab8b0" : "#66736d";
-  const labels = [0, Math.floor((rows.length - 1) / 2), rows.length - 1];
+  const labels = [0, Math.floor((sourceRows.length - 1) / 2), sourceRows.length - 1];
   [...new Set(labels)].forEach(index => {
-    const labelX = pad.left + (plotW * index) / Math.max(rows.length - 1, 1);
-    ctx.fillText(formatDate(rows[index].fecha).slice(3), labelX, height - pad.bottom + 14);
+    const labelX = pad.left + (plotW * index) / Math.max(sourceRows.length - 1, 1);
+    ctx.fillText(formatDate(sourceRows[index].fecha).slice(3), labelX, height - pad.bottom + 14);
   });
 }
 

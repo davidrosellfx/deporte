@@ -507,26 +507,10 @@ select {
   background: var(--green);
 }
 
-.mini-bar.burned {
-  background: rgba(224, 123, 57, 0.16);
-}
-
-.mini-bar.burned i {
-  background: #e07b39;
-}
-
-.mini-bar.km {
-  background: rgba(31, 159, 181, 0.16);
-}
-
-.mini-bar.km i {
-  background: #1f9fb5;
-}
-
 .plan-list {
   border-radius: 8px;
   border: 1px solid var(--line);
-  background: #ffffff;
+  background: var(--panel);
   box-shadow: var(--shadow);
   padding: 16px;
   display: grid;
@@ -536,7 +520,7 @@ select {
 .impact-card {
   border-radius: 8px;
   border: 1px solid var(--line);
-  background: #ffffff;
+  background: var(--panel);
   box-shadow: var(--shadow);
   padding: 22px;
   display: grid;
