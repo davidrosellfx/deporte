@@ -1,4 +1,4 @@
-# Camino a los 85
+# Vuelta a mi mejor version
 
 Web estática para GitHub Pages con seguimiento visual de peso y composición corporal sincronizado con Google Sheets.
 
@@ -22,6 +22,12 @@ Solo necesitas poner `SHEET_ID` manualmente si creas el Apps Script fuera de la 
 La primera fila debe tener estos encabezados, con o sin acentos:
 
 `Fecha`, `Peso`, `IMC`, `Musculo`, `Grasa`, `G.Visceral`, `Calorías`
+
+Opcionalmente puedes añadir estas columnas de contexto semanal:
+
+`Nutrición (1-10)`, `Deporte (días)`, `Emocional`
+
+`Nutrición (1-10)` mide calidad de dieta de 0 a 10. `Deporte (días)` mide entrenamientos de 0 a 7. `Emocional` acepta `Bien`, `Regular` o `Mal`.
 
 ## Subir a GitHub Pages
 

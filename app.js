@@ -1,14 +1,14 @@
 const SAMPLE_DATA = [
-  { fecha: "2024-12-15", peso: 93.8, imc: 29.1, musculo: 35.2, grasa: 24.5, visceral: 11, calorias: 1934 },
-  { fecha: "2024-12-17", peso: 92.8, imc: 28.8, musculo: 36.3, grasa: 24, visceral: 11, calorias: 1919 },
-  { fecha: "2024-12-20", peso: 90.4, imc: 28.1, musculo: 35, grasa: 26.5, visceral: 11, calorias: 1882 },
-  { fecha: "2025-03-25", peso: 94.4, imc: 29.3, musculo: 36, grasa: 24.6, visceral: 12, calorias: 1940 },
-  { fecha: "2025-07-18", peso: 87.6, imc: 27.2, musculo: 36.2, grasa: 24.3, visceral: 10, calorias: 1850 },
-  { fecha: "2025-08-10", peso: 89.6, imc: 27.8, musculo: 37, grasa: 22.8, visceral: 10, calorias: 1877 },
-  { fecha: "2025-10-13", peso: 93.4, imc: 29, musculo: 37.2, grasa: 22.4, visceral: 11, calorias: 1928 },
-  { fecha: "2026-01-19", peso: 92.9, imc: 28.8, musculo: 36.7, grasa: 23.4, visceral: 11, calorias: 1921 },
-  { fecha: "2026-02-23", peso: 91.8, imc: 28.5, musculo: 36.5, grasa: 23.7, visceral: 11, calorias: 1906 },
-  { fecha: "2026-04-17", peso: 92.4, imc: 28.7, musculo: 36.1, grasa: 24.4, visceral: 11, calorias: 1913 }
+  { fecha: "2024-12-15", peso: 93.8, imc: 29.1, musculo: 35.2, grasa: 24.5, visceral: 11, calorias: 1934, nutricion: 7, deporte: 4, emocional: "Bien" },
+  { fecha: "2024-12-17", peso: 92.8, imc: 28.8, musculo: 36.3, grasa: 24, visceral: 11, calorias: 1919, nutricion: 8, deporte: 5, emocional: "Bien" },
+  { fecha: "2024-12-20", peso: 90.4, imc: 28.1, musculo: 35, grasa: 26.5, visceral: 11, calorias: 1882, nutricion: 5, deporte: 2, emocional: "Regular" },
+  { fecha: "2025-03-25", peso: 94.4, imc: 29.3, musculo: 36, grasa: 24.6, visceral: 12, calorias: 1940, nutricion: 4, deporte: 1, emocional: "Mal" },
+  { fecha: "2025-07-18", peso: 87.6, imc: 27.2, musculo: 36.2, grasa: 24.3, visceral: 10, calorias: 1850, nutricion: 8, deporte: 5, emocional: "Bien" },
+  { fecha: "2025-08-10", peso: 89.6, imc: 27.8, musculo: 37, grasa: 22.8, visceral: 10, calorias: 1877, nutricion: 7, deporte: 4, emocional: "Bien" },
+  { fecha: "2025-10-13", peso: 93.4, imc: 29, musculo: 37.2, grasa: 22.4, visceral: 11, calorias: 1928, nutricion: 8, deporte: 5, emocional: "Regular" },
+  { fecha: "2026-01-19", peso: 92.9, imc: 28.8, musculo: 36.7, grasa: 23.4, visceral: 11, calorias: 1921, nutricion: 6, deporte: 3, emocional: "Regular" },
+  { fecha: "2026-02-23", peso: 91.8, imc: 28.5, musculo: 36.5, grasa: 23.7, visceral: 11, calorias: 1906, nutricion: 7, deporte: 4, emocional: "Bien" },
+  { fecha: "2026-04-17", peso: 92.4, imc: 28.7, musculo: 36.1, grasa: 24.4, visceral: 11, calorias: 1913, nutricion: 8, deporte: 2, emocional: "Regular" }
 ];
 
 const METRICS = [
@@ -114,7 +114,10 @@ function normalizeRows(input) {
       musculo: number(row.musculo || row.Musculo || row["Músculo"]),
       grasa: number(row.grasa || row.Grasa),
       visceral: number(row.visceral || row["G.Visceral"] || row["G. visceral"] || row["Grasa visceral"]),
-      calorias: number(row.calorias || row.Calorias || row["Calorías"])
+      calorias: number(row.calorias || row.Calorias || row["Calorías"]),
+      nutricion: boundedNumber(firstValue(row.nutricion, row.Nutricion, row["Nutrición"], row["Nutrición (1-10)"]), 0, 10),
+      deporte: boundedNumber(firstValue(row.deporte, row.Deporte, row["Deporte"], row["Deporte (días)"], row["Deporte dias"]), 0, 7),
+      emocional: emotionalValue(firstValue(row.emocional, row.Emocional))
     }))
     .filter(row => row.fecha && Number.isFinite(row.peso));
 }
@@ -132,12 +135,86 @@ function number(value) {
   return Number(String(value).replace(",", "."));
 }
 
+function firstValue(...values) {
+  return values.find(value => value !== "" && value !== null && value !== undefined);
+}
+
+function boundedNumber(value, min, max) {
+  const parsed = number(value);
+  if (!Number.isFinite(parsed)) return null;
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function emotionalValue(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const normalized = String(value).trim().toLowerCase();
+  if (["bien", "bueno", "good"].includes(normalized)) return "Bien";
+  if (["regular", "medio", "ok"].includes(normalized)) return "Regular";
+  if (["mal", "malo", "bad"].includes(normalized)) return "Mal";
+  return String(value).trim();
+}
+
+function average(values) {
+  const valid = values.filter(Number.isFinite);
+  if (!valid.length) return null;
+  return valid.reduce((sum, value) => sum + value, 0) / valid.length;
+}
+
+function commonEmotion(values) {
+  const valid = values.filter(Boolean);
+  if (!valid.length) return null;
+  return valid.sort((a, b) =>
+    valid.filter(value => value === b).length - valid.filter(value => value === a).length
+  )[0];
+}
+
+function emotionClass(value) {
+  if (value === "Bien") return "yes";
+  if (value === "Mal") return "no";
+  return null;
+}
+
 function render() {
   renderHero();
   renderCards();
+  renderWeeklyPlan();
   renderCharts();
   renderRecords();
   renderTable();
+}
+
+function renderWeeklyPlan() {
+  const plannedRows = rows.filter(row => row.nutricion !== null || row.deporte !== null || row.emocional);
+  const container = document.getElementById("weeklyPlan");
+  if (!plannedRows.length) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const nutritionAverage = average(plannedRows.map(row => row.nutricion));
+  const sportAverage = average(plannedRows.map(row => row.deporte));
+  const emotion = commonEmotion(plannedRows.map(row => row.emocional));
+  const progress = Math.round((((nutritionAverage || 0) / 10) * 0.55 + ((sportAverage || 0) / 7) * 0.45) * 100);
+  const latest = [...plannedRows].reverse().slice(0, 5);
+
+  container.innerHTML = `
+    <article class="plan-panel">
+      <p class="eyebrow">Contexto semanal</p>
+      <h2>Nutrición ${formatPlain(nutritionAverage, 1)}/10 · Deporte ${formatPlain(sportAverage, 1)}/7</h2>
+      <p>Estos datos explican la semana detrás del peso: cómo fue la nutrición, cuántos días entrenaste y cómo estabas emocionalmente.</p>
+      <div class="plan-bar" style="--progress:${progress}%"><span></span></div>
+      <p>Estado más repetido: <strong>${emotion || "--"}</strong></p>
+    </article>
+    <article class="plan-list">
+      ${latest.map(row => `
+        <div class="plan-week">
+          <strong>${formatDate(row.fecha).slice(0, 5)}</strong>
+          <span>N ${formatPlain(row.nutricion, 0)}/10 · D ${formatPlain(row.deporte, 0)}/7</span>
+          <b class="plan-badge ${emotionClass(row.emocional) || ""}">${row.emocional || "--"}</b>
+        </div>
+      `).join("")}
+    </article>
+  `;
 }
 
 function renderHero() {
@@ -302,6 +379,9 @@ function renderTable() {
       <td>${format(row.grasa, METRICS[3])}</td>
       <td>${format(row.visceral, METRICS[4])}</td>
       <td>${format(row.calorias, METRICS[5])}</td>
+      <td>${formatPlain(row.nutricion, 0)}</td>
+      <td>${formatPlain(row.deporte, 0)}</td>
+      <td>${row.emocional || "--"}</td>
     </tr>
   `).join("");
 }
@@ -313,6 +393,14 @@ function format(value, metric) {
     maximumFractionDigits: metric.decimals
   });
   return `${formatted}${metric.unit ? ` ${metric.unit}` : ""}`;
+}
+
+function formatPlain(value, decimals) {
+  if (!Number.isFinite(Number(value))) return "--";
+  return Number(value).toLocaleString("es-ES", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  });
 }
 
 function formatDate(value) {

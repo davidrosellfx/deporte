@@ -1,8 +1,8 @@
 // Si pegas este script desde Extensiones > Apps Script dentro de tu Google Sheet,
-// puedes dejar SHEET_ID vacío y cogerá automáticamente ese archivo.
+// puedes dejar SHEET_ID vacio y cogera automaticamente ese archivo.
 const SHEET_ID = "";
 
-// Déjalo vacío para usar la primera pestaña de la Sheet.
+// Dejalo vacio para usar la primera pestana de la Sheet.
 const SHEET_NAME = "";
 
 function doGet(e) {
@@ -41,8 +41,11 @@ function getRows() {
         imc: number(item.imc),
         musculo: number(item.musculo),
         grasa: number(item.grasa),
-        visceral: number(item.visceral || item.gvisceral || item.grasavisceral),
-        calorias: number(item.calorias)
+        visceral: number(firstValue(item.visceral, item.gvisceral, item.grasavisceral)),
+        calorias: number(item.calorias),
+        nutricion: boundedNumber(firstValue(item.nutricion, item.nutricion110), 0, 10),
+        deporte: boundedNumber(firstValue(item.deporte, item.deporteds, item.deportedias), 0, 7),
+        emocional: emotionalValue(item.emocional)
       };
     })
     .filter(row => row.fecha && row.peso !== null);
@@ -72,4 +75,27 @@ function number(value) {
   if (value === "" || value === null || value === undefined) return null;
   const parsed = Number(String(value).replace(",", "."));
   return isNaN(parsed) ? null : parsed;
+}
+
+function firstValue() {
+  for (let i = 0; i < arguments.length; i++) {
+    const value = arguments[i];
+    if (value !== "" && value !== null && value !== undefined) return value;
+  }
+  return null;
+}
+
+function boundedNumber(value, min, max) {
+  const parsed = number(value);
+  if (parsed === null) return null;
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function emotionalValue(value) {
+  if (value === "" || value === null || value === undefined) return null;
+  const normalized = String(value).trim().toLowerCase();
+  if (["bien", "bueno", "good"].indexOf(normalized) !== -1) return "Bien";
+  if (["regular", "medio", "ok"].indexOf(normalized) !== -1) return "Regular";
+  if (["mal", "malo", "bad"].indexOf(normalized) !== -1) return "Mal";
+  return String(value).trim();
 }

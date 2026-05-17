@@ -227,6 +227,82 @@ button {
   gap: 14px;
 }
 
+.weekly-plan {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  gap: 14px;
+}
+
+.plan-panel {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #111915;
+  color: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+}
+
+.plan-panel p {
+  color: #c7d6ce;
+  line-height: 1.5;
+}
+
+.plan-bar {
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.plan-bar span {
+  display: block;
+  height: 100%;
+  width: var(--progress);
+  background: var(--lime);
+}
+
+.plan-list {
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.plan-week {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.plan-week:last-child {
+  border-bottom: 0;
+}
+
+.plan-badge {
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.plan-badge.yes {
+  background: #e8f7ed;
+  color: var(--green);
+}
+
+.plan-badge.no {
+  background: #fff0f2;
+  color: var(--red);
+}
+
 .metric-card {
   padding: 18px;
   display: grid;
@@ -371,6 +447,7 @@ th {
   .hero,
   .setup,
   .metrics,
+  .weekly-plan,
   .charts,
   .highlights {
     grid-template-columns: 1fr;
