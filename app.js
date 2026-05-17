@@ -635,6 +635,7 @@ function format(value, metric) {
 
 function formatSigned(value, metric) {
   if (!Number.isFinite(Number(value))) return "--";
+  if (Number(value) === 0) return "Sin cambio";
   const sign = Number(value) > 0 ? "+" : "";
   return `${sign}${format(value, metric)}`;
 }
