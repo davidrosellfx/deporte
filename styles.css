@@ -223,7 +223,7 @@ button {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -247,17 +247,19 @@ button {
 }
 
 .plan-panel.compact {
-  grid-template-columns: minmax(0, 0.8fr) minmax(420px, 1fr);
+  grid-template-columns: minmax(0, 0.7fr) minmax(420px, 1fr);
   align-items: center;
 }
 
-.compact-context {
+.compact-context,
+.weekly-deltas {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
-.compact-context div {
+.compact-context div,
+.weekly-deltas div {
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
   padding: 12px;
@@ -266,15 +268,25 @@ button {
   gap: 5px;
 }
 
-.compact-context span {
+.compact-context span,
+.weekly-deltas span {
   color: #c7d6ce;
   font-size: 12px;
   font-weight: 850;
   text-transform: uppercase;
 }
 
-.compact-context strong {
+.compact-context strong,
+.weekly-deltas strong {
   font-size: 22px;
+}
+
+.weekly-deltas {
+  grid-column: 1 / -1;
+}
+
+.weekly-deltas div {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .context-analysis {
@@ -616,7 +628,7 @@ canvas {
 
 .highlights {
   display: grid;
-  grid-template-columns: minmax(320px, 0.8fr) minmax(0, 1.2fr);
+  grid-template-columns: 1fr;
   gap: 14px;
   align-items: start;
 }
@@ -629,6 +641,7 @@ canvas {
 
 .records {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -647,7 +660,7 @@ canvas {
 
 .table-wrap {
   overflow: auto;
-  max-height: 520px;
+  max-height: 620px;
   border: 1px solid var(--line);
   border-radius: 8px;
 }
@@ -688,13 +701,15 @@ th {
   .weekly-plan,
   .plan-panel.compact,
   .compact-context,
+  .weekly-deltas,
   .context-layout,
   .context-grid,
   .impact-grid,
   .month-summary-grid,
   .week-foot,
   .charts,
-  .highlights {
+  .highlights,
+  .records {
     grid-template-columns: 1fr;
   }
 

@@ -43,24 +43,6 @@ const configUrl = window.WEIGHT_DASHBOARD_CONFIG?.sheetApiUrl?.trim() || "";
 const savedUrl = localStorage.getItem(SOURCE_KEY) || "";
 const activeUrl = savedUrl || configUrl;
 
-document.getElementById("sourceUrl").value = activeUrl;
-document.getElementById("sourceForm").addEventListener("submit", event => {
-  event.preventDefault();
-  const url = document.getElementById("sourceUrl").value.trim();
-  if (url) localStorage.setItem(SOURCE_KEY, url);
-  load(url);
-});
-
-document.getElementById("clearSource").addEventListener("click", () => {
-  localStorage.removeItem(SOURCE_KEY);
-  document.getElementById("sourceUrl").value = configUrl;
-  load(configUrl);
-});
-
-document.getElementById("toggleSetup").addEventListener("click", () => {
-  document.getElementById("setupPanel").classList.toggle("hidden");
-});
-
 window.addEventListener("resize", () => drawAllCharts());
 setRandomQuote();
 load(activeUrl);
@@ -79,7 +61,6 @@ async function load(url) {
     console.error(error);
     rows = SAMPLE_DATA;
     render();
-    document.getElementById("setupPanel").classList.remove("hidden");
   }
 }
 
@@ -203,6 +184,12 @@ function renderWeeklyPlan() {
         <div><span>Emocional</span><strong>${formatPlain(latestWeek.emocional, 1)}/10</strong></div>
         <div><span>Resultado</span><strong>${impactLabel(latest)}</strong></div>
       </div>
+      <div class="weekly-deltas">
+        <div><span>Peso</span><strong>${formatSigned(latest.pesoDelta, METRICS[0])}</strong></div>
+        <div><span>Músculo</span><strong>${formatSigned(latest.musculoDelta, METRICS[2])}</strong></div>
+        <div><span>Grasa</span><strong>${formatSigned(latest.grasaDelta, METRICS[3])}</strong></div>
+        <div><span>G. visceral</span><strong>${formatSigned(latest.visceralDelta, METRICS[4])}</strong></div>
+      </div>
     </article>
   `;
 }
@@ -216,7 +203,8 @@ function getContextRows(sourceRows) {
       previous,
       pesoDelta: previous ? row.peso - previous.peso : null,
       grasaDelta: previous && Number.isFinite(row.grasa) && Number.isFinite(previous.grasa) ? row.grasa - previous.grasa : null,
-      musculoDelta: previous && Number.isFinite(row.musculo) && Number.isFinite(previous.musculo) ? row.musculo - previous.musculo : null
+      musculoDelta: previous && Number.isFinite(row.musculo) && Number.isFinite(previous.musculo) ? row.musculo - previous.musculo : null,
+      visceralDelta: previous && Number.isFinite(row.visceral) && Number.isFinite(previous.visceral) ? row.visceral - previous.visceral : null
     };
   });
 }
@@ -478,7 +466,8 @@ function renderCards() {
     { label: "Peso actual", metric: METRICS[0], value: last.peso, change: last.peso - first.peso },
     { label: "Objetivo", goal: true, detail: `${format(last.peso - goalWeight, METRICS[0])} por bajar` },
     { label: "Músculo", metric: METRICS[2], value: last.musculo, change: last.musculo - first.musculo },
-    { label: "Grasa", metric: METRICS[3], value: last.grasa, change: last.grasa - first.grasa }
+    { label: "Grasa", metric: METRICS[3], value: last.grasa, change: last.grasa - first.grasa },
+    { label: "G. visceral", metric: METRICS[4], value: last.visceral, change: last.visceral - first.visceral }
   ];
 
   document.getElementById("metricCards").innerHTML = cards.map(card => {

@@ -21,18 +21,6 @@
       </div>
     </section>
 
-    <section class="setup hidden" id="setupPanel">
-      <div>
-        <h2>Sincronización con Google Sheets</h2>
-        <p>Pega aquí la URL del Web App de Apps Script. También puedes fijarla en <code>config.js</code> antes de subirlo a GitHub.</p>
-      </div>
-      <form id="sourceForm">
-        <input type="url" id="sourceUrl" placeholder="https://script.google.com/macros/s/..." autocomplete="off">
-        <button type="submit">Conectar</button>
-      </form>
-      <button class="ghost" type="button" id="clearSource">Quitar conexión local</button>
-    </section>
-
     <section class="metrics" id="metricCards"></section>
 
     <section class="weekly-plan" id="weeklyPlan"></section>
@@ -42,19 +30,16 @@
         <p class="eyebrow">Evolución real</p>
         <h2>Tu composición, métrica por métrica</h2>
       </div>
-      <button class="source-toggle" type="button" id="toggleSetup">Cambiar Sheet</button>
     </section>
 
     <section class="charts" id="chartsGrid"></section>
 
-    <section class="panel context-analysis" id="contextAnalysis"></section>
-
     <section class="highlights">
-      <div class="panel">
+      <div class="panel records-panel">
         <h2>Mejores marcas</h2>
         <div id="recordsGrid" class="records"></div>
       </div>
-      <div class="panel">
+      <div class="panel history-panel">
         <h2>Historial</h2>
         <div class="table-wrap">
           <table>
@@ -77,6 +62,8 @@
         </div>
       </div>
     </section>
+
+    <section class="panel context-analysis" id="contextAnalysis"></section>
   </main>
 
   <script src="./config.js"></script>
