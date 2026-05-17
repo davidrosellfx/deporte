@@ -580,6 +580,38 @@ select {
   font-weight: 850;
 }
 
+.compact-context strong.good,
+.weekly-deltas strong.good,
+.context-card strong.good,
+.bar-row b.good,
+.week-foot b.good,
+.impact-grid b.good,
+.month-tile b.good {
+  color: var(--lime);
+}
+
+.compact-context strong.bad,
+.weekly-deltas strong.bad,
+.context-card strong.bad,
+.bar-row b.bad,
+.week-foot b.bad,
+.impact-grid b.bad,
+.month-tile b.bad {
+  color: #ff7b8f;
+}
+
+.plan-list .bar-row b.good,
+.plan-list .week-foot b.good,
+.month-tile b.good {
+  color: var(--green);
+}
+
+.plan-list .bar-row b.bad,
+.plan-list .week-foot b.bad,
+.month-tile b.bad {
+  color: var(--red);
+}
+
 .story {
   display: flex;
   align-items: end;

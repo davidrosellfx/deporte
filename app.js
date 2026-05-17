@@ -179,16 +179,16 @@ function renderWeeklyPlan() {
         <p>Media de las mediciones de la última semana registrada, sin tapar las gráficas principales.</p>
       </div>
       <div class="compact-context">
-        <div><span>Nutrición</span><strong>${formatPlain(latestWeek.nutricion, 1)}/10</strong></div>
-        <div><span>Deporte</span><strong>${formatPlain(latestWeek.deporte, 1)}/7</strong></div>
-        <div><span>Emocional</span><strong>${formatPlain(latestWeek.emocional, 1)}/10</strong></div>
-        <div><span>Resultado</span><strong>${impactLabel(latest)}</strong></div>
+        <div><span>Nutrición</span><strong class="${thresholdClass(latestWeek.nutricion, 6)}">${formatPlain(latestWeek.nutricion, 1)}/10</strong></div>
+        <div><span>Deporte</span><strong class="${thresholdClass(latestWeek.deporte, 4)}">${formatPlain(latestWeek.deporte, 1)}/7</strong></div>
+        <div><span>Emocional</span><strong class="${thresholdClass(latestWeek.emocional, 5)}">${formatPlain(latestWeek.emocional, 1)}/10</strong></div>
+        <div><span>Resultado</span><strong class="${impactClass(latest)}">${impactLabel(latest)}</strong></div>
       </div>
       <div class="weekly-deltas">
-        <div><span>Peso</span><strong>${formatSigned(latest.pesoDelta, METRICS[0])}</strong></div>
-        <div><span>Músculo</span><strong>${formatSigned(latest.musculoDelta, METRICS[2])}</strong></div>
-        <div><span>Grasa</span><strong>${formatSigned(latest.grasaDelta, METRICS[3])}</strong></div>
-        <div><span>G. visceral</span><strong>${formatSigned(latest.visceralDelta, METRICS[4])}</strong></div>
+        <div><span>Peso</span><strong class="${deltaClass(latest.pesoDelta, METRICS[0])}">${formatSigned(latest.pesoDelta, METRICS[0])}</strong></div>
+        <div><span>Músculo</span><strong class="${deltaClass(latest.musculoDelta, METRICS[2])}">${formatSigned(latest.musculoDelta, METRICS[2])}</strong></div>
+        <div><span>Grasa</span><strong class="${deltaClass(latest.grasaDelta, METRICS[3])}">${formatSigned(latest.grasaDelta, METRICS[3])}</strong></div>
+        <div><span>G. visceral</span><strong class="${deltaClass(latest.visceralDelta, METRICS[4])}">${formatSigned(latest.visceralDelta, METRICS[4])}</strong></div>
       </div>
     </article>
   `;
@@ -251,17 +251,17 @@ function renderContextAnalysis() {
       <div class="context-grid">
         <div class="context-card">
           <span>Nutrición media</span>
-          <strong>${formatPlain(nutritionAverage, 1)}/10</strong>
+          <strong class="${thresholdClass(nutritionAverage, 6)}">${formatPlain(nutritionAverage, 1)}/10</strong>
           <div class="mini-bar"><i style="width:${percentage(nutritionAverage, 10)}%"></i></div>
         </div>
         <div class="context-card">
           <span>Deporte medio</span>
-          <strong>${formatPlain(sportAverage, 1)}/7</strong>
+          <strong class="${thresholdClass(sportAverage, 4)}">${formatPlain(sportAverage, 1)}/7</strong>
           <div class="mini-bar"><i style="width:${percentage(sportAverage, 7)}%"></i></div>
         </div>
         <div class="context-card">
           <span>Emocional medio</span>
-          <strong>${formatPlain(emotionalAverage, 1)}/10</strong>
+          <strong class="${thresholdClass(emotionalAverage, 5)}">${formatPlain(emotionalAverage, 1)}/10</strong>
           <div class="mini-bar emotion"><i style="width:${percentage(emotionalAverage, 10)}%"></i></div>
         </div>
       </div>
@@ -273,9 +273,9 @@ function renderContextAnalysis() {
       <h2>${impact.title}</h2>
       <p>${impact.text}</p>
       <div class="impact-grid">
-        <span>Peso ${formatSigned(impact.peso, METRICS[0])}</span>
-        <span>Grasa ${formatSigned(impact.grasa, METRICS[3])}</span>
-        <span>Músculo ${formatSigned(impact.musculo, METRICS[2])}</span>
+        <span>Peso <b class="${deltaClass(impact.peso, METRICS[0])}">${formatSigned(impact.peso, METRICS[0])}</b></span>
+        <span>Grasa <b class="${deltaClass(impact.grasa, METRICS[3])}">${formatSigned(impact.grasa, METRICS[3])}</b></span>
+        <span>Músculo <b class="${deltaClass(impact.musculo, METRICS[2])}">${formatSigned(impact.musculo, METRICS[2])}</b></span>
       </div>
     </article>
     </div>
@@ -355,17 +355,17 @@ function renderMonthDetail(month) {
       <div class="month-tile">
         <span>Peso medio</span>
         <strong>${format(month.pesoMedio, METRICS[0])}</strong>
-        <p>Cambio vs medición anterior: ${formatSigned(month.peso, METRICS[0])}</p>
+        <p>Cambio vs medición anterior: <b class="${deltaClass(month.peso, METRICS[0])}">${formatSigned(month.peso, METRICS[0])}</b></p>
       </div>
       <div class="month-tile">
         <span>Grasa media</span>
         <strong>${format(month.grasaMedia, METRICS[3])}</strong>
-        <p>Cambio vs medición anterior: ${formatSigned(month.grasa, METRICS[3])}</p>
+        <p>Cambio vs medición anterior: <b class="${deltaClass(month.grasa, METRICS[3])}">${formatSigned(month.grasa, METRICS[3])}</b></p>
       </div>
       <div class="month-tile">
         <span>Músculo medio</span>
         <strong>${format(month.musculoMedio, METRICS[2])}</strong>
-        <p>Cambio vs medición anterior: ${formatSigned(month.musculo, METRICS[2])}</p>
+        <p>Cambio vs medición anterior: <b class="${deltaClass(month.musculo, METRICS[2])}">${formatSigned(month.musculo, METRICS[2])}</b></p>
       </div>
     </div>
     <div class="week-strip">
@@ -376,23 +376,23 @@ function renderMonthDetail(month) {
       <div class="bar-row">
         <span>Nutrición</span>
         <div class="mini-bar"><i style="width:${percentage(month.nutricion, 10)}%"></i></div>
-        <b>${formatPlain(month.nutricion, 1)}/10</b>
+        <b class="${thresholdClass(month.nutricion, 6)}">${formatPlain(month.nutricion, 1)}/10</b>
       </div>
       <div class="bar-row">
         <span>Deporte</span>
         <div class="mini-bar sport"><i style="width:${percentage(month.deporte, 7)}%"></i></div>
-        <b>${formatPlain(month.deporte, 1)}/7</b>
+        <b class="${thresholdClass(month.deporte, 4)}">${formatPlain(month.deporte, 1)}/7</b>
       </div>
       <div class="bar-row">
         <span>Emocional</span>
         <div class="mini-bar emotion"><i style="width:${percentage(month.emocional, 10)}%"></i></div>
-        <b>${formatPlain(month.emocional, 1)}/10</b>
+        <b class="${thresholdClass(month.emocional, 5)}">${formatPlain(month.emocional, 1)}/10</b>
       </div>
       <div class="week-foot">
         <span>Desde ${formatDate(month.baseline.fecha)}</span>
         <span>Hasta ${formatDate(month.last.fecha)}</span>
-        <span>Peso ${formatSigned(month.peso, METRICS[0])}</span>
-        <span>Grasa ${formatSigned(month.grasa, METRICS[3])}</span>
+        <span>Peso <b class="${deltaClass(month.peso, METRICS[0])}">${formatSigned(month.peso, METRICS[0])}</b></span>
+        <span>Grasa <b class="${deltaClass(month.grasa, METRICS[3])}">${formatSigned(month.grasa, METRICS[3])}</b></span>
       </div>
     </div>
   `;
@@ -481,12 +481,11 @@ function renderCards() {
         <p>${card.detail}</p>
       </article>`;
     }
-    const good = card.metric.lowerIsGood ? card.change <= 0 : card.change >= 0;
     const sign = card.change > 0 ? "+" : "";
     return `<article class="metric-card">
       <span>${card.label}</span>
       <strong>${format(card.value, card.metric)}</strong>
-      <p><b class="${good ? "good" : "bad"}">${sign}${format(card.change, card.metric)}</b> desde el primer registro</p>
+      <p><b class="${deltaClass(card.change, card.metric)}">${sign}${format(card.change, card.metric)}</b> desde el primer registro</p>
     </article>`;
   }).join("");
 
@@ -596,11 +595,13 @@ function renderRecords() {
     const values = rows.filter(row => Number.isFinite(row[metric.key]));
     const minRow = values.reduce((best, row) => row[metric.key] < best[metric.key] ? row : best, values[0]);
     const maxRow = values.reduce((best, row) => row[metric.key] > best[metric.key] ? row : best, values[0]);
+    const minGood = metric.lowerIsGood;
+    const maxGood = !metric.lowerIsGood;
     return `<article class="record">
       <span>${metric.label}</span>
-      <strong>Mín: ${format(minRow[metric.key], metric)}</strong>
+      <strong class="${minGood ? "good" : "bad"}">Mín: ${format(minRow[metric.key], metric)}</strong>
       <p>${formatDate(minRow.fecha)}</p>
-      <strong>Máx: ${format(maxRow[metric.key], metric)}</strong>
+      <strong class="${maxGood ? "good" : "bad"}">Máx: ${format(maxRow[metric.key], metric)}</strong>
       <p>${formatDate(maxRow.fecha)}</p>
     </article>`;
   }).join("");
@@ -636,6 +637,17 @@ function formatSigned(value, metric) {
   if (!Number.isFinite(Number(value))) return "--";
   const sign = Number(value) > 0 ? "+" : "";
   return `${sign}${format(value, metric)}`;
+}
+
+function deltaClass(value, metric) {
+  if (!Number.isFinite(Number(value)) || Number(value) === 0) return "";
+  const good = metric.lowerIsGood ? Number(value) < 0 : Number(value) > 0;
+  return good ? "good" : "bad";
+}
+
+function thresholdClass(value, min) {
+  if (!Number.isFinite(Number(value))) return "";
+  return Number(value) < min ? "bad" : "good";
 }
 
 function formatPlain(value, decimals) {
