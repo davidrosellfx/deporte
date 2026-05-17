@@ -280,17 +280,18 @@ function getContextRows(sourceRows) {
 function renderContextAnalysis() {
   const plannedRows = rows.filter(row => row.nutricion !== null || row.deporte !== null || row.emocional !== null);
   const container = document.getElementById("contextAnalysis");
-  if (!plannedRows.length) {
+  if (!rows.length) {
     container.innerHTML = "";
     return;
   }
-  const enriched = getContextRows(plannedRows);
+  const enriched = getContextRows(rows);
+  const contextRows = enriched.filter(row => row.nutricion !== null || row.deporte !== null || row.emocional !== null);
   const nutritionAverage = average(plannedRows.map(row => row.nutricion));
   const sportAverage = average(plannedRows.map(row => row.deporte));
   const emotionalAverage = average(plannedRows.map(row => row.emocional));
-  const contextAverage = average(enriched.map(row => row.score));
+  const contextAverage = average(contextRows.map(row => row.score));
   const progress = Math.round((contextAverage || 0) * 100);
-  const impact = impactSummary(enriched);
+  const impact = impactSummary(contextRows);
   const months = monthlyContext(enriched);
   if (!selectedContextMonth || !months.some(month => month.key === selectedContextMonth)) {
     selectedContextMonth = months.at(-1).key;
@@ -380,6 +381,7 @@ function monthlyContext(enriched) {
       key,
       label: new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" }).format(new Date(`${key}-01T00:00:00`)),
       count: group.length,
+      contextCount: group.filter(row => row.nutricion !== null || row.deporte !== null || row.emocional !== null).length,
       baseline,
       first,
       last,
@@ -438,7 +440,7 @@ function renderMonthDetail(month) {
     </div>
     <div class="week-strip">
       <div class="week-head">
-        <strong>${month.count} mediciones en el mes</strong>
+        <strong>${month.count} mediciones · ${month.contextCount} con contexto</strong>
         <b class="plan-badge ${month.netGood ? "yes" : "no"}">${month.netGood ? "Buen mes" : "Revisar"}</b>
       </div>
       <div class="bar-row">
@@ -482,7 +484,7 @@ function contextScore(row) {
 function impactSummary(enriched) {
   const comparable = enriched.filter(row => row.previous && row.score !== null);
   if (!comparable.length) {
-    return { title: "Aún falta historial", text: "Con unas semanas más podré comparar contexto y cambios de composición.", peso: null, grasa: null, musculo: null };
+    return { title: "Aún faltan datos de contexto", text: "Ya hay historial de peso, pero necesito más semanas con nutrición, deporte y emocional para relacionarlo con la composición.", peso: null, grasa: null, musculo: null };
   }
   const strong = comparable.filter(row => row.score >= 0.68);
   const base = strong.length >= 2 ? strong : comparable;
@@ -491,10 +493,10 @@ function impactSummary(enriched) {
   const musculo = average(base.map(row => row.musculoDelta));
   const improved = (peso !== null && peso < 0) || (grasa !== null && grasa < 0) || (musculo !== null && musculo > 0);
   return {
-    title: improved ? "Las mejores semanas coinciden con mejora" : "El patrón aún no es claro",
+    title: improved ? "El contexto apunta en buena dirección" : "Contexto registrado, tendencia por confirmar",
     text: strong.length >= 2
       ? "En semanas con mejor contexto global, estos fueron los cambios medios frente a la medición anterior."
-      : "Todavía hay pocas semanas fuertes registradas; muestro la media disponible como referencia, no como conclusión cerrada.",
+      : "Aún hay pocas semanas con contexto alto. Muestro el promedio disponible para que veas la tendencia sin forzar una conclusión.",
     peso,
     grasa,
     musculo
@@ -683,7 +685,7 @@ function renderTable() {
       <td>${format(row.calorias, METRICS[5])}</td>
       <td>${formatPlain(row.nutricion, 0)}</td>
       <td>${formatPlain(row.deporte, 0)}</td>
-      <td>${formatPlain(row.emocional, 0)}/10</td>
+      <td>${formatPlain(row.emocional, 0)}</td>
     </tr>
   `).join("");
 }
