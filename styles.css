@@ -127,12 +127,40 @@ h2 {
 
 .hero-panel span,
 .metric-card span,
-.record span,
-.status {
+.record span {
   color: var(--muted);
   font-size: 13px;
   font-weight: 780;
   text-transform: uppercase;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.source-toggle {
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.goal-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.goal-input {
+  width: 92px;
+  min-height: 40px;
+  font-size: 30px;
+  font-weight: 850;
+  padding: 4px 8px;
+}
+
+.goal-unit {
+  font-size: 30px;
+  font-weight: 850;
 }
 
 .hero-panel strong {

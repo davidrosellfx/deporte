@@ -22,7 +22,7 @@ const METRICS = [
 
 const MOTIVATIONAL_QUOTES = [
   "Si lo hiciste una vez, lo harás otra vez.",
-  "Camino a los 85: hoy también cuenta.",
+  "Vuelta a mi mejor versión: hoy también cuenta.",
   "No necesitas perfección, necesitas volver.",
   "Cada medición es información, no juicio.",
   "El cuerpo cambia cuando la constancia se queda.",
@@ -34,7 +34,9 @@ const MOTIVATIONAL_QUOTES = [
 ];
 
 const SOURCE_KEY = "camino-a-los-85-source";
+const GOAL_KEY = "camino-a-los-85-goal";
 let rows = [];
+let goalWeight = Number(localStorage.getItem(GOAL_KEY)) || 85;
 
 const configUrl = window.WEIGHT_DASHBOARD_CONFIG?.sheetApiUrl?.trim() || "";
 const savedUrl = localStorage.getItem(SOURCE_KEY) || "";
@@ -54,6 +56,10 @@ document.getElementById("clearSource").addEventListener("click", () => {
   load(configUrl);
 });
 
+document.getElementById("toggleSetup").addEventListener("click", () => {
+  document.getElementById("setupPanel").classList.toggle("hidden");
+});
+
 window.addEventListener("resize", () => drawAllCharts());
 setRandomQuote();
 load(activeUrl);
@@ -64,17 +70,15 @@ function setRandomQuote() {
 }
 
 async function load(url) {
-  setStatus(url ? "Cargando datos desde Google Sheets..." : "Mostrando datos de ejemplo hasta conectar la Sheet.");
   try {
     rows = url ? await loadJsonp(url) : SAMPLE_DATA;
     rows = normalizeRows(rows).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
     render();
-    setStatus(url ? `Sincronizado con Google Sheets · ${rows.length} registros` : "Modo demo · conecta tu Sheet para ver tus datos reales");
   } catch (error) {
     console.error(error);
     rows = SAMPLE_DATA;
     render();
-    setStatus("No pude cargar la Sheet. Revisa la URL del Web App o los permisos de despliegue.");
+    document.getElementById("setupPanel").classList.remove("hidden");
   }
 }
 
@@ -147,14 +151,21 @@ function renderCards() {
   const last = rows.at(-1);
   const cards = [
     { label: "Peso actual", metric: METRICS[0], value: last.peso, change: last.peso - first.peso },
-    { label: "Objetivo", valueText: "85 kg", detail: `${format(last.peso - 85, METRICS[0])} por bajar` },
+    { label: "Objetivo", goal: true, detail: `${format(last.peso - goalWeight, METRICS[0])} por bajar` },
     { label: "Músculo", metric: METRICS[2], value: last.musculo, change: last.musculo - first.musculo },
     { label: "Grasa", metric: METRICS[3], value: last.grasa, change: last.grasa - first.grasa }
   ];
 
   document.getElementById("metricCards").innerHTML = cards.map(card => {
-    if (card.valueText) {
-      return `<article class="metric-card"><span>${card.label}</span><strong>${card.valueText}</strong><p>${card.detail}</p></article>`;
+    if (card.goal) {
+      return `<article class="metric-card">
+        <span>${card.label}</span>
+        <div class="goal-control">
+          <input class="goal-input" id="goalInput" type="number" step="0.1" value="${goalWeight}">
+          <b class="goal-unit">kg</b>
+        </div>
+        <p>${card.detail}</p>
+      </article>`;
     }
     const good = card.metric.lowerIsGood ? card.change <= 0 : card.change >= 0;
     const sign = card.change > 0 ? "+" : "";
@@ -164,6 +175,12 @@ function renderCards() {
       <p><b class="${good ? "good" : "bad"}">${sign}${format(card.change, card.metric)}</b> desde el primer registro</p>
     </article>`;
   }).join("");
+
+  document.getElementById("goalInput").addEventListener("change", event => {
+    goalWeight = Number(event.target.value) || 85;
+    localStorage.setItem(GOAL_KEY, String(goalWeight));
+    renderCards();
+  });
 }
 
 function renderCharts() {
@@ -300,8 +317,4 @@ function format(value, metric) {
 
 function formatDate(value) {
   return new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(`${value}T00:00:00`));
-}
-
-function setStatus(text) {
-  document.getElementById("statusText").textContent = text;
 }

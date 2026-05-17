@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Camino a los 85</title>
+  <title>Vuelta a mi mejor versión</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">DAVID ROSELL</p>
-        <h1>Camino a los 85</h1>
+        <h1>Vuelta a mi mejor versión</h1>
         <p class="mantra" id="motivationalQuote">Si lo hiciste una vez, lo harás otra vez.</p>
       </div>
       <div class="hero-panel">
@@ -21,7 +21,7 @@
       </div>
     </section>
 
-    <section class="setup" id="setupPanel">
+    <section class="setup hidden" id="setupPanel">
       <div>
         <h2>Sincronización con Google Sheets</h2>
         <p>Pega aquí la URL del Web App de Apps Script. También puedes fijarla en <code>config.js</code> antes de subirlo a GitHub.</p>
@@ -40,7 +40,7 @@
         <p class="eyebrow">Evolución real</p>
         <h2>Tu composición, métrica por métrica</h2>
       </div>
-      <div class="status" id="statusText">Preparando datos...</div>
+      <button class="source-toggle" type="button" id="toggleSetup">Cambiar Sheet</button>
     </section>
 
     <section class="charts" id="chartsGrid"></section>
