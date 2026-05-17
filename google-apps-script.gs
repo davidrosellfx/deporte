@@ -1,10 +1,9 @@
-// Si pegas este script desde Extensiones > Apps Script dentro de tu Google Sheet,
-// puedes dejar SHEET_ID vacio y cogera automaticamente ese archivo.
+// Pegalo desde Extensiones > Apps Script dentro de tu Google Sheet.
 const SHEET_ID = "";
-
-// Dejalo vacio para usar la primera pestana de la Sheet.
 const SHEET_NAME = "";
 
+// Estructura real de tu hoja:
+// Fecha | Peso | IMC | Musculo | Grasa | G.Visceral | Calorias | Nutricion (0-10) | Deporte (dias) | Emocional
 const REQUIRED_HEADERS = [
   "Fecha",
   "Peso",
@@ -12,11 +11,24 @@ const REQUIRED_HEADERS = [
   "Musculo",
   "Grasa",
   "G.Visceral",
-  "Calorías",
-  "Nutrición (1-10)",
-  "Deporte (días)",
-  "Emocional (0-10)"
+  "Calorias",
+  "Nutricion (0-10)",
+  "Deporte (dias)",
+  "Emocional"
 ];
+
+const FIELD_ALIASES = {
+  fecha: ["fecha"],
+  peso: ["peso"],
+  imc: ["imc"],
+  musculo: ["musculo"],
+  grasa: ["grasa"],
+  visceral: ["gvisceral", "visceral", "grasavisceral"],
+  calorias: ["calorias"],
+  nutricion: ["nutricion010", "nutricion110", "nutricion"],
+  deporte: ["deportedias", "deporte"],
+  emocional: ["emocional", "emocional010"]
+};
 
 function doGet(e) {
   const action = e.parameter.action || "read";
@@ -57,19 +69,34 @@ function getSheetInfo() {
     sheet.getRange(1, 1, 1, REQUIRED_HEADERS.length).setValues([REQUIRED_HEADERS]);
   }
 
-  const headers = sheet.getRange(headerRowIndex + 1, 1, 1, Math.max(sheet.getLastColumn(), REQUIRED_HEADERS.length)).getValues()[0];
+  const headerRow = headerRowIndex + 1;
+  const width = Math.max(sheet.getLastColumn(), REQUIRED_HEADERS.length);
+  const headers = sheet.getRange(headerRow, 1, 1, width).getValues()[0];
   const normalizedHeaders = headers.map(normalizeHeader);
+
   REQUIRED_HEADERS.forEach(header => {
-    if (normalizedHeaders.indexOf(normalizeHeader(header)) === -1) {
+    const normalized = normalizeHeader(header);
+    if (normalizedHeaders.indexOf(normalized) === -1 && !hasAliasForRequired(normalizedHeaders, normalized)) {
       headers.push(header);
-      normalizedHeaders.push(normalizeHeader(header));
+      normalizedHeaders.push(normalized);
     }
   });
-  sheet.getRange(headerRowIndex + 1, 1, 1, headers.length).setValues([headers]);
+
+  sheet.getRange(headerRow, 1, 1, headers.length).setValues([headers]);
 
   const index = {};
-  normalizedHeaders.forEach((header, i) => index[header] = i + 1);
-  return { sheet, headerRow: headerRowIndex + 1, headers, index };
+  normalizedHeaders.forEach((header, i) => {
+    if (header) index[header] = i + 1;
+  });
+  return { sheet, headerRow, headers, index };
+}
+
+function hasAliasForRequired(normalizedHeaders, required) {
+  if (required === "nutricion010") return normalizedHeaders.indexOf("nutricion") !== -1 || normalizedHeaders.indexOf("nutricion110") !== -1;
+  if (required === "deportedias") return normalizedHeaders.indexOf("deporte") !== -1;
+  if (required === "emocional") return normalizedHeaders.indexOf("emocional010") !== -1;
+  if (required === "gvisceral") return normalizedHeaders.indexOf("visceral") !== -1 || normalizedHeaders.indexOf("grasavisceral") !== -1;
+  return false;
 }
 
 function getRows() {
@@ -86,16 +113,16 @@ function getRows() {
 
 function rowToObject(row, index) {
   return {
-    fecha: formatDate(row[valueIndex(index, "fecha")]),
-    peso: number(row[valueIndex(index, "peso")]),
-    imc: number(row[valueIndex(index, "imc")]),
-    musculo: number(row[valueIndex(index, "musculo")]),
-    grasa: number(row[valueIndex(index, "grasa")]),
-    visceral: number(firstValue(row[valueIndex(index, "visceral")], row[valueIndex(index, "gvisceral")], row[valueIndex(index, "grasavisceral")])),
-    calorias: number(row[valueIndex(index, "calorias")]),
-    nutricion: boundedNumber(firstValue(row[valueIndex(index, "nutricion")], row[valueIndex(index, "nutricion110")]), 0, 10),
-    deporte: boundedNumber(firstValue(row[valueIndex(index, "deporte")], row[valueIndex(index, "deportedias")]), 0, 7),
-    emocional: emotionalValue(firstValue(row[valueIndex(index, "emocional")], row[valueIndex(index, "emocional010")]))
+    fecha: formatDate(getValue(row, index, "fecha")),
+    peso: number(getValue(row, index, "peso")),
+    imc: number(getValue(row, index, "imc")),
+    musculo: number(getValue(row, index, "musculo")),
+    grasa: number(getValue(row, index, "grasa")),
+    visceral: number(getValue(row, index, "visceral")),
+    calorias: number(getValue(row, index, "calorias")),
+    nutricion: boundedNumber(getValue(row, index, "nutricion"), 0, 10),
+    deporte: boundedNumber(getValue(row, index, "deporte"), 0, 7),
+    emocional: emotionalValue(getValue(row, index, "emocional"))
   };
 }
 
@@ -108,17 +135,20 @@ function upsertMeasurement(params) {
 
   const existingRow = findDateRow(info, fecha);
   const targetRow = existingRow || info.sheet.getLastRow() + 1;
-  const row = new Array(info.headers.length).fill("");
-  setCell(row, info.index, "fecha", new Date(`${fecha}T00:00:00`));
-  setCell(row, info.index, "peso", number(params.peso));
-  setCell(row, info.index, "imc", number(params.imc));
-  setCell(row, info.index, "musculo", number(params.musculo));
-  setCell(row, info.index, "grasa", number(params.grasa));
-  setCell(row, info.index, "gvisceral", number(params.visceral));
-  setCell(row, info.index, "calorias", number(params.calorias));
-  setCell(row, info.index, "nutricion110", boundedNumber(params.nutricion, 0, 10));
-  setCell(row, info.index, "deportedias", boundedNumber(params.deporte, 0, 7));
-  setCell(row, info.index, "emocional010", boundedNumber(params.emocional, 0, 10));
+  const row = existingRow
+    ? info.sheet.getRange(targetRow, 1, 1, info.headers.length).getValues()[0]
+    : new Array(info.headers.length).fill("");
+
+  setValue(row, info.index, "fecha", new Date(fecha + "T00:00:00"));
+  setValue(row, info.index, "peso", number(params.peso));
+  setValue(row, info.index, "imc", number(params.imc));
+  setValue(row, info.index, "musculo", number(params.musculo));
+  setValue(row, info.index, "grasa", number(params.grasa));
+  setValue(row, info.index, "visceral", number(params.visceral));
+  setValue(row, info.index, "calorias", number(params.calorias));
+  setValue(row, info.index, "nutricion", boundedNumber(params.nutricion, 0, 10));
+  setValue(row, info.index, "deporte", boundedNumber(params.deporte, 0, 7));
+  setValue(row, info.index, "emocional", boundedNumber(params.emocional, 0, 10));
 
   info.sheet.getRange(targetRow, 1, 1, row.length).setValues([row]);
   sortDataByDate(info);
@@ -126,7 +156,7 @@ function upsertMeasurement(params) {
 }
 
 function findDateRow(info, fecha) {
-  const dateColumn = info.index.fecha;
+  const dateColumn = findColumn(info.index, "fecha");
   const lastRow = info.sheet.getLastRow();
   if (!dateColumn || lastRow <= info.headerRow) return null;
   const values = info.sheet.getRange(info.headerRow + 1, dateColumn, lastRow - info.headerRow, 1).getValues();
@@ -136,20 +166,29 @@ function findDateRow(info, fecha) {
 
 function sortDataByDate(info) {
   const lastRow = info.sheet.getLastRow();
-  if (lastRow <= info.headerRow + 1 || !info.index.fecha) return;
+  const dateColumn = findColumn(info.index, "fecha");
+  if (lastRow <= info.headerRow + 1 || !dateColumn) return;
   info.sheet
     .getRange(info.headerRow + 1, 1, lastRow - info.headerRow, info.headers.length)
-    .sort({ column: info.index.fecha, ascending: true });
+    .sort({ column: dateColumn, ascending: true });
 }
 
-function setCell(row, index, key, value) {
-  const col = index[key];
+function getValue(row, index, field) {
+  const col = findColumn(index, field);
+  return col ? row[col - 1] : null;
+}
+
+function setValue(row, index, field, value) {
+  const col = findColumn(index, field);
   if (col) row[col - 1] = value === null ? "" : value;
 }
 
-function valueIndex(index, key) {
-  const col = index[key];
-  return col ? col - 1 : -1;
+function findColumn(index, field) {
+  const aliases = FIELD_ALIASES[field] || [field];
+  for (let i = 0; i < aliases.length; i++) {
+    if (index[aliases[i]]) return index[aliases[i]];
+  }
+  return null;
 }
 
 function normalizeHeader(value) {
@@ -176,14 +215,6 @@ function number(value) {
   if (value === "" || value === null || value === undefined) return null;
   const parsed = Number(String(value).replace(",", "."));
   return isNaN(parsed) ? null : parsed;
-}
-
-function firstValue() {
-  for (let i = 0; i < arguments.length; i++) {
-    const value = arguments[i];
-    if (value !== "" && value !== null && value !== undefined) return value;
-  }
-  return null;
 }
 
 function boundedNumber(value, min, max) {

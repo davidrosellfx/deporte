@@ -147,7 +147,7 @@ function normalizeRows(input) {
       grasa: number(row.grasa || row.Grasa),
       visceral: number(row.visceral || row["G.Visceral"] || row["G. visceral"] || row["Grasa visceral"]),
       calorias: number(row.calorias || row.Calorias || row["Calorías"]),
-      nutricion: boundedNumber(firstValue(row.nutricion, row.Nutricion, row["Nutrición"], row["Nutrición (1-10)"]), 0, 10),
+      nutricion: boundedNumber(firstValue(row.nutricion, row.Nutricion, row["Nutrición"], row["Nutrición (0-10)"], row["Nutrición (1-10)"]), 0, 10),
       deporte: boundedNumber(firstValue(row.deporte, row.Deporte, row["Deporte"], row["Deporte (días)"], row["Deporte dias"]), 0, 7),
       emocional: emotionalValue(firstValue(row.emocional, row.Emocional, row["Emocional (0-10)"]))
     }))
