@@ -34,9 +34,7 @@ const MOTIVATIONAL_QUOTES = [
 ];
 
 const SOURCE_KEY = "camino-a-los-85-source";
-const GOAL_KEY = "camino-a-los-85-goal";
 let rows = [];
-let goalWeight = Number(localStorage.getItem(GOAL_KEY)) || 85;
 let selectedContextMonth = "";
 
 const configUrl = window.WEIGHT_DASHBOARD_CONFIG?.sheetApiUrl?.trim() || "";
@@ -506,7 +504,7 @@ function percentage(value, max) {
 function renderHero() {
   const last = rows.at(-1);
   document.getElementById("heroWeight").textContent = format(last.peso, METRICS[0]);
-  document.getElementById("heroDate").textContent = `Última medición: ${formatDate(last.fecha)}`;
+  document.getElementById("heroDate").textContent = `Última medición: ${formatDate(last.fecha)} · Objetivo 85 kg`;
 }
 
 function renderCards() {
@@ -514,23 +512,14 @@ function renderCards() {
   const last = rows.at(-1);
   const cards = [
     { label: "Peso actual", metric: METRICS[0], value: last.peso, change: last.peso - first.peso },
-    { label: "Objetivo", goal: true, detail: `${format(last.peso - goalWeight, METRICS[0])} por bajar` },
+    { label: "IMC", metric: METRICS[1], value: last.imc, change: last.imc - first.imc },
     { label: "Músculo", metric: METRICS[2], value: last.musculo, change: last.musculo - first.musculo },
     { label: "Grasa", metric: METRICS[3], value: last.grasa, change: last.grasa - first.grasa },
-    { label: "G. visceral", metric: METRICS[4], value: last.visceral, change: last.visceral - first.visceral }
+    { label: "G. visceral", metric: METRICS[4], value: last.visceral, change: last.visceral - first.visceral },
+    { label: "Calorías", metric: METRICS[5], value: last.calorias, change: last.calorias - first.calorias }
   ];
 
   document.getElementById("metricCards").innerHTML = cards.map(card => {
-    if (card.goal) {
-      return `<article class="metric-card">
-        <span>${card.label}</span>
-        <div class="goal-control">
-          <input class="goal-input" id="goalInput" type="number" step="0.1" value="${goalWeight}">
-          <b class="goal-unit">kg</b>
-        </div>
-        <p>${card.detail}</p>
-      </article>`;
-    }
     const sign = card.change > 0 ? "+" : "";
     return `<article class="metric-card">
       <span>${card.label}</span>
@@ -539,11 +528,6 @@ function renderCards() {
     </article>`;
   }).join("");
 
-  document.getElementById("goalInput").addEventListener("change", event => {
-    goalWeight = Number(event.target.value) || 85;
-    localStorage.setItem(GOAL_KEY, String(goalWeight));
-    renderCards();
-  });
 }
 
 function renderCharts() {

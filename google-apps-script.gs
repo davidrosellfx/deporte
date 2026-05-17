@@ -139,7 +139,7 @@ function upsertMeasurement(params) {
     ? info.sheet.getRange(targetRow, 1, 1, info.headers.length).getValues()[0]
     : new Array(info.headers.length).fill("");
 
-  setValue(row, info.index, "fecha", new Date(fecha + "T00:00:00"));
+  setValue(row, info.index, "fecha", localDate(fecha));
   setValue(row, info.index, "peso", number(params.peso));
   setValue(row, info.index, "imc", number(params.imc));
   setValue(row, info.index, "musculo", number(params.musculo));
@@ -209,6 +209,11 @@ function formatDate(value) {
     return Utilities.formatDate(parsed, Session.getScriptTimeZone(), "yyyy-MM-dd");
   }
   return "";
+}
+
+function localDate(isoDate) {
+  const parts = String(isoDate).split("-").map(Number);
+  return new Date(parts[0], parts[1] - 1, parts[2]);
 }
 
 function number(value) {
