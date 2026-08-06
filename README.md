@@ -1,44 +1,55 @@
 # Vuelta a mi mejor version
 
-Web estática para GitHub Pages con seguimiento visual de peso y composición corporal sincronizado con Google Sheets.
+Web estatica para GitHub Pages con seguimiento visual de peso, composicion corporal y contexto semanal sincronizado con Google Sheets.
 
-## Cómo conectarlo a tu Google Sheet
+## Que muestra
+
+- Estado actual con ultimo peso, objetivo editable y diferencia.
+- Lectura de la ultima medicion con cambios de peso, grasa, musculo y grasa visceral.
+- Tendencias por 4 semanas, 8 semanas o todo el historial.
+- Graficas separadas de peso, grasa, musculo, grasa visceral, contexto y actividad semanal.
+- Analisis de contexto por meses desde que hay datos de nutricion, deporte y emocional.
+- Historial completo con boton **Editar** para corregir una fila desde la propia web.
+
+## Columnas esperadas en Google Sheets
+
+La hoja debe tener estos encabezados:
+
+`Fecha`, `Peso`, `IMC`, `Musculo`, `Grasa`, `G.Visceral`, `Calorias`, `Calorias quemadas`, `Nutricion (0-10)`, `Deporte (dias)`, `Emocional`, `Km semana`
+
+Notas:
+
+- `Calorias` es la estimacion de calorias necesarias.
+- `Calorias quemadas` es la media semanal segun Garmin.
+- `Nutricion (0-10)` mide cumplimiento nutricional.
+- `Deporte (dias)` va de 0 a 7.
+- `Emocional` va de 0 a 10.
+- `Km semana` mide la carga total de movimiento semanal.
+
+## Conectar con Google Sheets
 
 1. Abre tu Google Sheet.
 2. Ve a **Extensiones > Apps Script**.
 3. Pega el contenido de `google-apps-script.gs`.
-4. Déjalo tal cual si lo estás pegando desde esa misma Sheet.
-5. Despliega como **Web app**.
-6. En permisos, usa:
-   - Ejecutar como: **tú**
-   - Quién tiene acceso: **cualquiera con el enlace**
-7. Copia la URL del Web App.
-8. Pégala en la web o en `config.js`.
+4. Despliega como **Web app**.
+5. Usa:
+   - Ejecutar como: **tu**
+   - Quien tiene acceso: **cualquiera con el enlace**
+6. Copia la URL del Web App.
+7. Pegala en `config.js` como `sheetApiUrl`.
 
-Solo necesitas poner `SHEET_ID` manualmente si creas el Apps Script fuera de la Sheet. En ese caso, si la URL es `https://docs.google.com/spreadsheets/d/ABC123/edit`, el ID es `ABC123`.
+Solo necesitas poner `SHEET_ID` manualmente si creas el Apps Script fuera de la Sheet.
 
-## Columnas esperadas
+## Editar datos
 
-La primera fila debe tener estos encabezados, con o sin acentos:
+En el historial, pulsa **Editar** en la fila que quieras corregir. La web rellena el formulario con esa medicion y al guardar actualiza la fila con la misma fecha.
 
-`Fecha`, `Peso`, `IMC`, `Musculo`, `Grasa`, `G.Visceral`, `Calorías`, `Calorías quemadas`
-
-Opcionalmente puedes añadir estas columnas de contexto semanal:
-
-`Nutricion (0-10)`, `Deporte (dias)`, `Emocional (0-10)`, `Km semana`
-
-`Calorías quemadas` es la media semanal que te da Garmin. `Nutricion (0-10)` mide calidad de dieta de 0 a 10. `Deporte (dias)` mide entrenamientos de 0 a 7. `Emocional (0-10)` mide estado emocional, donde 10 es muy bien y 0 es muy mal. `Km semana` mide la carga total de movimiento de esa semana.
-
-## Añadir datos desde la web
-
-El dashboard incluye un formulario desplegable de **Añadir medición semanal**. Al guardar:
-
-- Si la fecha ya existe, actualiza esa fila.
-- Si la fecha no existe, añade una fila nueva.
-- Después ordena la tabla por fecha.
-
-Para que funcione, pega la versión actual de `google-apps-script.gs` y vuelve a desplegar el Web App.
+Si introduces una fecha nueva, se anade una fila nueva y el script ordena la hoja por fecha.
 
 ## Subir a GitHub Pages
 
-Sube `index.html`, `styles.css`, `app.js`, `config.js` y `google-apps-script.gs` al repositorio. Después activa GitHub Pages desde la rama principal.
+Sube estos archivos al repositorio:
+
+`index.html`, `styles.css`, `app.js`, `config.js`, `google-apps-script.gs`, `README.md`
+
+Despues activa GitHub Pages desde la rama principal.

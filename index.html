@@ -3,44 +3,48 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vuelta a mi mejor versión</title>
+  <title>Vuelta a mi mejor version</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <main class="app">
-    <button class="theme-toggle" type="button" id="themeToggle">Modo oscuro</button>
+    <div class="top-actions">
+      <button class="theme-toggle" type="button" id="themeToggle">Modo oscuro</button>
+    </div>
+
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">DAVID ROSELL</p>
-        <h1>Vuelta a mi mejor versión</h1>
-        <p class="mantra" id="motivationalQuote">Si lo hiciste una vez, lo harás otra vez.</p>
+        <h1>Vuelta a mi mejor version</h1>
+        <p class="mantra" id="motivationalQuote">Si lo hiciste una vez, lo haras otra vez.</p>
       </div>
-      <div class="hero-panel">
-        <div class="hero-weight-grid">
-          <div>
-            <span>Último peso</span>
-            <strong id="heroWeight">--</strong>
-          </div>
-          <div>
-            <span>Peso objetivo</span>
-            <div class="hero-goal">
-              <input id="heroGoalInput" type="number" step="0.1" value="85">
-              <b>kg</b>
-            </div>
-          </div>
+      <article class="hero-panel">
+        <div class="hero-main">
+          <span>Ultimo peso</span>
+          <strong id="heroWeight">--</strong>
+          <small id="heroDate">Cargando datos...</small>
         </div>
-        <small id="heroDate">Conecta tu Google Sheet para sincronizar datos.</small>
-        <small id="heroGoalDiff"></small>
-      </div>
+        <div class="hero-goal-row">
+          <label>Peso objetivo
+            <span><input id="heroGoalInput" type="number" step="0.1" value="85"> kg</span>
+          </label>
+          <p id="heroGoalDiff"></p>
+        </div>
+        <div class="goal-progress" id="goalProgress"><span></span></div>
+        <p class="hero-status" id="heroStatus"></p>
+      </article>
     </section>
 
-    <section class="metrics" id="metricCards"></section>
+    <section class="summary-grid" id="metricCards"></section>
 
-    <section class="weekly-plan" id="weeklyPlan"></section>
+    <section class="focus-grid">
+      <article class="panel decision-panel" id="lastReading"></article>
+      <article class="panel insight-panel" id="insightPanel"></article>
+    </section>
 
     <section class="panel entry-panel">
-      <details>
-        <summary>Añadir medición semanal</summary>
+      <details id="entryDetails">
+        <summary id="entrySummary">Anadir medicion semanal</summary>
         <form id="entryForm" class="entry-form">
           <label>Fecha
             <input type="date" name="fecha" required>
@@ -51,7 +55,7 @@
           <label>IMC
             <input type="number" name="imc" step="0.1">
           </label>
-          <label>Músculo
+          <label>Musculo
             <input type="number" name="musculo" step="0.1">
           </label>
           <label>Grasa
@@ -66,7 +70,7 @@
           <label>Cal. quemadas
             <input type="number" name="caloriasQuemadas" step="1">
           </label>
-          <label>Nutrición
+          <label>Nutricion
             <input type="number" name="nutricion" min="0" max="10" step="1">
           </label>
           <label>Deporte
@@ -78,28 +82,45 @@
           <label>Km semana
             <input type="number" name="kmSemana" min="0" step="0.1">
           </label>
-          <button type="submit">Guardar en Sheet</button>
+          <button type="submit" id="entrySubmit">Guardar en Sheet</button>
+          <button type="button" class="ghost" id="entryCancel">Limpiar</button>
         </form>
         <p class="entry-status" id="entryStatus"></p>
       </details>
     </section>
 
-    <section class="story">
-      <div>
-        <p class="eyebrow">Evolución real</p>
-        <h2>Tu composición, métrica por métrica</h2>
+    <section class="panel trends-panel">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Tendencia real</p>
+          <h2>Como va el camino</h2>
+          <p id="trendSummary">Cargando lectura...</p>
+        </div>
+        <div class="range-tabs" id="rangeControls" aria-label="Rango de tendencia"></div>
       </div>
+      <div class="charts" id="chartsGrid"></div>
     </section>
 
-    <section class="charts" id="chartsGrid"></section>
+    <section class="panel context-analysis" id="contextAnalysis"></section>
 
-    <section class="highlights">
-      <div class="panel records-panel">
-        <h2>Mejores marcas</h2>
+    <section class="lower-grid">
+      <article class="panel records-panel">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Marcas</p>
+            <h2>Mejores registros</h2>
+          </div>
+        </div>
         <div id="recordsGrid" class="records"></div>
-      </div>
-      <div class="panel history-panel">
-        <h2>Historial</h2>
+      </article>
+
+      <article class="panel history-panel">
+        <div class="section-head compact">
+          <div>
+            <p class="eyebrow">Base de datos</p>
+            <h2>Historial</h2>
+          </div>
+        </div>
         <div class="table-wrap">
           <table>
             <thead>
@@ -107,24 +128,23 @@
                 <th>Fecha</th>
                 <th>Peso</th>
                 <th>IMC</th>
-                <th>Músculo</th>
+                <th>Musculo</th>
                 <th>Grasa</th>
                 <th>G. visceral</th>
-                <th>Cal. necesarias</th>
-                <th>Cal. quemadas</th>
-                <th>Nutrición</th>
+                <th>Cal. nec.</th>
+                <th>Cal. quem.</th>
+                <th>Nutricion</th>
                 <th>Deporte</th>
                 <th>Emocional</th>
-                <th>Km semana</th>
+                <th>Km</th>
+                <th></th>
               </tr>
             </thead>
             <tbody id="historyTable"></tbody>
           </table>
         </div>
-      </div>
+      </article>
     </section>
-
-    <section class="panel context-analysis" id="contextAnalysis"></section>
   </main>
 
   <script src="./config.js"></script>
