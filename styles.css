@@ -280,6 +280,85 @@ body[data-theme="dark"] .hero-panel {
   white-space: nowrap;
 }
 
+.progress-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--panel), var(--panel-soft));
+  box-shadow: var(--shadow);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.progress-panel > .section-head > p {
+  max-width: 420px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.progress-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.progress-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.progress-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.progress-card-head span,
+.progress-kpis span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.progress-card-head strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 20px;
+}
+
+.progress-card-head p {
+  color: var(--muted);
+  text-align: right;
+  line-height: 1.35;
+}
+
+.progress-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.progress-kpis div {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.progress-kpis strong {
+  font-size: 24px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 .focus-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
@@ -624,6 +703,7 @@ th {
 @media (max-width: 1080px) {
   .hero,
   .summary-grid,
+  .progress-columns,
   .focus-grid,
   .context-board,
   .charts,
@@ -660,6 +740,8 @@ th {
   }
 
   .summary-grid,
+  .progress-columns,
+  .progress-kpis,
   .delta-grid,
   .context-strip,
   .context-mini-grid,
