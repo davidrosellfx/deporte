@@ -227,6 +227,7 @@ function render() {
   if (!rows.length) return;
   renderHero();
   renderCards();
+  renderProgressComparison();
   renderLastReading();
   renderInsights();
   renderTrendSummary();
@@ -288,6 +289,61 @@ function renderCards() {
         : `<b class="${deltaClass(card.change, card.m)}">${formatSigned(card.change, card.m)}</b> vs medicion anterior`}</p>
     </article>
   `).join("");
+}
+
+function renderProgressComparison() {
+  const first = rows[0];
+  const worst = maxRow(rows.filter(row => Number.isFinite(row.peso)), "peso");
+  const last = rows.at(-1);
+  const references = [
+    {
+      label: "Desde el primer dia",
+      date: first.fecha,
+      row: first,
+      note: "Tu punto de salida"
+    },
+    {
+      label: "Desde tu peor pico",
+      date: worst.fecha,
+      row: worst,
+      note: "Mayor peso registrado"
+    }
+  ];
+  const progressMetrics = ["peso", "grasa", "musculo", "visceral"].map(metric);
+
+  document.getElementById("progressComparison").innerHTML = `
+    <div class="section-head compact">
+      <div>
+        <p class="eyebrow">Progreso acumulado</p>
+        <h2>Lo que ya has recuperado</h2>
+      </div>
+      <p>Comparo el dato actual contra el inicio y contra el pico mas alto de peso.</p>
+    </div>
+    <div class="progress-columns">
+      ${references.map(reference => `
+        <article class="progress-card">
+          <div class="progress-card-head">
+            <div>
+              <span>${reference.label}</span>
+              <strong>${formatDate(reference.date)}</strong>
+            </div>
+            <p>${reference.note}</p>
+          </div>
+          <div class="progress-kpis">
+            ${progressMetrics.map(item => {
+              const change = delta(last, reference.row, item.key);
+              return `
+                <div>
+                  <span>${item.label}</span>
+                  <strong class="${deltaClass(change, item)}">${formatSigned(change, item)}</strong>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </article>
+      `).join("")}
+    </div>
+  `;
 }
 
 function renderLastReading() {
