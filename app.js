@@ -148,7 +148,7 @@ async function load() {
     return;
   }
   try {
-    const payload = await jsonp(API_URL, {}, 20000);
+    const payload = await apiRequest({}, 20000);
     const data = Array.isArray(payload) ? payload : payload && payload.data;
     if (!Array.isArray(data)) throw new Error("Respuesta sin datos");
     applyData(data, payload.updatedAt);
@@ -171,6 +171,40 @@ function useSample(message) {
   state.source = "sample";
   showBanner(message);
   render();
+}
+
+// Pide los datos sin enviar cookies de Google: con varias cuentas abiertas,
+// Google redirige a /u/N/ y la Web App falla. Si fetch no funciona, usa JSONP.
+async function apiRequest(params = {}, timeout = 20000) {
+  try {
+    return await fetchJson(API_URL, params, timeout);
+  } catch (error) {
+    console.warn("fetch sin cookies falló, se prueba JSONP", error);
+    return jsonp(API_URL, params, timeout);
+  }
+}
+
+async function fetchJson(url, params, timeout) {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== "" && value !== null && value !== undefined) query.set(key, value);
+  });
+  query.set("_", String(Date.now()));
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}${query.toString()}`, {
+      method: "GET",
+      credentials: "omit",
+      cache: "no-store",
+      redirect: "follow",
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function jsonp(url, params = {}, timeout = 20000) {
@@ -1282,7 +1316,7 @@ function setupForm() {
     status.className = "form-status";
     status.textContent = "Guardando en Google Sheets…";
     try {
-      const payload = await jsonp(API_URL, params, 30000);
+      const payload = await apiRequest(params, 30000);
       if (!payload || payload.ok === false) throw new Error("El Apps Script no confirmó el guardado");
       if (Array.isArray(payload.data)) applyData(payload.data, payload.updatedAt);
       else await load();
