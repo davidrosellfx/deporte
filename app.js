@@ -1,1122 +1,1743 @@
-const SAMPLE_DATA = [
-  { fecha: "2024-12-15", peso: 93.8, imc: 29.1, musculo: 35.2, grasa: 24.5, visceral: 11, calorias: 1934 },
-  { fecha: "2024-12-17", peso: 92.8, imc: 28.8, musculo: 36.3, grasa: 24.0, visceral: 11, calorias: 1919 },
-  { fecha: "2024-12-20", peso: 90.4, imc: 28.1, musculo: 35.0, grasa: 26.5, visceral: 11, calorias: 1882 },
-  { fecha: "2025-01-06", peso: 94.6, imc: 29.4, musculo: 36.1, grasa: 24.5, visceral: 12, calorias: 1942 },
-  { fecha: "2025-01-11", peso: 94.1, imc: 29.2, musculo: 35.8, grasa: 24.9, visceral: 12, calorias: 1935 },
-  { fecha: "2025-02-12", peso: 93.1, imc: 28.9, musculo: 36.1, grasa: 23.5, visceral: 11, calorias: 1922 },
-  { fecha: "2025-03-05", peso: 94.0, imc: 29.2, musculo: 35.4, grasa: 25.6, visceral: 12, calorias: 1933 },
-  { fecha: "2025-03-25", peso: 94.4, imc: 29.3, musculo: 36.0, grasa: 24.6, visceral: 12, calorias: 1940 },
-  { fecha: "2025-03-28", peso: 93.1, imc: 28.9, musculo: 35.9, grasa: 24.9, visceral: 11, calorias: 1922 },
-  { fecha: "2025-04-02", peso: 91.5, imc: 28.4, musculo: 36.4, grasa: 24.0, visceral: 11, calorias: 1902 },
-  { fecha: "2025-04-09", peso: 92.0, imc: 28.6, musculo: 35.0, grasa: 26.5, visceral: 11, calorias: 1904 },
-  { fecha: "2025-05-01", peso: 88.3, imc: 27.4, musculo: 35.1, grasa: 26.2, visceral: 10, calorias: 1853 },
-  { fecha: "2025-07-18", peso: 87.6, imc: 27.2, musculo: 36.2, grasa: 24.3, visceral: 10, calorias: 1850 },
-  { fecha: "2025-08-02", peso: 88.6, imc: 27.5, musculo: 36.4, grasa: 24.0, visceral: 10, calorias: 1862 },
-  { fecha: "2025-08-10", peso: 89.6, imc: 27.8, musculo: 37.0, grasa: 22.8, visceral: 10, calorias: 1877 },
-  { fecha: "2025-08-16", peso: 89.0, imc: 27.6, musculo: 36.5, grasa: 23.7, visceral: 10, calorias: 1868 },
-  { fecha: "2025-09-01", peso: 92.4, imc: 28.7, musculo: 35.9, grasa: 24.8, visceral: 11, calorias: 1913 },
-  { fecha: "2025-09-20", peso: 93.0, imc: 28.9, musculo: 36.1, grasa: 24.5, visceral: 11, calorias: 1921 },
-  { fecha: "2025-09-26", peso: 92.1, imc: 28.6, musculo: 36.6, grasa: 23.6, visceral: 11, calorias: 1910 },
-  { fecha: "2025-10-13", peso: 93.4, imc: 29.0, musculo: 37.2, grasa: 22.4, visceral: 11, calorias: 1928 },
-  { fecha: "2025-10-25", peso: 92.2, imc: 28.6, musculo: 36.4, grasa: 23.9, visceral: 11, calorias: 1911 },
-  { fecha: "2025-10-29", peso: 91.3, imc: 28.3, musculo: 36.7, grasa: 23.4, visceral: 11, calorias: 1900 },
-  { fecha: "2025-11-20", peso: 91.9, imc: 28.1, musculo: 36.6, grasa: 23.5, visceral: 11, calorias: 1907 },
-  { fecha: "2025-12-05", peso: 91.7, imc: 28.5, musculo: 36.6, grasa: 23.5, visceral: 11, calorias: 1905 },
-  { fecha: "2025-12-27", peso: 93.4, imc: 29.0, musculo: 35.7, grasa: 25.2, visceral: 12, calorias: 1926 },
-  { fecha: "2026-01-14", peso: 93.2, imc: 28.9, musculo: 36.6, grasa: 23.6, visceral: 11, calorias: 1925 },
-  { fecha: "2026-01-19", peso: 92.9, imc: 28.8, musculo: 36.7, grasa: 23.4, visceral: 11, calorias: 1921 },
-  { fecha: "2026-02-02", peso: 90.3, imc: 28.0, musculo: 35.7, grasa: 25.1, visceral: 11, calorias: 1883, caloriasQuemadas: 2533, nutricion: 7, deporte: 4, emocional: 7, kmSemana: 58.1 },
-  { fecha: "2026-02-23", peso: 91.8, imc: 28.5, musculo: 36.5, grasa: 23.7, visceral: 11, calorias: 1906, caloriasQuemadas: 2357, nutricion: 6, deporte: 3, emocional: 8, kmSemana: 51.7 },
-  { fecha: "2026-04-03", peso: 91.7, imc: 28.5, musculo: 35.0, grasa: 26.5, visceral: 11, calorias: 1901, caloriasQuemadas: 2265, nutricion: 8, deporte: 5, emocional: 9, kmSemana: 44.6 },
-  { fecha: "2026-04-17", peso: 92.4, imc: 28.7, musculo: 36.1, grasa: 24.4, visceral: 11, calorias: 1913, caloriasQuemadas: 2137, nutricion: 8, deporte: 2, emocional: 5, kmSemana: 11.6 },
-  { fecha: "2026-05-11", peso: 93.2, imc: 28.9, musculo: 36.1, grasa: 24.4, visceral: 11, calorias: 1924, caloriasQuemadas: 2280, nutricion: 4, deporte: 1, emocional: 7, kmSemana: 50.8 },
-  { fecha: "2026-05-18", peso: 93.1, imc: 28.9, musculo: 35.3, grasa: 25.9, visceral: 11, calorias: 1921, caloriasQuemadas: 2323, nutricion: 4, deporte: 1, emocional: 6, kmSemana: 65.2 },
-  { fecha: "2026-05-25", peso: 91.6, imc: 28.4, musculo: 35.9, grasa: 24.9, visceral: 11, calorias: 1902, caloriasQuemadas: 2754, nutricion: 6, deporte: 5, emocional: 6, kmSemana: 79.5 },
-  { fecha: "2026-06-01", peso: 91.7, imc: 28.5, musculo: 36.6, grasa: 23.6, visceral: 11, calorias: 1905, caloriasQuemadas: 2521, nutricion: 7, deporte: 4, emocional: 7, kmSemana: 62.4 },
-  { fecha: "2026-06-08", peso: 90.6, imc: 28.0, musculo: 35.8, grasa: 24.9, visceral: 11, calorias: 1891, caloriasQuemadas: 2512, nutricion: 7, deporte: 4, emocional: 8, kmSemana: 61.8 },
-  { fecha: "2026-06-15", peso: 90.2, imc: 28.0, musculo: 36.1, grasa: 24.5, visceral: 10, calorias: 1883, caloriasQuemadas: 2350, nutricion: 5, deporte: 4, emocional: 8, kmSemana: 56.0 },
-  { fecha: "2026-06-22", peso: 90.3, imc: 28.1, musculo: 36.6, grasa: 23.6, visceral: 10, calorias: 1888, caloriasQuemadas: 2554, nutricion: 6, deporte: 5, emocional: 7, kmSemana: 64.0 },
-  { fecha: "2026-06-29", peso: 90.2, imc: 27.9, musculo: 37.5, grasa: 21.9, visceral: 10, calorias: 1887, caloriasQuemadas: 2483, nutricion: 8, deporte: 4, emocional: 8, kmSemana: 59.0 },
-  { fecha: "2026-07-06", peso: 90.0, imc: 27.9, musculo: 36.4, grasa: 23.9, visceral: 10, calorias: 1882, caloriasQuemadas: 2584, nutricion: 8, deporte: 4, emocional: 8, kmSemana: 66.0 },
-  { fecha: "2026-07-20", peso: 88.1, imc: 27.2, musculo: 36.8, grasa: 23.2, visceral: 10, calorias: 1857, caloriasQuemadas: 2494, nutricion: 10, deporte: 3, emocional: 8, kmSemana: 58.0 },
-  { fecha: "2026-07-31", peso: 87.9, imc: 27.3, musculo: 37.9, grasa: 21.3, visceral: 10, calorias: 1858, caloriasQuemadas: 2638, nutricion: 8, deporte: 4, emocional: 8, kmSemana: 70.0 },
-  { fecha: "2026-08-06", peso: 86.7, imc: 26.9, musculo: 37.1, grasa: 21.5, visceral: 9, calorias: 1834, caloriasQuemadas: 2540, nutricion: 10, deporte: 3, emocional: 9, kmSemana: 75.0 }
+"use strict";
+
+/* ==========================================================================
+   Vuelta a mi mejor versión — lógica de la web
+   Lee el Google Sheet vía Apps Script (JSONP), calcula tendencias y
+   relaciones prudentes entre hábitos y composición, y permite añadir o
+   editar mediciones.
+   ========================================================================== */
+
+/* ---------- Configuración ---------- */
+
+const API_URL = String((window.WEIGHT_DASHBOARD_CONFIG && window.WEIGHT_DASHBOARD_CONFIG.sheetApiUrl) || "").trim();
+
+// Orden exacto de columnas del Sheet.
+const FIELDS = ["fecha", "peso", "imc", "musculo", "grasa", "visceral", "calorias", "caloriasQuemadas", "nutricion", "deporte", "emocional", "kmSemana"];
+
+const STORE = { goal: "vmv-goal", theme: "vmv-theme", range: "vmv-range" };
+const LEGACY = { goal: "camino-a-los-85-goal", theme: "camino-a-los-85-theme" };
+
+const DAY = 86400000;
+const STALE_DAYS = 10;
+
+// dir: -1 bajar es mejora · 1 subir es mejora · 0 dato informativo
+const META = {
+  peso: { label: "Peso", unit: "kg", dec: 1, dir: -1 },
+  imc: { label: "IMC", unit: "", dec: 1, dir: -1 },
+  musculo: { label: "Músculo", unit: "%", dec: 1, dir: 1 },
+  grasa: { label: "Grasa", unit: "%", dec: 1, dir: -1 },
+  visceral: { label: "G. visceral", unit: "", dec: 0, dir: -1 },
+  calorias: { label: "Calorías necesarias", unit: "kcal", dec: 0, dir: 0 },
+  caloriasQuemadas: { label: "Cal. quemadas", unit: "kcal", dec: 0, dir: 0 },
+  nutricion: { label: "Nutrición", unit: "", dec: 0, dir: 1, min: 6, max: 10 },
+  deporte: { label: "Deporte", unit: "días", dec: 0, dir: 1, min: 4, max: 7 },
+  emocional: { label: "Emocional", unit: "", dec: 0, dir: 1, min: 5, max: 10 },
+  kmSemana: { label: "Km semana", unit: "km", dec: 1, dir: 0 },
+  rate: { label: "Ritmo", unit: "kg/sem", dec: 1, dir: -1 }
+};
+
+const RANGES = [
+  { key: "3m", label: "3 meses", months: 3 },
+  { key: "6m", label: "6 meses", months: 6 },
+  { key: "12m", label: "1 año", months: 12 },
+  { key: "all", label: "Todo", months: null }
 ];
 
-const METRICS = [
-  { key: "peso", label: "Peso", unit: "kg", color: "#276ef1", decimals: 1, lowerIsGood: true },
-  { key: "imc", label: "IMC", unit: "", color: "#7a5cff", decimals: 1, lowerIsGood: true },
-  { key: "musculo", label: "Musculo", unit: "%", color: "#16875d", decimals: 1, lowerIsGood: false },
-  { key: "grasa", label: "Grasa", unit: "%", color: "#dc4666", decimals: 1, lowerIsGood: true },
-  { key: "visceral", label: "G. visceral", unit: "", color: "#b47a17", decimals: 0, lowerIsGood: true },
-  { key: "calorias", label: "Cal. necesarias", unit: "kcal", color: "#0b8195", decimals: 0, lowerIsGood: false }
-];
-
-const ACTIVITY_METRICS = [
-  { key: "caloriasQuemadas", label: "Cal. quemadas", unit: "kcal", color: "#e26f35", decimals: 0, lowerIsGood: false },
-  { key: "deporte", label: "Deporte", unit: "d", color: "#276ef1", decimals: 0, lowerIsGood: false },
-  { key: "kmSemana", label: "Km", unit: "km", color: "#18a7b8", decimals: 1, lowerIsGood: false }
-];
-
-const RANGE_OPTIONS = [
-  { key: "4w", label: "4 semanas", days: 28 },
-  { key: "8w", label: "8 semanas", days: 56 },
-  { key: "all", label: "Todo", days: null }
-];
-
-const MOTIVATIONAL_QUOTES = [
-  "Si lo hiciste una vez, lo haras otra vez.",
+const QUOTES = [
+  "Si lo hiciste una vez, lo harás otra vez.",
   "Cada semana cuenta, incluso cuando no es perfecta.",
-  "La mejor version no aparece: se construye.",
-  "No estas empezando de cero, estas volviendo con experiencia.",
+  "La mejor versión no aparece: se construye.",
+  "No estás empezando de cero, estás volviendo con experiencia.",
   "El dato no juzga, te orienta.",
   "La constancia gana cuando dejas de negociar con ella.",
-  "Hoy toca hacerlo facil, claro y repetible.",
-  "Tu mejor registro no es techo, es referencia.",
-  "El objetivo esta cerca. La calma tambien entrena.",
-  "No necesitas heroismo, necesitas continuidad."
+  "Hazlo fácil, claro y repetible.",
+  "Tu mejor registro no es un techo, es una referencia.",
+  "La calma también entrena.",
+  "No necesitas heroísmo, necesitas continuidad."
 ];
 
-const SOURCE_KEY = "camino-a-los-85-source";
-const GOAL_KEY = "camino-a-los-85-goal";
-const THEME_KEY = "camino-a-los-85-theme";
+// Copia de respaldo del Sheet (se usa solo si no hay conexión).
+// Columnas: fecha, peso, imc, musculo, grasa, visceral, calorias, caloriasQuemadas, nutricion, deporte, emocional, kmSemana
+const SAMPLE_ROWS = [
+  ["2024-12-15",93.8,29.1,35.2,24.5,11,1934,null,null,null,null,null],
+  ["2024-12-17",92.8,28.8,36.3,24,11,1919,null,null,null,null,null],
+  ["2024-12-20",90.4,28.1,35,26.5,11,1882,null,null,null,null,null],
+  ["2025-01-06",94.6,29.4,36.1,24.5,12,1942,null,null,null,null,null],
+  ["2025-01-11",94.1,29.2,35.8,24.9,12,1935,null,null,null,null,null],
+  ["2025-02-12",93.1,28.9,36.1,23.5,11,1922,null,null,null,null,null],
+  ["2025-03-05",94,29.2,35.4,25.6,12,1933,null,null,null,null,null],
+  ["2025-03-25",94.4,29.3,36,24.6,12,1940,null,null,null,null,null],
+  ["2025-03-28",93.1,28.9,35.9,24.9,11,1922,null,null,null,null,null],
+  ["2025-04-02",91.5,28.4,36.4,24,11,1902,null,null,null,null,null],
+  ["2025-04-09",92,28.6,35,26.5,11,1904,null,null,null,null,null],
+  ["2025-05-01",88.3,27.4,35.1,26.2,10,1853,null,null,null,null,null],
+  ["2025-07-18",87.6,27.2,36.2,24.3,10,1850,null,null,null,null,null],
+  ["2025-08-02",88.6,27.5,36.4,24,10,1862,null,null,null,null,null],
+  ["2025-08-10",89.6,27.8,37,22.8,10,1877,null,null,null,null,null],
+  ["2025-08-16",89,27.6,36.5,23.7,10,1868,null,null,null,null,null],
+  ["2025-09-01",92.4,28.7,35.9,24.8,11,1913,null,null,null,null,null],
+  ["2025-09-20",93,28.9,36.1,24.5,11,1921,null,null,null,null,null],
+  ["2025-09-26",92.1,28.6,36.6,23.6,11,1910,null,null,null,null,null],
+  ["2025-10-13",93.4,29,37.2,22.4,11,1928,null,null,null,null,null],
+  ["2025-10-25",92.2,28.6,36.4,23.9,11,1911,null,null,null,null,null],
+  ["2025-10-29",91.3,28.3,36.7,23.4,11,1900,null,null,null,null,null],
+  ["2025-11-20",91.9,28.1,36.6,23.5,11,1907,null,null,null,null,null],
+  ["2025-12-05",91.7,28.5,36.6,23.5,11,1905,null,null,null,null,null],
+  ["2025-12-27",93.4,29,35.7,25.2,12,1926,null,null,null,null,null],
+  ["2026-01-14",93.2,28.9,36.6,23.6,11,1925,null,null,null,null,null],
+  ["2026-01-19",92.9,28.8,36.7,23.4,11,1921,null,null,null,null,null],
+  ["2026-02-02",90.3,28,35.7,25.1,11,1883,2533,7,4,7,58.1],
+  ["2026-02-23",91.8,28.5,36.5,23.7,11,1906,2357,6,3,8,51.7],
+  ["2026-04-03",91.7,28.5,35,26.5,11,1901,2265,8,5,9,44.6],
+  ["2026-04-17",92.4,28.7,36.1,24.4,11,1913,2137,8,2,5,11.6],
+  ["2026-05-11",94.5,29.3,36.1,25.3,12,1924,2280,4,1,7,50.8],
+  ["2026-05-18",93.1,28.9,35.3,25.9,11,1921,2323,4,1,4,48.1],
+  ["2026-05-25",91.6,28.4,35.9,24.9,11,1902,2754,6,5,7,60.2],
+  ["2026-06-01",91.7,28.5,36.6,23.6,11,1905,2521,7,4,8,72.9],
+  ["2026-06-08",90.6,28,35.8,24.9,11,1891,2512,7,4,7,65.2],
+  ["2026-06-15",90.2,28,36.1,24.5,10,1883,2350,5,4,9,88],
+  ["2026-06-22",90.3,28.1,36.6,23.6,10,1888,2554,6,5,7,65.8],
+  ["2026-06-29",90.2,27.9,37.5,21.9,10,1887,2483,8,4,7,55.5],
+  ["2026-07-06",90,27.9,36.4,23.9,10,1882,2584,8,4,8,62],
+  ["2026-07-20",88.1,27.2,36.8,23.2,10,1857,2494,10,3,7,58],
+  ["2026-07-31",87.9,27.3,37.9,21.3,10,1858,2638,8,4,8,70.2],
+  ["2026-08-06",86.7,26.9,37.1,21.5,9,1834,2540,10,3,9,68],
+  ["2026-08-09",85.4,26.8,37.8,21.4,9,1835,2450,9,2,8,75],
+  ["2026-08-25",83.7,26,37.1,22.6,9,1797,2521,9,7,8,70],
+  ["2026-08-31",83.8,26,37.8,21.4,8,1800,2400,8,4,8,65],
+  ["2026-09-21",83.9,26,38,20.9,9,1802,2000,7,4,6,55]
+];
 
-let rows = [];
-let selectedRange = "8w";
-let selectedContextMonth = "";
-let goalWeight = Number(localStorage.getItem(GOAL_KEY)) || 85;
-let editingDate = "";
+/* ---------- Estado ---------- */
 
-const configUrl = window.WEIGHT_DASHBOARD_CONFIG?.sheetApiUrl?.trim() || "";
-const savedUrl = localStorage.getItem(SOURCE_KEY) || "";
-const activeUrl = configUrl || savedUrl;
+const store = {
+  get(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
+  set(key, value) { try { localStorage.setItem(key, value); } catch (e) { /* sin almacenamiento */ } }
+};
 
-window.addEventListener("resize", () => requestAnimationFrame(drawAllCharts));
-setupTheme();
-setupEntryForm();
-setRandomQuote();
-load(activeUrl);
+const state = {
+  rows: [],
+  goal: readGoal(),
+  range: RANGES.some(r => r.key === store.get(STORE.range)) ? store.get(STORE.range) : "all",
+  month: "",
+  editing: null,
+  source: "sheet",
+  updatedAt: null
+};
 
-function setRandomQuote() {
-  document.getElementById("motivationalQuote").textContent = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+const charts = {};
+const $ = id => document.getElementById(id);
+
+function init() {
+  $("motivationalQuote").textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  setupTheme();
+  setupGoal();
+  setupRange();
+  setupForm();
+  $("monthSelect").addEventListener("change", e => { state.month = e.target.value; renderMonth(); });
+  if (window.Chart) setupChartDefaults();
+  load();
 }
 
-function setupTheme() {
-  const savedTheme = localStorage.getItem(THEME_KEY) || "light";
-  document.body.dataset.theme = savedTheme;
-  updateThemeButton();
-  document.getElementById("themeToggle").addEventListener("click", () => {
-    document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
-    localStorage.setItem(THEME_KEY, document.body.dataset.theme);
-    updateThemeButton();
-    drawAllCharts();
-  });
-}
+/* ---------- Carga y escritura ---------- */
 
-function updateThemeButton() {
-  document.getElementById("themeToggle").textContent = document.body.dataset.theme === "dark" ? "Modo claro" : "Modo oscuro";
-}
-
-async function load(url) {
+async function load() {
+  setSync("Conectando con Google Sheets…");
+  if (!API_URL) {
+    useSample("No hay URL de Google Sheets configurada en config.js. Se muestran datos de respaldo.");
+    return;
+  }
   try {
-    rows = url ? await loadJsonp(url) : SAMPLE_DATA;
-    rows = normalizeRows(rows).sort((a, b) => dateValue(a.fecha) - dateValue(b.fecha));
+    const payload = await jsonp(API_URL, {}, 20000);
+    const data = Array.isArray(payload) ? payload : payload && payload.data;
+    if (!Array.isArray(data)) throw new Error("Respuesta sin datos");
+    applyData(data, payload.updatedAt);
   } catch (error) {
     console.error(error);
-    rows = normalizeRows(SAMPLE_DATA);
+    useSample("No se pudo conectar con Google Sheets. Se muestran los últimos datos guardados en la web.");
   }
+}
+
+function applyData(data, updatedAt) {
+  state.rows = normalize(data);
+  state.source = "sheet";
+  state.updatedAt = updatedAt || new Date().toISOString();
+  removeBanner();
   render();
 }
 
-function loadJsonp(url) {
+function useSample(message) {
+  state.rows = normalize(SAMPLE_ROWS.map(arr => Object.fromEntries(FIELDS.map((f, i) => [f, arr[i]]))));
+  state.source = "sample";
+  showBanner(message);
+  render();
+}
+
+function jsonp(url, params = {}, timeout = 20000) {
   return new Promise((resolve, reject) => {
-    const callback = `weightDashboard_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    const callback = `vmv_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== "" && value !== null && value !== undefined) query.set(key, value);
+    });
+    query.set("callback", callback);
     const script = document.createElement("script");
-    const separator = url.includes("?") ? "&" : "?";
-    window[callback] = payload => {
-      cleanup();
-      resolve(payload.data || payload);
-    };
-    script.onerror = () => {
-      cleanup();
-      reject(new Error("No se pudieron cargar los datos"));
-    };
-    script.src = `${url}${separator}callback=${callback}`;
+    const timer = setTimeout(() => { cleanup(); reject(new Error("Tiempo de espera agotado")); }, timeout);
+    window[callback] = payload => { cleanup(); resolve(payload); };
+    script.onerror = () => { cleanup(); reject(new Error("No se pudo cargar la respuesta")); };
+    script.src = `${url}${url.includes("?") ? "&" : "?"}${query.toString()}`;
     document.body.appendChild(script);
 
     function cleanup() {
-      delete window[callback];
+      clearTimeout(timer);
+      window[callback] = () => {};
       script.remove();
     }
   });
 }
 
-function setupEntryForm() {
-  const form = document.getElementById("entryForm");
-  document.getElementById("entryCancel").addEventListener("click", clearEntryForm);
-  form.elements.fecha.value = todayIso();
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-    const status = document.getElementById("entryStatus");
-    if (!activeUrl) {
-      status.textContent = "No hay conexion configurada con Google Sheets.";
-      return;
-    }
-    const formData = new FormData(form);
-    status.textContent = editingDate ? "Guardando cambios..." : "Guardando medicion...";
-    try {
-      await writeMeasurement(Object.fromEntries(formData.entries()));
-      status.textContent = editingDate ? "Registro actualizado en Google Sheets." : "Medicion guardada en Google Sheets.";
-      editingDate = "";
-      updateEntryMode();
-      await load(activeUrl);
-    } catch (error) {
-      console.error(error);
-      status.textContent = "No se pudo guardar. Revisa el despliegue del Apps Script.";
-    }
+function normalize(input) {
+  const byDate = new Map();
+  input.forEach(row => {
+    const r = {
+      fecha: toIso(first(row.fecha, row.Fecha, row.date)),
+      peso: num(first(row.peso, row.Peso)),
+      imc: num(first(row.imc, row.IMC)),
+      musculo: num(first(row.musculo, row.Musculo, row["Músculo"])),
+      grasa: num(first(row.grasa, row.Grasa)),
+      visceral: num(first(row.visceral, row["G.Visceral"], row["G. visceral"], row["Grasa visceral"])),
+      calorias: num(first(row.calorias, row.Calorias, row["Calorías"])),
+      caloriasQuemadas: num(first(row.caloriasQuemadas, row["Calorias quemadas"], row["Cal. quemadas"])),
+      nutricion: bounded(first(row.nutricion, row.Nutricion, row["Nutricion (0-10)"]), 0, 10),
+      deporte: bounded(first(row.deporte, row.Deporte, row["Deporte (dias)"]), 0, 7),
+      emocional: emotional(first(row.emocional, row.Emocional)),
+      kmSemana: num(first(row.kmSemana, row["Km semana"], row["KM semana"]))
+    };
+    if (r.fecha && isNum(r.peso)) byDate.set(r.fecha, r);
+  });
+  const rows = [...byDate.values()].sort((a, b) => (a.fecha < b.fecha ? -1 : 1));
+  enrich(rows);
+  return rows;
+}
+
+// Añade intervalo entre mediciones, ritmo en kg/semana y media móvil de 3 mediciones.
+function enrich(rows) {
+  rows.forEach((r, i) => {
+    r.t = parseDate(r.fecha).getTime();
+    r.prev = i ? rows[i - 1] : null;
+    r.days = r.prev ? Math.round((r.t - r.prev.t) / DAY) : null;
+    r.rate = r.prev && r.days > 0 ? ((r.peso - r.prev.peso) / r.days) * 7 : null;
+    r.smooth = {};
+  });
+  ["peso", "grasa", "musculo", "visceral"].forEach(key => {
+    const valid = rows.filter(r => isNum(r[key]));
+    valid.forEach((r, i) => {
+      r.smooth[key] = mean([valid[i - 1], r, valid[i + 1]].filter(Boolean).map(x => x[key]));
+    });
   });
 }
 
-function writeMeasurement(values) {
-  return loadJsonp(withParams(activeUrl, {
-    action: "upsert",
-    fecha: values.fecha,
-    peso: values.peso,
-    imc: values.imc,
-    musculo: values.musculo,
-    grasa: values.grasa,
-    visceral: values.visceral,
-    calorias: values.calorias,
-    caloriasQuemadas: values.caloriasQuemadas,
-    nutricion: values.nutricion,
-    deporte: values.deporte,
-    emocional: values.emocional,
-    kmSemana: values.kmSemana
-  }));
-}
-
-function withParams(url, params) {
-  const query = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== "" && value !== null && value !== undefined) query.set(key, value);
-  });
-  return `${url}${url.includes("?") ? "&" : "?"}${query.toString()}`;
-}
-
-function normalizeRows(input) {
-  return input
-    .map(row => ({
-      fecha: toIsoDate(firstValue(row.fecha, row.Fecha, row.date, row.Date)),
-      peso: number(firstValue(row.peso, row.Peso)),
-      imc: number(firstValue(row.imc, row.IMC)),
-      musculo: number(firstValue(row.musculo, row.Musculo, row["Musculo"], row["Musculo"])),
-      grasa: number(firstValue(row.grasa, row.Grasa)),
-      visceral: number(firstValue(row.visceral, row["G.Visceral"], row["G. visceral"], row["Grasa visceral"])),
-      calorias: number(firstValue(row.calorias, row.Calorias, row["Calorias"])),
-      caloriasQuemadas: number(firstValue(row.caloriasQuemadas, row.CaloriasQuemadas, row["Calorias quemadas"], row["Cal. quemadas"])),
-      nutricion: boundedNumber(firstValue(row.nutricion, row.Nutricion, row["Nutricion"], row["Nutricion (0-10)"]), 0, 10),
-      deporte: boundedNumber(firstValue(row.deporte, row.Deporte, row["Deporte"], row["Deporte (dias)"]), 0, 7),
-      emocional: emotionalValue(firstValue(row.emocional, row.Emocional, row["Emocional (0-10)"])),
-      kmSemana: number(firstValue(row.kmSemana, row.KmSemana, row["Km semana"], row["KM semana"], row["Kilometros semana"]))
-    }))
-    .filter(row => row.fecha && Number.isFinite(row.peso));
-}
+/* ---------- Render general ---------- */
 
 function render() {
-  if (!rows.length) return;
+  const rows = state.rows;
+  if (!rows.length) {
+    $("heroWeight").textContent = "--";
+    $("heroDate").textContent = "Aún no hay mediciones. Añade la primera.";
+    setSync("Sin mediciones todavía.");
+    return;
+  }
   renderHero();
-  renderCards();
-  renderProgressComparison();
-  renderLastReading();
-  renderInsights();
-  renderTrendSummary();
+  renderKpis();
+  renderCompare();
   renderCharts();
-  renderContextAnalysis();
+  renderReading();
+  renderHabits();
+  renderMonthOptions();
+  renderMonth();
   renderRecords();
-  renderTable();
+  renderHistory();
+  renderSync();
 }
+
+/* ---------- Hero ---------- */
 
 function renderHero() {
-  const first = rows[0];
+  const rows = state.rows;
   const last = rows.at(-1);
-  const diff = last.peso - goalWeight;
-  const totalRoad = Math.max(0.1, first.peso - goalWeight);
-  const done = clamp(((first.peso - last.peso) / totalRoad) * 100, 0, 100);
+  const ago = daysAgo(last.fecha);
+  const goal = state.goal;
+  const diff = last.peso - goal;
+  const peak = extreme(rows, "peso", "max");
 
-  document.getElementById("heroWeight").textContent = format(last.peso, metric("peso"));
-  document.getElementById("heroDate").textContent = `A fecha de ${formatDate(last.fecha)}`;
-  document.getElementById("heroGoalDiff").innerHTML = `Diferencia: <b class="${diff <= 0 ? "good" : "bad"}">${formatSigned(diff, metric("peso"))}</b>`;
-  document.getElementById("goalProgress").style.setProperty("--progress", `${done}%`);
-  document.getElementById("heroStatus").textContent = heroStatus(first, last, diff);
+  $("heroWeight").textContent = fmtNum(last.peso, 1);
+  $("heroDate").innerHTML = `Medido el ${fmtDate(last.fecha)}${
+    ago > STALE_DAYS ? ` <span class="stale">hace ${ago} días · toca medir</span>`
+      : ago === 0 ? " · hoy" : ago === 1 ? " · ayer" : ` · hace ${ago} días`}`;
 
-  const goalInput = document.getElementById("heroGoalInput");
-  goalInput.value = String(goalWeight);
-  goalInput.onchange = event => {
-    goalWeight = Number(String(event.target.value).replace(",", ".")) || 85;
-    localStorage.setItem(GOAL_KEY, String(goalWeight));
-    render();
-  };
-}
+  $("goalInput").value = String(goal);
+  $("goalDiff").innerHTML = Math.abs(diff) < 0.05
+    ? `<span class="good">Justo en el objetivo</span>`
+    : diff < 0
+      ? `<span class="good">Objetivo cumplido · ${fmtNum(-diff, 1)} kg por debajo</span>`
+      : `Faltan <b>${fmtNum(diff, 1)} kg</b>`;
 
-function heroStatus(first, last, diff) {
-  const bestWeight = minRow(rows, "peso");
-  if (last.fecha === bestWeight.fecha) return "Estas en tu mejor peso registrado. Esto ya no es una idea: esta en tus datos.";
-  if (diff <= 0) return "Objetivo alcanzado. Ahora la mision es consolidar composicion y rutina.";
-  const total = first.peso - last.peso;
-  if (total > 5) return `Llevas ${formatSigned(-Math.abs(total), metric("peso"))} desde el inicio. El objetivo esta muy cerca.`;
-  return "El foco es simple: medir, ajustar y repetir.";
-}
+  const span = peak.peso - goal;
+  const pct = span > 0 ? clamp((peak.peso - last.peso) / span, 0, 1) : (diff <= 0 ? 1 : 0);
+  $("goalFill").style.setProperty("--progress", `${(pct * 100).toFixed(1)}%`);
+  $("goalTrack").setAttribute("aria-label", `${Math.round(pct * 100)} % del camino entre el pico y el objetivo`);
+  $("goalFrom").textContent = `Pico ${fmtNum(peak.peso, 1)} kg · ${fmtMonthYear(peak.t)}`;
+  $("goalTo").textContent = `Objetivo ${fmtNum(goal, 1)} kg`;
 
-function renderCards() {
-  const last = rows.at(-1);
-  const previous = previousOf(last);
-  const cards = [
-    { label: "Peso actual", value: last.peso, m: metric("peso"), change: delta(last, previous, "peso") },
-    { label: "Faltan al objetivo", value: Math.max(0, last.peso - goalWeight), m: metric("peso"), change: null, forceGood: last.peso <= goalWeight },
-    { label: "Grasa", value: last.grasa, m: metric("grasa"), change: delta(last, previous, "grasa") },
-    { label: "Musculo", value: last.musculo, m: metric("musculo"), change: delta(last, previous, "musculo") },
-    { label: "G. visceral", value: last.visceral, m: metric("visceral"), change: delta(last, previous, "visceral") },
-    { label: "IMC", value: last.imc, m: metric("imc"), change: delta(last, previous, "imc") }
-  ];
-
-  document.getElementById("metricCards").innerHTML = cards.map(card => `
-    <article class="metric-card">
-      <span>${card.label}</span>
-      <strong>${format(card.value, card.m)}</strong>
-      <p>${card.change === null
-        ? `<b class="${card.forceGood ? "good" : ""}">${card.forceGood ? "Objetivo cumplido" : "Camino restante"}</b>`
-        : `<b class="${deltaClass(card.change, card.m)}">${formatSigned(card.change, card.m)}</b> vs medicion anterior`}</p>
-    </article>
-  `).join("");
-}
-
-function renderProgressComparison() {
-  const first = rows[0];
-  const worst = maxRow(rows.filter(row => Number.isFinite(row.peso)), "peso");
-  const last = rows.at(-1);
-  const references = [
-    {
-      label: "Desde el primer dia",
-      date: first.fecha,
-      row: first,
-      note: "Tu punto de salida"
-    },
-    {
-      label: "Desde tu peor pico",
-      date: worst.fecha,
-      row: worst,
-      note: "Mayor peso registrado"
-    }
-  ];
-  const progressMetrics = ["peso", "grasa", "musculo", "visceral"].map(metric);
-
-  document.getElementById("progressComparison").innerHTML = `
-    <div class="section-head compact">
-      <div>
-        <p class="eyebrow">Progreso acumulado</p>
-        <h2>Lo que ya has recuperado</h2>
-      </div>
-      <p>Comparo el dato actual contra el inicio y contra el pico mas alto de peso.</p>
-    </div>
-    <div class="progress-columns">
-      ${references.map(reference => `
-        <article class="progress-card">
-          <div class="progress-card-head">
-            <div>
-              <span>${reference.label}</span>
-              <strong>${formatDate(reference.date)}</strong>
-            </div>
-            <p>${reference.note}</p>
-          </div>
-          <div class="progress-kpis">
-            ${progressMetrics.map(item => {
-              const change = delta(last, reference.row, item.key);
-              return `
-                <div>
-                  <span>${item.label}</span>
-                  <strong class="${deltaClass(change, item)}">${formatSigned(change, item)}</strong>
-                </div>
-              `;
-            }).join("")}
-          </div>
-        </article>
-      `).join("")}
-    </div>
-  `;
-}
-
-function renderLastReading() {
-  const last = rows.at(-1);
-  const previous = previousOf(last);
-  const week = latestContextSummary();
-  const deltas = [
-    { label: "Peso", value: delta(last, previous, "peso"), m: metric("peso") },
-    { label: "Grasa", value: delta(last, previous, "grasa"), m: metric("grasa") },
-    { label: "Musculo", value: delta(last, previous, "musculo"), m: metric("musculo") },
-    { label: "G. visceral", value: delta(last, previous, "visceral"), m: metric("visceral") }
-  ];
-
-  document.getElementById("lastReading").innerHTML = `
-    <p class="eyebrow">Ultima medicion</p>
-    <h2>${lastReadingTitle(last, previous)}</h2>
-    <p class="lead">${lastReadingText(last, previous)}</p>
-    <div class="delta-grid">
-      ${deltas.map(item => `
-        <div>
-          <span>${item.label}</span>
-          <strong class="${deltaClass(item.value, item.m)}">${formatSigned(item.value, item.m)}</strong>
-        </div>
-      `).join("")}
-    </div>
-    <div class="context-strip">
-      <div><span>Nutricion</span><strong class="${thresholdClass(week.nutricion, 6)}">${formatPlain(week.nutricion, 0)}</strong></div>
-      <div><span>Deporte</span><strong class="${thresholdClass(week.deporte, 4)}">${formatPlain(week.deporte, 0)}</strong></div>
-      <div><span>Emocional</span><strong class="${thresholdClass(week.emocional, 5)}">${formatPlain(week.emocional, 0)}</strong></div>
-      <div><span>Contexto</span><strong class="${thresholdClass(week.score * 10, 6)}">${formatPlain(week.score * 100, 0)}%</strong></div>
-    </div>
-  `;
-}
-
-function lastReadingTitle(last, previous) {
-  if (!previous) return "Primer punto de referencia";
-  const peso = delta(last, previous, "peso");
-  const musculo = delta(last, previous, "musculo");
-  const visceral = delta(last, previous, "visceral");
-  if (peso < -0.8 && visceral < 0) return "Semana muy potente: baja peso y visceral";
-  if (peso < -0.8 && musculo < -0.4) return "Buena bajada, pero vigila el musculo";
-  if (peso < -0.3) return "Vas bajando: buen ritmo";
-  if (peso > 0.5) return "Semana de revisar el plan";
-  return "Semana estable";
-}
-
-function lastReadingText(last, previous) {
-  if (!previous) return "Esta medicion abre la referencia para las siguientes semanas.";
-  const peso = delta(last, previous, "peso");
-  const grasa = delta(last, previous, "grasa");
-  const musculo = delta(last, previous, "musculo");
-  const visceral = delta(last, previous, "visceral");
-  if (peso < -0.8 && musculo < -0.4) {
-    return `Bajas ${format(Math.abs(peso), metric("peso"))}, pero el musculo tambien cae ${format(Math.abs(musculo), metric("musculo"))}. Esta semana priorizaria fuerza, proteina y no apretar demasiado.`;
+  const lost = peak.peso - last.peso;
+  const pace = weightPace();
+  let note;
+  if (diff <= 0) {
+    note = `${fmtNum(lost, 1)} kg menos que en tu pico. El peso ya está en zona objetivo: ahora toca consolidarlo y seguir mejorando la composición.`;
+  } else if (pace && pace.rate < -0.05) {
+    const weeks = diff / -pace.rate;
+    const eta = new Date(last.t + weeks * 7 * DAY);
+    note = weeks < 104
+      ? `Al ritmo de las últimas ${pace.weeks} semanas (${fmtNum(pace.rate, 2).replace("-", "−")} kg/sem) llegarías hacia ${fmtMonthLong(eta)}.`
+      : `Llevas ${fmtNum(lost, 1)} kg menos que en tu pico. El ritmo reciente es lento para estimar una fecha.`;
+  } else {
+    note = `Llevas ${fmtNum(lost, 1)} kg menos que en tu pico, pero en las últimas semanas el peso no baja de forma sostenida.`;
   }
-  if (peso < -0.8 && visceral < 0) {
-    return `Gran lectura: ${formatSigned(peso, metric("peso"))} y visceral ${formatSigned(visceral, metric("visceral"))}. Es una semana para repetir lo que funciono.`;
-  }
-  if (grasa > 0.4) return "El peso puede moverse, pero la grasa sube. Mejor mirar nutricion, descanso y constancia antes de tocar todo.";
-  return "La lectura no pide drama: mira tendencia, contexto y siguiente accion.";
+  $("goalNote").textContent = note;
 }
 
-function renderInsights() {
+/* ---------- Franja de indicadores ---------- */
+
+function renderKpis() {
+  const rows = state.rows;
   const last = rows.at(-1);
-  const bestWeight = minRow(rows, "peso");
-  const bestFat = minRow(rows.filter(row => Number.isFinite(row.grasa)), "grasa");
-  const bestMuscle = maxRow(rows.filter(row => Number.isFinite(row.musculo)), "musculo");
-  const trend = trendStats(rangeRows("8w"));
-  const lever = mainLever();
-
-  document.getElementById("insightPanel").innerHTML = `
-    <p class="eyebrow">Lectura accionable</p>
-    <h2>${last.fecha === bestWeight.fecha ? "Estas en zona de mejor version" : "Lo importante ahora"}</h2>
-    <div class="insight-list">
-      <p><b>Ritmo 8 semanas:</b> ${formatSigned(trend.pesoDelta, metric("peso"))}, ${formatPlain(Math.abs(trend.pace), 2)} kg/semana.</p>
-      <p><b>Marca fuerte:</b> mejor peso ${format(bestWeight.peso, metric("peso"))} el ${formatDate(bestWeight.fecha)}.</p>
-      <p><b>Composicion:</b> mejor grasa ${format(bestFat.grasa, metric("grasa"))} y maximo musculo ${format(bestMuscle.musculo, metric("musculo"))}.</p>
-      <p><b>Palanca probable:</b> ${lever}</p>
-    </div>
-  `;
+  const keys = ["peso", "grasa", "musculo", "visceral", "imc", "calorias"];
+  $("kpiStrip").innerHTML = keys.map(key => {
+    const m = META[key];
+    const prev = previousWith(last, key);
+    const d = prev && isNum(last[key]) ? last[key] - prev[key] : null;
+    return `
+      <div class="kpi">
+        <p class="kpi-label">${m.label}</p>
+        <p class="kpi-value">${isNum(last[key]) ? fmtNum(last[key], m.dec) : "—"}${m.unit ? `<small>${m.unit}</small>` : ""}</p>
+        <p class="kpi-delta ${tone(d, key)}">${prev ? fmtDelta(d, key) : "Primera medición"}</p>
+        ${sparkline(key)}
+      </div>`;
+  }).join("");
+  const prev = last.prev;
+  $("stripFoot").textContent = prev
+    ? `Cambios frente a la medición anterior (${fmtDate(prev.fecha)}). Las líneas muestran las últimas 12 mediciones.`
+    : "";
 }
 
-function mainLever() {
-  const comparable = contextComparableRows();
-  if (comparable.length < 6) return "aun faltan semanas para sacar una lectura fuerte.";
-  const correlations = [
-    { label: "nutricion", value: correlation(comparable.map(row => row.nutricion), comparable.map(row => row.pesoDelta)) },
-    { label: "deporte", value: correlation(comparable.map(row => row.deporte), comparable.map(row => row.pesoDelta)) },
-    { label: "calorias quemadas", value: correlation(comparable.map(row => row.caloriasQuemadas), comparable.map(row => row.pesoDelta)) },
-    { label: "km", value: correlation(comparable.map(row => row.kmSemana), comparable.map(row => row.pesoDelta)) }
-  ].filter(item => Number.isFinite(item.value)).sort((a, b) => a.value - b.value);
-  const best = correlations[0];
-  if (!best || best.value > -0.2) return "la bajada existe, pero no hay una palanca aislada clara.";
-  return `${best.label} es lo que mas se esta asociando a bajadas de peso en tu historial reciente.`;
+function sparkline(key) {
+  const values = state.rows.slice(-12).map(r => r[key]).filter(isNum);
+  if (values.length < 2) return "";
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  const W = 120;
+  const H = 28;
+  const pad = 3;
+  const d = values.map((v, i) => {
+    const x = (i / (values.length - 1)) * W;
+    const y = pad + (H - pad * 2) * (1 - (v - min) / span);
+    return `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join("");
+  return `<svg class="kpi-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" vector-effect="non-scaling-stroke"/></svg>`;
 }
 
-function renderTrendSummary() {
-  const selected = RANGE_OPTIONS.find(option => option.key === selectedRange) || RANGE_OPTIONS[1];
-  const trend = trendStats(rangeRows(selected.key));
-  const text = trend.pesoDelta <= -2
-    ? `En ${selected.label.toLowerCase()} vas muy bien: ${formatSigned(trend.pesoDelta, metric("peso"))}.`
-    : trend.pesoDelta < 0
-      ? `En ${selected.label.toLowerCase()} sigues bajando: ${formatSigned(trend.pesoDelta, metric("peso"))}.`
-      : `En ${selected.label.toLowerCase()} toca revisar: ${formatSigned(trend.pesoDelta, metric("peso"))}.`;
-  document.getElementById("trendSummary").textContent = `${text} La grasa cambia ${formatSigned(trend.grasaDelta, metric("grasa"))} y el musculo ${formatSigned(trend.musculoDelta, metric("musculo"))}.`;
+/* ---------- 01 Progreso acumulado ---------- */
+
+function renderCompare() {
+  const rows = state.rows;
+  const firstRow = rows[0];
+  const peak = extreme(rows, "peso", "max");
+  const last = rows.at(-1);
+  const refs = [firstRow, peak];
+  const keys = ["peso", "grasa", "musculo", "visceral"];
+
+  $("compareTable").innerHTML = `
+    <thead>
+      <tr>
+        <th scope="col">Métrica</th>
+        <th scope="col">Hoy</th>
+        <th scope="col">Desde el primer registro<span class="ref-date">${fmtDate(firstRow.fecha)}</span></th>
+        <th scope="col">Desde el peor pico<span class="ref-date">${fmtDate(peak.fecha)} · ${fmt(peak.peso, "peso")}</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      ${keys.map(key => {
+        const current = latestValue(key);
+        return `
+        <tr>
+          <th scope="row">${META[key].label === "G. visceral" ? "Grasa visceral" : META[key].label}</th>
+          <td class="now">${fmt(current, key)}</td>
+          ${refs.map(ref => {
+            const d = isNum(current) && isNum(ref[key]) ? current - ref[key] : null;
+            return `<td><span class="chg ${tone(d, key)}">${fmtDelta(d, key)}</span><span class="from">desde ${fmt(ref[key], key)}</span></td>`;
+          }).join("")}
+        </tr>`;
+      }).join("")}
+    </tbody>`;
+}
+
+/* ---------- 02 Tendencia ---------- */
+
+function setupRange() {
+  const box = $("rangeControls");
+  box.innerHTML = RANGES.map(r => `<button type="button" role="tab" data-range="${r.key}" aria-selected="${r.key === state.range}">${r.label}</button>`).join("");
+  box.addEventListener("click", e => {
+    const btn = e.target.closest("button[data-range]");
+    if (!btn) return;
+    state.range = btn.dataset.range;
+    store.set(STORE.range, state.range);
+    box.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", String(b === btn)));
+    if (state.rows.length) renderCharts();
+  });
+}
+
+function rangeRows() {
+  const rows = state.rows;
+  const range = RANGES.find(r => r.key === state.range) || RANGES.at(-1);
+  if (!range.months) return rows;
+  const start = new Date(rows.at(-1).t);
+  start.setMonth(start.getMonth() - range.months);
+  const list = rows.filter(r => r.t >= start.getTime());
+  return list.length >= 2 ? list : rows.slice(-2);
 }
 
 function renderCharts() {
-  const controls = document.getElementById("rangeControls");
-  controls.innerHTML = RANGE_OPTIONS.map(option => `
-    <button type="button" class="${option.key === selectedRange ? "active" : ""}" data-range="${option.key}">${option.label}</button>
-  `).join("");
-  controls.querySelectorAll("button").forEach(button => {
-    button.addEventListener("click", () => {
-      selectedRange = button.dataset.range;
-      renderTrendSummary();
-      renderCharts();
-    });
+  if (!window.Chart) { chartFallback(); return; }
+  const list = rangeRows();
+  const range = RANGES.find(r => r.key === state.range) || RANGES.at(-1);
+  const scope = range.months ? `en ${range.label}` : "en todo el historial";
+
+  bodyChart("chartPeso", "peso", list, { goal: state.goal, accent: true });
+  bodyChart("chartGrasa", "grasa", list);
+  bodyChart("chartMusculo", "musculo", list);
+  bodyChart("chartVisceral", "visceral", list);
+
+  [["capPeso", "peso"], ["capGrasa", "grasa"], ["capMusculo", "musculo"], ["capVisceral", "visceral"]].forEach(([id, key]) => {
+    const pts = list.filter(r => isNum(r.smooth[key]));
+    if (pts.length < 2) { $(id).textContent = ""; return; }
+    const d = pts.at(-1).smooth[key] - pts[0].smooth[key];
+    $(id).innerHTML = `<span class="${tone(d, key)}">${fmtDelta(d, key)}</span> <span class="muted">${scope}</span>`;
   });
-
-  document.getElementById("chartsGrid").innerHTML = `
-    <article class="chart-card weight-chart">
-      <h3>Peso hacia objetivo</h3>
-      <div class="chart-frame"><canvas id="weightChart"></canvas></div>
-    </article>
-    <article class="chart-card">
-      <h3>Grasa</h3>
-      <div class="chart-frame"><canvas id="fatChart"></canvas></div>
-    </article>
-    <article class="chart-card">
-      <h3>Musculo</h3>
-      <div class="chart-frame"><canvas id="muscleChart"></canvas></div>
-    </article>
-    <article class="chart-card">
-      <h3>Grasa visceral</h3>
-      <div class="chart-frame"><canvas id="visceralChart"></canvas></div>
-    </article>
-    <article class="chart-card">
-      <h3>Contexto semanal</h3>
-      <div class="chart-frame"><canvas id="contextChart"></canvas></div>
-    </article>
-    <article class="chart-card">
-      <h3>Actividad semanal</h3>
-      <div class="chart-frame"><canvas id="activityChart"></canvas></div>
-    </article>
-  `;
-  requestAnimationFrame(drawAllCharts);
 }
 
-function drawAllCharts() {
-  if (!rows.length) return;
-  const chartRows = rangeRows(selectedRange);
-  drawLineChart(document.getElementById("weightChart"), chartRows, [
-    { key: "peso", label: "Peso", color: metric("peso").color, m: metric("peso") }
-  ], { target: goalWeight, targetLabel: "Objetivo" });
-  drawLineChart(document.getElementById("fatChart"), chartRows, [
-    { key: "grasa", label: "Grasa", color: metric("grasa").color, m: metric("grasa") }
-  ]);
-  drawLineChart(document.getElementById("muscleChart"), chartRows, [
-    { key: "musculo", label: "Musculo", color: metric("musculo").color, m: metric("musculo") }
-  ]);
-  drawLineChart(document.getElementById("visceralChart"), chartRows, [
-    { key: "visceral", label: "Visceral", color: metric("visceral").color, m: metric("visceral") }
-  ]);
-  const contextRows = contextRowsInRange(selectedRange).map(row => ({ ...row, scorePct: contextScore(row) * 100 }));
-  drawLineChart(document.getElementById("contextChart"), contextRows, [
-    { key: "nutricion", label: "Nutricion", color: "#cfe86a", m: { unit: "", decimals: 0 } },
-    { key: "deporteScaled", label: "Deporte", color: "#276ef1", m: { unit: "", decimals: 0 }, value: row => (row.deporte / 7) * 10 },
-    { key: "emocional", label: "Emocional", color: "#16875d", m: { unit: "", decimals: 0 } }
-  ], { fixedMin: 0, fixedMax: 10 });
-  drawActivityChart(document.getElementById("activityChart"), selectedRange);
+function bodyChart(id, key, list, opts = {}) {
+  const c = colors();
+  const m = META[key];
+  const raw = list.filter(r => isNum(r[key])).map(r => ({ x: r.t, y: r[key] }));
+  const smooth = list.filter(r => isNum(r.smooth[key])).map(r => ({ x: r.t, y: r.smooth[key] }));
+  if (!raw.length) { destroyChart(id); return; }
+  const lineColor = opts.accent ? c.accent : c.ink;
+
+  const ys = raw.map(p => p.y);
+  if (isNum(opts.goal)) ys.push(opts.goal);
+  let yMin = Math.min(...ys);
+  let yMax = Math.max(...ys);
+  const pad = (yMax - yMin) * 0.14 || 1;
+  yMin -= pad;
+  yMax += pad;
+  if (m.dec === 0) { yMin = Math.floor(yMin); yMax = Math.ceil(yMax); }
+
+  const refs = isNum(opts.goal) ? [{ value: opts.goal, color: c.good, label: `Objetivo ${fmtNum(opts.goal, 1)} kg` }] : [];
+  const xMin = raw[0].x;
+  const xMax = raw.at(-1).x;
+  const xPad = Math.max((xMax - xMin) * 0.02, DAY);
+  const lastIndex = raw.length - 1;
+
+  makeChart(id, {
+    type: "line",
+    data: {
+      datasets: [
+        {
+          label: "Tendencia",
+          data: smooth,
+          borderColor: lineColor,
+          borderWidth: opts.accent ? 2.75 : 2.25,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          tension: 0.35,
+          order: 2
+        },
+        {
+          label: "Lectura",
+          data: raw,
+          showLine: false,
+          pointRadius: ctx => (ctx.dataIndex === lastIndex ? 4.5 : raw.length > 60 ? 2.2 : 3),
+          pointHoverRadius: 5.5,
+          pointBackgroundColor: ctx => (ctx.dataIndex === lastIndex ? lineColor : c.dot),
+          pointBorderWidth: 0,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      ...baseOptions(c),
+      interaction: { mode: "nearest", axis: "x", intersect: false },
+      scales: {
+        x: timeAxis(c, xMin - xPad, xMax + xPad),
+        y: {
+          suggestedMin: yMin,
+          suggestedMax: yMax,
+          grid: { color: c.grid },
+          border: { display: false },
+          ticks: {
+            color: c.axis,
+            maxTicksLimit: 5,
+            padding: 8,
+            stepSize: m.dec === 0 ? 1 : undefined,
+            callback: v => (m.dec === 0 && !Number.isInteger(v) ? "" : fmtNum(v, m.dec === 0 ? 0 : 1))
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        refLines: { lines: refs },
+        tooltip: {
+          ...tooltipTheme(c),
+          filter: item => item.datasetIndex === 1,
+          callbacks: {
+            title: items => fmtDate(isoFromT(items[0].parsed.x)),
+            label: item => {
+              const s = smooth.find(p => p.x === item.parsed.x);
+              const lines = [`Lectura: ${fmt(item.parsed.y, key)}`];
+              if (s) lines.push(`Tendencia: ${fmt(s.y, key)}`);
+              return lines;
+            }
+          }
+        }
+      }
+    }
+  });
 }
 
-function drawActivityChart(canvas, rangeKey) {
-  const source = contextRowsInRange(rangeKey).filter(row => Number.isFinite(row.caloriasQuemadas) || Number.isFinite(row.kmSemana) || Number.isFinite(row.deporte));
-  drawNormalizedChart(canvas, source, [
-    { key: "caloriasQuemadas", label: "Cal. quemadas", color: "#e26f35" },
-    { key: "kmSemana", label: "Km", color: "#18a7b8" },
-    { key: "deporte", label: "Deporte", color: "#276ef1" }
-  ]);
+function timeAxis(c, min, max) {
+  const spanDays = (max - min) / DAY;
+  return {
+    type: "linear",
+    min,
+    max,
+    grid: { display: false },
+    border: { color: c.grid },
+    afterBuildTicks: axis => {
+      const maxTicks = Math.max(2, Math.floor((axis.width || 600) / 72));
+      axis.ticks = monthTicks(axis.min, axis.max, maxTicks).map(value => ({ value }));
+    },
+    ticks: {
+      color: c.axis,
+      maxRotation: 0,
+      autoSkip: false,
+      callback: v => fmtAxisMonth(v, spanDays)
+    }
+  };
 }
 
-function renderContextAnalysis() {
-  const contextRows = rows.filter(hasContext);
-  const container = document.getElementById("contextAnalysis");
-  if (!contextRows.length) {
-    container.innerHTML = "";
-    return;
+function monthTicks(min, max, maxTicks) {
+  const ticks = [];
+  const d = new Date(min);
+  d.setDate(1);
+  d.setHours(0, 0, 0, 0);
+  if (d.getTime() < min) d.setMonth(d.getMonth() + 1);
+  while (d.getTime() <= max) {
+    ticks.push(d.getTime());
+    d.setMonth(d.getMonth() + 1);
   }
-  const months = monthlyContext(contextRows);
-  if (!selectedContextMonth || !months.some(month => month.key === selectedContextMonth)) selectedContextMonth = months.at(-1).key;
-  const selected = months.find(month => month.key === selectedContextMonth);
-  const total = trendStats(contextRows);
-  const avgNutrition = average(contextRows.map(row => row.nutricion));
-  const avgSport = average(contextRows.map(row => row.deporte));
-  const avgEmotional = average(contextRows.map(row => row.emocional));
+  if (ticks.length <= maxTicks) return ticks;
+  const step = Math.ceil(ticks.length / maxTicks);
+  return ticks.filter((_, i) => i % step === 0);
+}
 
-  container.innerHTML = `
-    <div class="section-head">
+/* ---------- 03 Lectura ---------- */
+
+const CHANGE_THRESHOLD = { peso: 0.4, grasa: 0.4, musculo: 0.3, visceral: 0.5 };
+const PHRASES = {
+  peso: { up: "sube el peso", down: "baja el peso" },
+  grasa: { up: "sube la grasa", down: "baja la grasa" },
+  musculo: { up: "sube el músculo", down: "baja el músculo" },
+  visceral: { up: "sube la grasa visceral", down: "baja la grasa visceral" }
+};
+
+function recentChanges() {
+  return ["peso", "grasa", "musculo", "visceral"].map(key => {
+    const valid = state.rows.filter(r => isNum(r[key]));
+    if (valid.length < 4) return null;
+    const n = valid.length >= 6 ? 3 : 2;
+    const recent = valid.slice(-n);
+    const before = valid.slice(-2 * n, -n);
+    const d = mean(recent.map(r => r[key])) - mean(before.map(r => r[key]));
+    const signed = d * META[key].dir;
+    const status = signed > CHANGE_THRESHOLD[key] ? "improved" : signed < -CHANGE_THRESHOLD[key] ? "worsened" : "stable";
+    return { key, d, n, status, recent };
+  }).filter(Boolean);
+}
+
+function renderReading() {
+  const rows = state.rows;
+  const last = rows.at(-1);
+  const changes = recentChanges();
+  const improved = changes.filter(c => c.status === "improved");
+  const worsened = changes.filter(c => c.status === "worsened");
+  const stable = changes.filter(c => c.status === "stable");
+  const n = changes[0] ? changes[0].n : 3;
+  const habits = habitAnalysis();
+  const topHabit = habits.list.find(h => h.verdict === "good");
+  const findings = [];
+
+  // 1. Qué mejora
+  if (improved.length) {
+    findings.push({
+      tone: "good",
+      tag: "Mejora",
+      title: capitalize(joinList(improved.map(c => PHRASES[c.key][c.d < 0 ? "down" : "up"]))),
+      text: `Media de las ${n} últimas mediciones (desde el ${fmtDate(improved[0].recent[0].fecha)}) frente a las ${n} anteriores: ${improved.map(c => `${labelOf(c.key).toLowerCase()} <b class="good">${fmtDelta(c.d, c.key)}</b>`).join(", ")}.`
+    });
+  } else {
+    findings.push({
+      tone: "flat",
+      tag: "Mejora",
+      title: "Ninguna métrica mejora con claridad",
+      text: `Comparando las ${n} últimas mediciones con las ${n} anteriores, los cambios están dentro del margen de ruido de la báscula.`
+    });
+  }
+
+  // 2. Qué se estanca o retrocede
+  const lastWeights = rows.slice(-3).map(r => r.peso);
+  const plateau = rows.length >= 4 && Math.max(...lastWeights) - Math.min(...lastWeights) <= 0.6;
+  const fatDown = improved.find(c => c.key === "grasa");
+  const muscleUp = improved.find(c => c.key === "musculo");
+  const stableOthers = stable.filter(c => c.key !== "peso");
+  if (worsened.length) {
+    findings.push({
+      tone: "bad",
+      tag: "Retrocede",
+      title: capitalize(joinList(worsened.map(c => PHRASES[c.key][c.d < 0 ? "down" : "up"]))),
+      text: `${worsened.map(c => `${labelOf(c.key)} <b class="bad">${fmtDelta(c.d, c.key)}</b>`).join(", ")} en la media reciente.${
+        plateau ? ` El peso lleva 3 mediciones entre ${fmtNum(Math.min(...lastWeights), 1)} y ${fmtNum(Math.max(...lastWeights), 1)} kg.` : ""}${
+        stableOthers.length ? ` Sin cambios relevantes en ${joinList(stableOthers.map(c => labelOf(c.key).toLowerCase()))}.` : ""}`
+    });
+  } else if (plateau || stable.length) {
+    let text = "";
+    if (plateau) {
+      text = `Las 3 últimas mediciones están entre ${fmtNum(Math.min(...lastWeights), 1)} y ${fmtNum(Math.max(...lastWeights), 1)} kg.`;
+      if (fatDown || muscleUp) {
+        text += ` Mientras, ${fatDown ? "la grasa baja" : ""}${fatDown && muscleUp ? " y " : ""}${muscleUp ? "el músculo sube" : ""}: es compatible con una recomposición, aunque la bioimpedancia tiene margen de error.`;
+      }
+    }
+    if (stableOthers.length) text += `${text ? " " : ""}${capitalize(joinList(stableOthers.map(c => labelOf(c.key).toLowerCase())))}: sin cambios relevantes en la media reciente.`;
+    findings.push({
+      tone: "warn",
+      tag: "Estancado",
+      title: plateau
+        ? (rows.at(-1).peso <= state.goal ? "El peso se ha estabilizado en zona objetivo" : "El peso se ha estabilizado")
+        : `Se mantiene${stable.length > 1 ? "n" : ""} ${joinList(stable.map(c => labelOf(c.key).toLowerCase()))}`,
+      text
+    });
+  } else {
+    findings.push({ tone: "good", tag: "Estancado", title: "Nada se estanca ni retrocede", text: "Todas las métricas de composición avanzan en la buena dirección." });
+  }
+
+  // 3. Hábitos que acompañan
+  if (topHabit) {
+    const others = habits.list.filter(h => h !== topHabit && h.verdict === "good");
+    const noise = habits.list.filter(h => h.verdict === "flat");
+    findings.push({
+      tone: "flat",
+      tag: "Hábitos",
+      title: `Tus mejores semanas coinciden con más ${topHabit.noun}`,
+      text: `Con ${topHabit.noun} ${topHabit.splitLabel}, el peso cambió típicamente <b class="good">${fmtRate(topHabit.hi)}</b>; por debajo, ${fmtRate(topHabit.lo).toLowerCase()} (${topHabit.nHi} frente a ${topHabit.nLo} semanas).${
+        others.length ? ` También acompaña: ${joinList(others.map(h => h.noun))}.` : ""}${
+        noise.length ? ` ${capitalize(joinList(noise.map(h => h.noun)))}: sin diferencia clara.` : ""} Es una asociación, no una causa demostrada.`
+    });
+  } else {
+    findings.push({
+      tone: "flat",
+      tag: "Hábitos",
+      title: "Aún no hay un hábito que destaque",
+      text: habits.sampleSize < 8
+        ? `Solo hay ${habits.sampleSize} semanas comparables con hábitos registrados. Sigue anotándolos: con unas semanas más la lectura será fiable.`
+        : "Con los datos actuales ningún hábito se separa claramente del ruido. Cada semana registrada añade claridad."
+    });
+  }
+
+  // 4. Siguiente foco
+  findings.push({ tone: "focus", tag: "Siguiente foco", title: "Lo razonable ahora", list: nextFocus(changes, habits, topHabit) });
+
+  $("findings").innerHTML = findings.map(f => `
+    <article class="finding" data-tone="${f.tone}">
+      <p class="finding-tag">${f.tag}</p>
       <div>
-        <p class="eyebrow">Contexto y composicion</p>
-        <h2>Que esta pasando alrededor del peso</h2>
-        <p>Analisis desde que registras nutricion, deporte, emocional, Garmin y km.</p>
+        <h3>${f.title}</h3>
+        ${f.text ? `<p>${f.text}</p>` : ""}
+        ${f.list ? `<ol>${f.list.map(item => `<li>${item}</li>`).join("")}</ol>` : ""}
       </div>
-      <label class="month-picker">Mes
-        <select id="contextMonthSelect">
-          ${months.map(month => `<option value="${month.key}" ${month.key === selectedContextMonth ? "selected" : ""}>${month.label}</option>`).join("")}
-        </select>
-      </label>
-    </div>
-    <div class="context-board">
-      <article class="context-total">
-        <p class="eyebrow">Desde que hay contexto</p>
-        <h3>${formatSigned(total.pesoDelta, metric("peso"))} en peso</h3>
-        <div class="context-mini-grid">
-          <span>Grasa <b class="${deltaClass(total.grasaDelta, metric("grasa"))}">${formatSigned(total.grasaDelta, metric("grasa"))}</b></span>
-          <span>Musculo <b class="${deltaClass(total.musculoDelta, metric("musculo"))}">${formatSigned(total.musculoDelta, metric("musculo"))}</b></span>
-          <span>Visceral <b class="${deltaClass(total.visceralDelta, metric("visceral"))}">${formatSigned(total.visceralDelta, metric("visceral"))}</b></span>
-        </div>
-        <div class="context-bars">
-          ${contextBar("Nutricion media", avgNutrition, 10, 6)}
-          ${contextBar("Deporte medio", avgSport, 7, 4)}
-          ${contextBar("Emocional medio", avgEmotional, 10, 5)}
-        </div>
-      </article>
-      <article class="month-card">
-        <p class="eyebrow">Mes seleccionado</p>
-        <h3>${selected.label}</h3>
-        <div class="month-grid">
-          <div><span>Peso</span><strong class="${deltaClass(selected.pesoDelta, metric("peso"))}">${formatSigned(selected.pesoDelta, metric("peso"))}</strong></div>
-          <div><span>Grasa</span><strong class="${deltaClass(selected.grasaDelta, metric("grasa"))}">${formatSigned(selected.grasaDelta, metric("grasa"))}</strong></div>
-          <div><span>Musculo</span><strong class="${deltaClass(selected.musculoDelta, metric("musculo"))}">${formatSigned(selected.musculoDelta, metric("musculo"))}</strong></div>
-        </div>
-        <p>${monthNarrative(selected)}</p>
-        <div class="context-bars">
-          ${contextBar("Nutricion", selected.nutricion, 10, 6)}
-          ${contextBar("Deporte", selected.deporte, 7, 4)}
-          ${contextBar("Emocional", selected.emocional, 10, 5)}
-        </div>
-      </article>
-    </div>
-  `;
-  document.getElementById("contextMonthSelect").addEventListener("change", event => {
-    selectedContextMonth = event.target.value;
-    renderContextAnalysis();
+    </article>`).join("");
+
+  renderLastWeek(last);
+}
+
+function nextFocus(changes, habits, topHabit) {
+  const rows = state.rows;
+  const last = rows.at(-1);
+  const ago = daysAgo(last.fecha);
+  const items = [];
+  const get = key => changes.find(c => c.key === key);
+
+  if (ago > 14) {
+    items.push(`<b>Vuelve a medir esta semana.</b> La última medición es de hace ${ago} días; sin datos recientes, la tendencia que ves aquí está desfasada.`);
+  }
+
+  if (last.peso <= state.goal) {
+    const grasa = get("grasa");
+    const lastFat = latestValue("grasa");
+    if (grasa && grasa.status !== "worsened" && isNum(lastFat)) {
+      const target = lastFat - Math.floor(lastFat) >= 0.3 ? Math.floor(lastFat) : Math.floor(lastFat) - 1;
+      items.push(`<b>Define el siguiente objetivo.</b> Los ${fmtNum(state.goal, 1)} kg ya están cumplidos. Con la grasa en ${fmt(lastFat, "grasa")}, un objetivo de composición (grasa por debajo del ${target} %) encaja mejor que seguir bajando peso.`);
+    } else {
+      items.push(`<b>Consolida el peso.</b> Los ${fmtNum(state.goal, 1)} kg ya están cumplidos: el reto ahora es mantenerte en esa zona varias semanas seguidas.`);
+    }
+  } else {
+    const pace = weightPace();
+    const diff = last.peso - state.goal;
+    if (!pace || pace.rate >= -0.05) {
+      items.push(`<b>Reactiva la bajada.</b> Faltan ${fmtNum(diff, 1)} kg y el ritmo reciente es plano. Vuelve a lo que funcionó en tus mejores semanas.`);
+    }
+  }
+
+  if (topHabit) {
+    const latestRow = [...rows].reverse().find(r => isNum(r[topHabit.key]));
+    if (latestRow && latestRow[topHabit.key] < topHabit.split) {
+      items.push(`<b>Recupera ${topHabit.noun}.</b> Tu última semana marcó ${fmt(latestRow[topHabit.key], topHabit.key)}, por debajo del umbral (${fmt(topHabit.split, topHabit.key)}) que acompaña a tus mejores semanas.`);
+    }
+  }
+
+  const ctx = [...rows].reverse().find(hasContext);
+  if (ctx) {
+    ["nutricion", "deporte", "emocional"].forEach(key => {
+      const m = META[key];
+      if (isNum(ctx[key]) && ctx[key] < m.min) {
+        const advice = {
+          nutricion: "Es la palanca más directa sobre el peso.",
+          deporte: "Apunta al menos a 4 días, aunque sean sesiones cortas.",
+          emocional: "Las semanas difíciles suelen arrastrar sueño y comida; bajar exigencia también es estrategia."
+        }[key];
+        const name = { nutricion: "la nutrición", deporte: "el deporte", emocional: "lo emocional" }[key];
+        items.push(`<b>Cuida ${name}.</b> La última semana registró ${fmtNum(ctx[key], 0)}${key === "deporte" ? " días" : "/10"}, por debajo de ${m.min}. ${advice}`);
+      }
+    });
+  }
+
+  const muscle = get("musculo");
+  if (muscle && muscle.status === "worsened") {
+    items.push(`<b>Protege el músculo.</b> La media reciente baja ${fmtDelta(muscle.d, "musculo").replace("−", "")}: prioriza fuerza y proteína antes de apretar el déficit.`);
+  }
+  const weight = get("peso");
+  if (weight && weight.status === "worsened" && last.peso > state.goal) {
+    items.push(`<b>Revisa la nutrición de las próximas dos semanas.</b> La media reciente de peso sube ${fmtDelta(weight.d, "peso").replace("+", "")}.`);
+  }
+
+  if (!items.length) items.push("<b>Mantén lo que está funcionando.</b> No hay alertas: repite la rutina y sigue midiendo cada semana.");
+  return items.slice(0, 3);
+}
+
+function renderLastWeek(last) {
+  const rows = state.rows;
+  const prev = last.prev;
+  const ctx = [...rows].reverse().find(hasContext);
+  const avgK = mean(rows.map(r => r.caloriasQuemadas).filter(isNum));
+  const avgKm = mean(rows.map(r => r.kmSemana).filter(isNum));
+
+  const comp = ["peso", "grasa", "musculo", "visceral"].map(key => {
+    const p = previousWith(last, key);
+    const d = p && isNum(last[key]) ? last[key] - p[key] : null;
+    return `<li><span>${META[key].label}</span><b>${fmt(last[key], key)}<small class="${tone(d, key)}">${p ? fmtDelta(d, key) : ""}</small></b></li>`;
+  }).join("");
+
+  const pace = isNum(last.rate)
+    ? `<li><span>Ritmo</span><b class="${tone(last.rate, "rate")}">${fmtRate(last.rate)}</b></li>`
+    : "";
+
+  let context = "";
+  if (ctx) {
+    const note = ctx !== last ? ` <span style="text-transform:none;letter-spacing:0">(${fmtDate(ctx.fecha)})</span>` : "";
+    context = `
+      <p class="lw-group">Contexto${note}</p>
+      <ul class="lw-list">
+        ${contextItem(ctx, "nutricion", "/10")}
+        ${contextItem(ctx, "deporte", " días")}
+        ${contextItem(ctx, "emocional", "/10")}
+      </ul>
+      <p class="lw-group">Actividad</p>
+      <ul class="lw-list">
+        <li><span>Cal. quemadas</span><b>${fmt(ctx.caloriasQuemadas, "caloriasQuemadas")}${isNum(avgK) ? `<small>media ${fmtNum(avgK, 0)}</small>` : ""}</b></li>
+        <li><span>Kilómetros</span><b>${fmt(ctx.kmSemana, "kmSemana")}${isNum(avgKm) ? `<small>media ${fmtNum(avgKm, 0)}</small>` : ""}</b></li>
+      </ul>`;
+  }
+
+  $("lastWeek").innerHTML = `
+    <p class="kicker">Última medición</p>
+    <h3>${fmtDate(last.fecha)}</h3>
+    <p class="lw-sub">${prev ? `Frente al ${fmtDate(prev.fecha)} · ${last.days} ${last.days === 1 ? "día" : "días"}` : "Primera medición del historial"}</p>
+    <p class="lw-group">Composición</p>
+    <ul class="lw-list">${comp}${pace}</ul>
+    ${context}`;
+}
+
+function contextItem(row, key, suffix) {
+  const v = row[key];
+  const cls = isNum(v) && v < META[key].min ? "bad" : "";
+  return `<li><span>${META[key].label}</span><b class="${cls}">${isNum(v) ? `${fmtNum(v, 0)}${suffix}` : "—"}</b></li>`;
+}
+
+/* ---------- 04 Hábitos y actividad ---------- */
+
+const HABIT_FACTORS = [
+  { key: "caloriasQuemadas", label: "Calorías quemadas", noun: "calorías quemadas" },
+  { key: "kmSemana", label: "Kilómetros", noun: "kilómetros" },
+  { key: "nutricion", label: "Nutrición", noun: "nutrición" },
+  { key: "deporte", label: "Días de deporte", noun: "días de deporte" },
+  { key: "emocional", label: "Emocional", noun: "bienestar emocional" }
+];
+
+// Compara el ritmo de peso (mediana, kg/sem) entre las semanas con el hábito alto y bajo.
+function habitAnalysis() {
+  const sample = state.rows.filter(r => isNum(r.rate) && r.days >= 5 && r.days <= 28);
+  const list = HABIT_FACTORS.map(f => {
+    const pts = sample.filter(r => isNum(r[f.key])).map(r => ({ v: r[f.key], rate: r.rate }));
+    const base = { ...f, n: pts.length };
+    if (pts.length < 6) return { ...base, verdict: "few" };
+    const values = [...new Set(pts.map(p => p.v))].sort((a, b) => a - b);
+    const med = median(pts.map(p => p.v));
+    let best = null;
+    values.slice(1).forEach(t => {
+      const nHi = pts.filter(p => p.v >= t).length;
+      const score = Math.abs(nHi - (pts.length - nHi)) + Math.abs(t - med) / (Math.abs(med) || 1) * 0.01;
+      if (!best || score < best.score) best = { t, score };
+    });
+    if (!best) return { ...base, verdict: "few" };
+    const hi = pts.filter(p => p.v >= best.t).map(p => p.rate);
+    const lo = pts.filter(p => p.v < best.t).map(p => p.rate);
+    const mHi = median(hi);
+    const mLo = median(lo);
+    const diff = mHi - mLo;
+    let verdict;
+    if (Math.min(hi.length, lo.length) < 4) verdict = "few";
+    else if (Math.abs(diff) < 0.25) verdict = "flat";
+    else verdict = diff < 0 ? "good" : "inverse";
+    return {
+      ...base,
+      split: best.t,
+      splitLabel: `≥ ${fmt(best.t, f.key)}`,
+      hi: mHi,
+      lo: mLo,
+      nHi: hi.length,
+      nLo: lo.length,
+      diff,
+      verdict
+    };
+  });
+  const order = { good: 0, inverse: 1, flat: 2, few: 3 };
+  list.sort((a, b) => order[a.verdict] - order[b.verdict] || (a.diff || 0) - (b.diff || 0));
+  return { list, sampleSize: sample.filter(hasContext).length };
+}
+
+function renderHabits() {
+  const rows = state.rows;
+  const start = rows.findIndex(r => HABIT_FACTORS.some(f => isNum(r[f.key])));
+  const list = start < 0 ? [] : rows.slice(start);
+
+  if (!list.length) {
+    $("habitsLead").textContent = "Todavía no hay registros de nutrición, deporte, emocional ni actividad.";
+  } else {
+    $("habitsLead").textContent = `Desde el ${fmtDate(list[0].fecha)}, primera semana con datos de hábitos y actividad. Cada métrica va en su propia escala; la línea discontinua marca el mínimo razonable o tu mediana.`;
+  }
+  renderLanes(list);
+
+  const habits = habitAnalysis();
+  const top = habits.list.find(h => h.verdict === "good");
+  $("habitCompareLead").innerHTML = top
+    ? `En tus datos, las semanas con ${top.noun} ${top.splitLabel} coinciden con un ritmo típico de <b class="good">${fmtRate(top.hi)}</b>, frente a ${fmtRate(top.lo).toLowerCase()} en el resto. Es una asociación con ${top.nHi + top.nLo} semanas, no una causa demostrada.`
+    : "Con los datos actuales ningún hábito se asocia claramente a mejores semanas. Sigue registrando: cada semana añade claridad.";
+
+  const scale = 1.2;
+  $("habitTable").innerHTML = `
+    <thead>
+      <tr>
+        <th scope="col">Hábito</th>
+        <th scope="col">Semanas altas</th>
+        <th scope="col">Semanas bajas</th>
+        <th scope="col">Diferencia de ritmo</th>
+        <th scope="col">Lectura</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${habits.list.map(h => {
+        if (!isNum(h.diff)) {
+          return `<tr><th scope="row" class="h-name">${h.label}<small>${h.n} semanas con dato</small></th><td colspan="3" class="h-n">Faltan semanas para comparar.</td><td><span class="verdict">Pocos datos</span></td></tr>`;
+        }
+        const w = Math.min(Math.abs(h.diff) / scale, 1) * 50;
+        const color = h.verdict === "few" || h.verdict === "flat" ? "var(--neutral-bar)" : h.diff < 0 ? "var(--good)" : "var(--bad)";
+        const left = h.diff < 0 ? 50 - w : 50;
+        const verdict = {
+          good: `<span class="verdict good">Acompaña a bajadas</span>`,
+          inverse: `<span class="verdict">Relación inversa</span>`,
+          flat: `<span class="verdict">Sin diferencia clara</span>`,
+          few: `<span class="verdict">Pocos datos</span>`
+        }[h.verdict];
+        return `
+          <tr>
+            <th scope="row" class="h-name">${h.label}<small>alto: ${h.splitLabel}</small></th>
+            <td><b class="${tone(h.hi, "rate")}">${fmtRate(h.hi)}</b><div class="h-n">${h.nHi} semanas</div></td>
+            <td><b class="${tone(h.lo, "rate")}">${fmtRate(h.lo)}</b><div class="h-n">${h.nLo} semanas</div></td>
+            <td>
+              <div class="diverge" role="img" aria-label="Diferencia ${fmtRate(h.diff)}"><i style="left:${left}%;width:${w}%;background:${color}"></i></div>
+              <div class="h-n">${fmtDelta(h.diff, "rate")}</div>
+            </td>
+            <td>${verdict}</td>
+          </tr>`;
+      }).join("")}
+    </tbody>`;
+
+  const used = state.rows.filter(r => isNum(r.rate) && r.days >= 5 && r.days <= 28 && hasContext(r)).length;
+  $("habitFootnote").textContent = `Ritmo típico = mediana del cambio de peso en kg/semana entre mediciones consecutivas. Cada hábito se divide en dos grupos lo más parecidos posible en tamaño. Se usan ${used} intervalos de entre 5 y 28 días: los muy cortos reflejan sobre todo agua y digestión, y los muy largos no corresponden a una sola semana. Una asociación no demuestra causa.`;
+}
+
+function renderLanes(list) {
+  if (!window.Chart) return;
+  const c = colors();
+  const labels = list.map(r => fmtShort(r.t));
+
+  const thresholdColor = key => list.map(r => (isNum(r[key]) && r[key] < META[key].min ? c.bad : c.neutral));
+  const outcomeColor = list.map(r => (!isNum(r.rate) ? c.neutral : r.rate < -0.2 ? c.good : r.rate > 0.2 ? c.bad : c.neutral));
+
+  laneChart("laneNutricion", list, labels, "nutricion", { min: 0, max: 10, colors: thresholdColor("nutricion"), refs: [{ value: 6, color: c.bad, label: "6" }] });
+  laneChart("laneDeporte", list, labels, "deporte", { min: 0, max: 7, colors: thresholdColor("deporte"), refs: [{ value: 4, color: c.bad, label: "4" }] });
+  laneChart("laneEmocional", list, labels, "emocional", { min: 0, max: 10, colors: thresholdColor("emocional"), refs: [{ value: 5, color: c.bad, label: "5" }], showX: true });
+
+  const kcal = list.map(r => r.caloriasQuemadas).filter(isNum);
+  const km = list.map(r => r.kmSemana).filter(isNum);
+  const kcalMed = median(kcal);
+  const kmMed = median(km);
+  laneChart("laneKcal", list, labels, "caloriasQuemadas", {
+    type: "line",
+    min: kcal.length ? Math.floor((Math.min(...kcal) - 150) / 100) * 100 : 0,
+    max: kcal.length ? Math.ceil((Math.max(...kcal) + 150) / 100) * 100 : 3000,
+    colors: outcomeColor,
+    refs: isNum(kcalMed) ? [{ value: kcalMed, color: c.axis, label: `mediana ${fmtNum(kcalMed, 0)}` }] : []
+  });
+  laneChart("laneKm", list, labels, "kmSemana", {
+    min: 0,
+    max: km.length ? Math.ceil((Math.max(...km) * 1.1) / 10) * 10 : 10,
+    colors: outcomeColor,
+    refs: isNum(kmMed) ? [{ value: kmMed, color: c.axis, label: `mediana ${fmtNum(kmMed, 0)}` }] : []
+  });
+  const rates = list.map(r => r.rate).filter(isNum);
+  const lim = Math.max(1, Math.ceil(Math.max(...rates.map(Math.abs), 0) * 2) / 2);
+  laneChart("laneRate", list, labels, "rate", {
+    min: -lim,
+    max: lim,
+    colors: outcomeColor,
+    refs: [{ value: 0, color: c.axis, dash: [] }],
+    showX: true
   });
 }
 
-function contextBar(label, value, max, threshold) {
+function laneChart(id, list, labels, key, opts) {
+  const c = colors();
+  const isLine = opts.type === "line";
+  const m = META[key];
+  makeChart(id, {
+    type: isLine ? "line" : "bar",
+    data: {
+      labels,
+      datasets: [{
+        data: list.map(r => (isNum(r[key]) ? r[key] : null)),
+        backgroundColor: opts.colors,
+        borderColor: isLine ? c.faint : opts.colors,
+        borderWidth: isLine ? 1.5 : 0,
+        pointBackgroundColor: opts.colors,
+        pointBorderWidth: 0,
+        pointRadius: isLine ? 4 : 0,
+        pointHoverRadius: isLine ? 6 : 0,
+        borderRadius: 2,
+        maxBarThickness: 18,
+        categoryPercentage: 0.72,
+        spanGaps: true,
+        tension: 0.25
+      }]
+    },
+    options: {
+      ...baseOptions(c),
+      layout: { padding: { top: 6, right: 4 } },
+      interaction: { mode: "index", intersect: false },
+      scales: {
+        x: {
+          display: !!opts.showX,
+          grid: { display: false },
+          border: { color: c.grid },
+          offset: true,
+          ticks: { color: c.axis, maxRotation: 0, autoSkip: true, autoSkipPadding: 14 }
+        },
+        y: {
+          min: opts.min,
+          max: opts.max,
+          afterFit: scale => { scale.width = 46; },
+          grid: { color: c.grid, drawTicks: false },
+          border: { display: false },
+          ticks: {
+            color: c.axis,
+            padding: 6,
+            maxTicksLimit: 3,
+            includeBounds: key === "rate",
+            callback: v => (key === "rate" ? fmtSigned(v, 1) : fmtNum(v, 0))
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        refLines: { lines: opts.refs || [] },
+        tooltip: {
+          ...tooltipTheme(c),
+          callbacks: {
+            title: items => fmtDate(list[items[0].dataIndex].fecha),
+            label: item => {
+              const r = list[item.dataIndex];
+              const value = key === "rate" ? fmtRate(r.rate) : fmt(r[key], key);
+              const extra = key !== "rate" && isNum(r.rate) && (key === "caloriasQuemadas" || key === "kmSemana") ? ` · peso ${fmtRate(r.rate)}` : "";
+              return `${m.label}: ${value}${extra}`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ---------- 05 Mes a mes ---------- */
+
+function monthGroups() {
+  const map = new Map();
+  state.rows.forEach(r => {
+    const key = r.fecha.slice(0, 7);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(r);
+  });
+  return [...map.entries()].map(([key, rows]) => ({ key, rows, label: fmtMonthKey(key) }));
+}
+
+function renderMonthOptions() {
+  const groups = monthGroups();
+  if (!groups.some(g => g.key === state.month)) state.month = groups.at(-1).key;
+  $("monthSelect").innerHTML = [...groups].reverse().map(g =>
+    `<option value="${g.key}" ${g.key === state.month ? "selected" : ""}>${capitalize(g.label)} · ${g.rows.length} ${g.rows.length === 1 ? "medición" : "mediciones"}</option>`
+  ).join("");
+}
+
+function renderMonth() {
+  const groups = monthGroups();
+  const idx = groups.findIndex(g => g.key === state.month);
+  if (idx < 0) return;
+  const g = groups[idx];
+  const p = idx > 0 ? groups[idx - 1] : null;
+  const avg = (key, rows) => mean(rows.map(r => r[key]).filter(isNum));
+  const overall = key => mean(state.rows.map(r => r[key]).filter(isNum));
+
+  const row = (key, opts = {}) => {
+    const a = avg(key, g.rows);
+    const b = p ? avg(key, p.rows) : null;
+    const d = isNum(a) && isNum(b) ? a - b : null;
+    const m = META[key];
+    const dec = opts.dec !== undefined ? opts.dec : Math.max(1, m.dec);
+    const low = isNum(m.min) && isNum(a) && a < m.min ? "bad" : "";
+    const value = isNum(a) ? `${fmtNum(a, dec)}${m.unit ? ` ${m.unit}` : ""}` : "—";
+    return `<tr><th scope="row">${opts.label || m.label}</th><td class="${low}">${value}</td><td class="${tone(d, key)}">${p ? fmtDeltaDec(d, key, dec) : "—"}</td></tr>`;
+  };
+  const hasCtx = g.rows.some(hasContext);
+  const hasAct = g.rows.some(r => isNum(r.caloriasQuemadas) || isNum(r.kmSemana));
+
+  const table = `
+    <table class="month-table">
+      <thead><tr><th scope="col">Media del mes</th><th scope="col">Valor</th><th scope="col">${p ? `vs ${p.label.split(" ")[0]}` : "vs anterior"}</th></tr></thead>
+      <tbody>
+        <tr class="group-row"><th colspan="3">Composición</th></tr>
+        ${row("peso")}
+        ${row("grasa")}
+        ${row("musculo")}
+        ${row("visceral", { label: "Grasa visceral", dec: 1 })}
+        ${hasCtx ? `<tr class="group-row"><th colspan="3">Contexto</th></tr>${row("nutricion")}${row("deporte")}${row("emocional")}` : ""}
+        ${hasAct ? `<tr class="group-row"><th colspan="3">Actividad</th></tr>${row("caloriasQuemadas", { dec: 0 })}${row("kmSemana")}` : ""}
+      </tbody>
+    </table>`;
+
+  // Narrativa prudente
+  const paragraphs = [];
+  const dPeso = p ? avg("peso", g.rows) - avg("peso", p.rows) : null;
+  const dGrasa = p && isNum(avg("grasa", g.rows)) && isNum(avg("grasa", p.rows)) ? avg("grasa", g.rows) - avg("grasa", p.rows) : null;
+  const prevName = p ? p.label : "";
+  if (!p) {
+    paragraphs.push("Primer mes del historial: sirve como punto de referencia para todo lo que viene después.");
+  } else if (dPeso <= -0.5) {
+    paragraphs.push(`El peso medio baja ${fmtNum(-dPeso, 1)} kg respecto a ${prevName}${
+      dGrasa !== null && dGrasa <= -0.3 ? " y la grasa media también cae." : dGrasa !== null && dGrasa >= 0.3 ? ", aunque la grasa media sube: parte de la bajada puede ser agua o músculo." : "."}`);
+  } else if (dPeso >= 0.5) {
+    paragraphs.push(`El peso medio sube ${fmtNum(dPeso, 1)} kg respecto a ${prevName}${
+      dGrasa !== null && dGrasa >= 0.3 ? " y la grasa media lo acompaña." : dGrasa !== null && dGrasa <= -0.3 ? ", pero la grasa media baja: parte de la subida puede no ser grasa." : "."}`);
+  } else {
+    paragraphs.push(`Mes estable: el peso medio cambia ${fmtDelta(dPeso, "peso").toLowerCase()} respecto a ${prevName}${
+      dGrasa !== null && dGrasa <= -0.3 ? ", con la grasa media bajando." : dGrasa !== null && dGrasa >= 0.3 ? ", con la grasa media subiendo." : "."}`);
+  }
+
+  if (hasCtx || hasAct) {
+    const checks = [
+      { key: "nutricion", name: "nutrición", tol: 0.5, dec: 1 },
+      { key: "deporte", name: "deporte", tol: 0.5, dec: 1 },
+      { key: "emocional", name: "emocional", tol: 0.5, dec: 1 },
+      { key: "caloriasQuemadas", name: "calorías quemadas", tol: 75, dec: 0 },
+      { key: "kmSemana", name: "kilómetros", tol: 5, dec: 0 }
+    ];
+    const above = [];
+    const below = [];
+    checks.forEach(ch => {
+      const a = avg(ch.key, g.rows);
+      const o = overall(ch.key);
+      if (!isNum(a) || !isNum(o)) return;
+      const txt = `${ch.name} (${fmtNum(a, ch.dec)} frente a ${fmtNum(o, ch.dec)})`;
+      if (a - o >= ch.tol) above.push(txt);
+      else if (o - a >= ch.tol) below.push(txt);
+    });
+    let s = "";
+    if (above.length) s += `Por encima de tu media: ${joinList(above)}. `;
+    if (below.length) s += `Por debajo: ${joinList(below)}. `;
+    if (!above.length && !below.length) s += "Los hábitos de este mes estuvieron en línea con tu media. ";
+    if (p && isNum(dPeso)) {
+      if (dPeso <= -0.5 && above.length > below.length) s += "Coincide con un mes de hábitos mejores que tu media.";
+      else if (dPeso >= 0.5 && below.length > above.length) s += "Coincide con hábitos por debajo de tu media.";
+      else if (dPeso <= -0.5) s += "El peso bajó sin que los hábitos destacaran; puede influir lo hecho el mes anterior o el ruido de la báscula.";
+      else if (dPeso >= 0.5) s += "Los hábitos no cayeron y aun así el peso medio subió; puede ser retención de líquidos o un efecto que tarda en verse.";
+      else s += "Hábitos y peso se movieron poco: mes de mantenimiento.";
+    }
+    paragraphs.push(s.trim());
+  } else {
+    paragraphs.push("Este mes no hay registro de nutrición, deporte, emocional ni actividad, así que no se puede relacionar el cambio con los hábitos.");
+  }
+
+  const n = g.rows.length;
+  const caution = n <= 2
+    ? `${n === 1 ? "Solo hay una medición" : "Solo hay dos mediciones"} este mes: tómalo como orientación, no como tendencia. Relación observada, no causa demostrada.`
+    : `Con ${n} mediciones la media es razonable, pero sigue siendo una relación observada, no una causa demostrada.`;
+
+  const bars = hasCtx ? `
+    <div class="bars">
+      ${bar("Nutrición", avg("nutricion", g.rows), 10, 6)}
+      ${bar("Deporte", avg("deporte", g.rows), 7, 4)}
+      ${bar("Emocional", avg("emocional", g.rows), 10, 5)}
+    </div>` : "";
+
+  $("monthPanel").innerHTML = `
+    <div>
+      <h3 class="month-title">${g.label}</h3>
+      <p class="month-meta">${n} ${n === 1 ? "medición" : "mediciones"}${p ? ` · comparado con ${p.label}` : ""}</p>
+      ${table}
+    </div>
+    <div class="month-story">
+      <h3>Lectura del mes</h3>
+      ${paragraphs.map(t => `<p>${t}</p>`).join("")}
+      ${bars}
+      <p class="caution">${caution}</p>
+    </div>`;
+}
+
+function bar(label, value, max, threshold) {
+  if (!isNum(value)) return "";
+  const low = value < threshold;
   return `
     <div class="bar-row">
       <span>${label}</span>
-      <div class="mini-bar"><i style="width:${percentage(value, max)}%"></i></div>
-      <b class="${thresholdClass(value, threshold)}">${formatPlain(value, 1)}</b>
-    </div>
-  `;
+      <div class="bar" role="img" aria-label="${label} ${fmtNum(value, 1)} de ${max}"><i class="${low ? "bad" : ""}" style="width:${clamp(value / max, 0, 1) * 100}%"></i><em style="left:${(threshold / max) * 100}%"></em></div>
+      <b class="${low ? "bad" : ""}">${fmtNum(value, 1)}</b>
+    </div>`;
 }
 
-function monthNarrative(month) {
-  if (month.pesoDelta < -1 && month.grasaDelta <= 0) return "Mes de avance claro: peso baja y la composicion acompana.";
-  if (month.pesoDelta < 0 && month.musculoDelta > 0) return "Buen mes: baja peso y el musculo responde.";
-  if (month.pesoDelta > 0.5) return "Mes para revisar: el peso sube respecto a la referencia anterior.";
-  if (month.grasaDelta > 0.6) return "El peso no lo cuenta todo: la grasa pide mas atencion.";
-  return "Mes estable: util para mantener el plan y buscar consistencia.";
-}
+/* ---------- 06 Marcas ---------- */
 
 function renderRecords() {
-  const recordMetrics = ["peso", "grasa", "musculo", "visceral", "imc", "calorias"].map(metric);
-  document.getElementById("recordsGrid").innerHTML = recordMetrics.map(item => {
-    const values = rows.filter(row => Number.isFinite(row[item.key]));
-    const best = item.lowerIsGood ? minRow(values, item.key) : maxRow(values, item.key);
-    const other = item.lowerIsGood ? maxRow(values, item.key) : minRow(values, item.key);
+  const specs = [
+    { key: "peso", best: "min", label: "Peso" },
+    { key: "grasa", best: "min", label: "Grasa" },
+    { key: "musculo", best: "max", label: "Músculo" },
+    { key: "visceral", best: "min", label: "Grasa visceral" },
+    { key: "imc", best: "min", label: "IMC" },
+    { key: "caloriasQuemadas", best: "max", label: "Calorías quemadas" },
+    { key: "kmSemana", best: "max", label: "Km semana" }
+  ];
+  const body = specs.map(s => {
+    const valid = state.rows.filter(r => isNum(r[s.key]));
+    if (!valid.length) return "";
+    const best = extreme(valid, s.key, s.best);
+    const worst = extreme(valid, s.key, s.best === "min" ? "max" : "min");
+    const current = valid.at(-1);
+    const gap = current[s.key] - best[s.key];
+    const atBest = round(gap, META[s.key].dec) === 0;
     return `
-      <article class="record">
-        <span>${item.label}</span>
-        <strong class="good">Mejor: ${format(best[item.key], item)}</strong>
-        <p>${formatDate(best.fecha)}</p>
-        <strong class="bad">Peor: ${format(other[item.key], item)}</strong>
-        <p>${formatDate(other.fecha)}</p>
-      </article>
-    `;
+      <tr>
+        <th scope="row">${s.label}</th>
+        <td><b class="good">${fmt(best[s.key], s.key)}</b><small>${fmtDate(best.fecha)}</small></td>
+        <td><b class="${META[s.key].dir === 0 ? "" : "bad"}">${fmt(worst[s.key], s.key)}</b><small>${fmtDate(worst.fecha)}</small></td>
+        <td><b>${fmt(current[s.key], s.key)}</b><small>${fmtDate(current.fecha)}</small></td>
+        <td class="gap">${atBest ? `<span class="good">En tu mejor marca</span>` : `a ${fmtDelta(gap, s.key).replace(/^[+−]/, "")} de la mejor`}</td>
+      </tr>`;
   }).join("");
+
+  $("recordsTable").innerHTML = `
+    <thead><tr><th scope="col">Métrica</th><th scope="col">Mejor</th><th scope="col">Peor</th><th scope="col">Último</th><th scope="col">Distancia</th></tr></thead>
+    <tbody>${body}</tbody>`;
 }
 
-function renderTable() {
-  const displayRows = rows.map((row, index) => ({ row, index })).reverse();
-  document.getElementById("historyTable").innerHTML = displayRows.map(({ row, index }) => `
-    <tr>
-      <td>${formatDate(row.fecha)}</td>
-      <td>${format(row.peso, metric("peso"))}</td>
-      <td>${format(row.imc, metric("imc"))}</td>
-      <td>${format(row.musculo, metric("musculo"))}</td>
-      <td>${format(row.grasa, metric("grasa"))}</td>
-      <td>${format(row.visceral, metric("visceral"))}</td>
-      <td>${format(row.calorias, metric("calorias"))}</td>
-      <td>${format(row.caloriasQuemadas, ACTIVITY_METRICS[0])}</td>
-      <td>${formatPlain(row.nutricion, 0)}</td>
-      <td>${formatPlain(row.deporte, 0)}</td>
-      <td>${formatPlain(row.emocional, 0)}</td>
-      <td>${format(row.kmSemana, ACTIVITY_METRICS[2])}</td>
-      <td><button class="row-edit" type="button" data-edit-index="${index}">Editar</button></td>
-    </tr>
-  `).join("");
-  document.querySelectorAll("[data-edit-index]").forEach(button => {
-    button.addEventListener("click", () => fillEntryForm(rows[Number(button.dataset.editIndex)]));
+/* ---------- 07 Historial ---------- */
+
+function renderHistory() {
+  const rows = [...state.rows].reverse();
+  const cell = (v, dec, cls = "") => (isNum(v) ? `<td class="${cls}">${fmtNum(v, dec)}</td>` : `<td><span class="empty">—</span></td>`);
+  const low = (r, key) => (isNum(r[key]) && r[key] < META[key].min ? "low" : "");
+
+  $("historyBody").innerHTML = rows.map(r => {
+    const d = r.prev ? r.peso - r.prev.peso : null;
+    const arrow = d === null || round(d, 1) === 0 ? "" : d < 0 ? `<span class="arrow good" aria-label="baja">▼</span>` : `<span class="arrow bad" aria-label="sube">▲</span>`;
+    return `
+      <tr>
+        <td>${fmtDate(r.fecha)}</td>
+        <td>${fmtNum(r.peso, 1)}${arrow || `<span class="arrow"></span>`}</td>
+        ${cell(r.imc, 1)}
+        ${cell(r.musculo, 1)}
+        ${cell(r.grasa, 1)}
+        ${cell(r.visceral, 0)}
+        ${cell(r.calorias, 0)}
+        ${cell(r.caloriasQuemadas, 0)}
+        ${cell(r.nutricion, 0, low(r, "nutricion"))}
+        ${cell(r.deporte, 0, low(r, "deporte"))}
+        ${cell(r.emocional, 0, low(r, "emocional"))}
+        ${cell(r.kmSemana, 1)}
+        <td><button type="button" class="row-edit" data-fecha="${r.fecha}" aria-label="Editar medición del ${fmtDate(r.fecha)}">Editar</button></td>
+      </tr>`;
+  }).join("");
+  $("historyLead").textContent = `${state.rows.length} mediciones, de la más reciente a la más antigua. Pulsa «Editar» para corregir una fila en Google Sheets. En rojo, valores por debajo del mínimo razonable.`;
+}
+
+/* ---------- Formulario ---------- */
+
+function setupForm() {
+  const dialog = $("entryDialog");
+  const form = $("entryForm");
+
+  $("addEntryBtn").addEventListener("click", () => openForm(null));
+  $("entryClose").addEventListener("click", () => dialog.close());
+  $("entryReset").addEventListener("click", () => openForm(null));
+  dialog.addEventListener("click", e => { if (e.target === dialog) dialog.close(); });
+  $("historyBody").addEventListener("click", e => {
+    const btn = e.target.closest("button[data-fecha]");
+    if (!btn) return;
+    const row = state.rows.find(r => r.fecha === btn.dataset.fecha);
+    if (row) openForm(row);
+  });
+
+  form.elements.fecha.addEventListener("change", () => {
+    const fecha = form.elements.fecha.value;
+    const status = $("entryStatus");
+    status.className = "form-status";
+    if (state.editing && fecha && fecha !== state.editing) {
+      status.textContent = `Has cambiado la fecha: se creará una fila nueva el ${fmtDate(fecha)} y la del ${fmtDate(state.editing)} se mantendrá.`;
+    } else if (!state.editing && state.rows.some(r => r.fecha === fecha)) {
+      status.textContent = `Ya existe una medición el ${fmtDate(fecha)}: al guardar se actualizará esa fila.`;
+    } else {
+      status.textContent = "";
+    }
+  });
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const status = $("entryStatus");
+    const submit = $("entrySubmit");
+    const fecha = form.elements.fecha.value;
+    const peso = num(form.elements.peso.value);
+    form.elements.fecha.setAttribute("aria-invalid", String(!fecha));
+    form.elements.peso.setAttribute("aria-invalid", String(!isNum(peso) || peso < 30 || peso > 250));
+    if (!fecha || !isNum(peso) || peso < 30 || peso > 250) {
+      status.className = "form-status err";
+      status.textContent = "La fecha y un peso válido son obligatorios.";
+      return;
+    }
+    if (!API_URL) {
+      status.className = "form-status err";
+      status.textContent = "No hay conexión configurada con Google Sheets (config.js).";
+      return;
+    }
+
+    const params = { action: "upsert" };
+    FIELDS.forEach(f => { params[f] = String(form.elements[f].value || "").trim(); });
+
+    submit.disabled = true;
+    status.className = "form-status";
+    status.textContent = "Guardando en Google Sheets…";
+    try {
+      const payload = await jsonp(API_URL, params, 30000);
+      if (!payload || payload.ok === false) throw new Error("El Apps Script no confirmó el guardado");
+      if (Array.isArray(payload.data)) applyData(payload.data, payload.updatedAt);
+      else await load();
+      status.className = "form-status ok";
+      status.textContent = state.editing ? "Cambios guardados en Google Sheets." : "Medición guardada en Google Sheets.";
+      setTimeout(() => { if (dialog.open) dialog.close(); }, 1100);
+    } catch (error) {
+      console.error(error);
+      status.className = "form-status err";
+      status.textContent = "No se pudo guardar. Revisa la conexión o el despliegue del Apps Script.";
+    } finally {
+      submit.disabled = false;
+    }
   });
 }
 
-function fillEntryForm(row) {
-  const form = document.getElementById("entryForm");
-  const fields = ["fecha", "peso", "imc", "musculo", "grasa", "visceral", "calorias", "caloriasQuemadas", "nutricion", "deporte", "emocional", "kmSemana"];
-  fields.forEach(field => {
-    form.elements[field].value = row[field] ?? "";
-  });
-  editingDate = row.fecha;
-  updateEntryMode();
-  document.getElementById("entryDetails").open = true;
-  document.getElementById("entryStatus").textContent = `Editando el registro del ${formatDate(row.fecha)}. Al guardar se actualizara esa fecha.`;
-  document.querySelector(".entry-panel").scrollIntoView({ behavior: "smooth", block: "start" });
-}
+function openForm(row) {
+  const form = $("entryForm");
+  const dialog = $("entryDialog");
+  const last = state.rows.at(-1);
+  state.editing = row ? row.fecha : null;
 
-function clearEntryForm() {
-  const form = document.getElementById("entryForm");
   form.reset();
-  form.elements.fecha.value = todayIso();
-  editingDate = "";
-  updateEntryMode();
-  document.getElementById("entryStatus").textContent = "";
+  FIELDS.forEach(f => {
+    const input = form.elements[f];
+    input.removeAttribute("aria-invalid");
+    input.value = row && row[f] !== null && row[f] !== undefined ? row[f] : "";
+    input.placeholder = !row && last && f !== "fecha" && isNum(last[f]) ? fmtNum(last[f], META[f] ? META[f].dec : 1).replace(",", ".") : "";
+  });
+  if (!row) form.elements.fecha.value = todayIso();
+
+  $("entryKicker").textContent = row ? "Editar" : "Nueva medición";
+  $("entryTitle").textContent = row ? `Medición del ${fmtDate(row.fecha)}` : "Añadir medición semanal";
+  $("entrySubmit").textContent = row ? "Guardar cambios" : "Guardar en Sheet";
+  const status = $("entryStatus");
+  status.className = "form-status";
+  status.textContent = row
+    ? "Al guardar se actualizará esta fila en Google Sheets."
+    : last ? `Los valores en gris son los de tu última medición (${fmtDate(last.fecha)}), como referencia.` : "";
+
+  if (!dialog.open) dialog.showModal();
+  requestAnimationFrame(() => form.elements.peso.focus());
 }
 
-function updateEntryMode() {
-  document.getElementById("entrySummary").textContent = editingDate ? "Editar medicion semanal" : "Anadir medicion semanal";
-  document.getElementById("entrySubmit").textContent = editingDate ? "Guardar cambios" : "Guardar en Sheet";
+/* ---------- Tema y objetivo ---------- */
+
+function setupTheme() {
+  const html = document.documentElement;
+  if (!store.get(STORE.theme) && store.get(LEGACY.theme)) html.dataset.theme = store.get(LEGACY.theme) === "dark" ? "dark" : "light";
+  const btn = $("themeToggle");
+  const sync = () => btn.setAttribute("aria-label", html.dataset.theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+  sync();
+  btn.addEventListener("click", () => {
+    html.dataset.theme = html.dataset.theme === "dark" ? "light" : "dark";
+    store.set(STORE.theme, html.dataset.theme);
+    sync();
+    if (state.rows.length) {
+      renderCharts();
+      renderHabits();
+    }
+  });
 }
 
-function drawLineChart(canvas, chartRows, series, options = {}) {
-  if (!canvas) return;
-  const ctx = setupCanvas(canvas);
-  const { width, height, dark } = chartBase(canvas, ctx);
-  const pad = { left: 58, right: 18, top: 24, bottom: 42 };
-  const plotW = width - pad.left - pad.right;
-  const plotH = height - pad.top - pad.bottom;
+function readGoal() {
+  const value = num(store.get(STORE.goal) || store.get(LEGACY.goal));
+  return isNum(value) && value > 30 && value < 250 ? value : 85;
+}
 
-  const prepared = series.map(item => ({
-    ...item,
-    values: chartRows.map(row => item.value ? item.value(row) : row[item.key])
-  }));
-  const allValues = prepared.flatMap(item => item.values).filter(Number.isFinite);
-  if (Number.isFinite(options.target)) allValues.push(options.target);
-  if (!allValues.length || !chartRows.length) {
-    emptyChart(ctx, width, height, "Aun no hay datos suficientes.");
-    return;
+function setupGoal() {
+  const input = $("goalInput");
+  input.value = String(state.goal);
+  input.addEventListener("change", () => {
+    const value = num(input.value);
+    if (!isNum(value) || value < 30 || value > 250) { input.value = String(state.goal); return; }
+    state.goal = Math.round(value * 10) / 10;
+    store.set(STORE.goal, String(state.goal));
+    if (state.rows.length) {
+      renderHero();
+      renderCharts();
+      renderReading();
+    }
+  });
+}
+
+/* ---------- Estado de sincronización ---------- */
+
+function renderSync() {
+  const n = state.rows.length;
+  if (state.source === "sheet") {
+    setSync(`Sincronizado con Google Sheets · ${n} mediciones · actualizado ${fmtDateTime(state.updatedAt)}`);
+  } else {
+    setSync(`<span class="warn">Sin conexión con Google Sheets</span> · datos de respaldo: ${n} mediciones hasta el ${fmtDate(state.rows.at(-1).fecha)}`);
   }
+}
 
-  const rawMin = options.fixedMin ?? Math.min(...allValues);
-  const rawMax = options.fixedMax ?? Math.max(...allValues);
-  const spread = rawMax - rawMin || 1;
-  const min = options.fixedMin ?? rawMin - spread * 0.14;
-  const max = options.fixedMax ?? rawMax + spread * 0.14;
+function setSync(html) {
+  $("syncStatus").innerHTML = html;
+}
 
-  drawGrid(ctx, width, height, pad, min, max, prepared[0]?.m || { decimals: 1, unit: "" }, dark);
-
-  if (Number.isFinite(options.target)) {
-    const y = pad.top + plotH - ((options.target - min) / (max - min)) * plotH;
-    ctx.setLineDash([6, 6]);
-    ctx.strokeStyle = dark ? "#d5f06d" : "#8aaa14";
-    ctx.beginPath();
-    ctx.moveTo(pad.left, y);
-    ctx.lineTo(width - pad.right, y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = dark ? "#d5f06d" : "#6f8a11";
-    ctx.textAlign = "right";
-    ctx.fillText(options.targetLabel || "Objetivo", width - pad.right, y - 8);
+function showBanner(message) {
+  let el = document.querySelector(".banner");
+  if (!el) {
+    el = document.createElement("div");
+    el.className = "banner";
+    el.setAttribute("role", "status");
+    document.querySelector(".masthead").after(el);
   }
+  el.textContent = message;
+}
 
-  prepared.forEach(item => {
-    ctx.strokeStyle = item.color;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    item.values.forEach((value, index) => {
-      if (!Number.isFinite(value)) return;
-      const x = pad.left + (plotW * index) / Math.max(chartRows.length - 1, 1);
-      const y = pad.top + plotH - ((value - min) / (max - min)) * plotH;
-      if (index === 0 || !Number.isFinite(item.values[index - 1])) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+function removeBanner() {
+  const el = document.querySelector(".banner");
+  if (el) el.remove();
+}
+
+/* ---------- Chart.js ---------- */
+
+const refLinesPlugin = {
+  id: "refLines",
+  afterDatasetsDraw(chart, args, opts) {
+    const lines = (opts && opts.lines) || [];
+    if (!lines.length) return;
+    const { ctx, chartArea, scales } = chart;
+    const y = scales.y;
+    lines.forEach(line => {
+      const py = y.getPixelForValue(line.value);
+      if (py < chartArea.top - 1 || py > chartArea.bottom + 1) return;
+      ctx.save();
+      ctx.strokeStyle = line.color;
+      ctx.lineWidth = 1.25;
+      ctx.setLineDash(line.dash || [5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(chartArea.left, py);
+      ctx.lineTo(chartArea.right, py);
+      ctx.stroke();
+      if (line.label) {
+        ctx.setLineDash([]);
+        ctx.font = "600 11px Inter, system-ui, sans-serif";
+        ctx.fillStyle = line.color;
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(line.label, chartArea.right - 2, py - 3);
+      }
+      ctx.restore();
     });
-    ctx.stroke();
-  });
-
-  drawLegend(ctx, prepared, pad.left, 13, dark);
-  drawDateLabels(ctx, chartRows, width, height, pad, dark);
-}
-
-function drawNormalizedChart(canvas, chartRows, series) {
-  if (!canvas) return;
-  const ctx = setupCanvas(canvas);
-  const { width, height, dark } = chartBase(canvas, ctx);
-  const pad = { left: 44, right: 18, top: 24, bottom: 42 };
-  const plotW = width - pad.left - pad.right;
-  const plotH = height - pad.top - pad.bottom;
-
-  if (!chartRows.length) {
-    emptyChart(ctx, width, height, "Anade datos de Garmin o km para comparar actividad.");
-    return;
   }
+};
 
-  ctx.strokeStyle = dark ? "#2a3a32" : "#dfe6df";
-  for (let i = 0; i <= 4; i++) {
-    const y = pad.top + plotH * (i / 4);
-    ctx.beginPath();
-    ctx.moveTo(pad.left, y);
-    ctx.lineTo(width - pad.right, y);
-    ctx.stroke();
-  }
-
-  const prepared = series.map(item => ({
-    ...item,
-    values: chartRows.map(row => Number(row[item.key]))
-  }));
-
-  prepared.forEach(item => {
-    const valid = item.values.filter(Number.isFinite);
-    if (!valid.length) return;
-    const min = Math.min(...valid);
-    const max = Math.max(...valid);
-    const spread = max - min || 1;
-    ctx.strokeStyle = item.color;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    item.values.forEach((value, index) => {
-      if (!Number.isFinite(value)) return;
-      const x = pad.left + (plotW * index) / Math.max(chartRows.length - 1, 1);
-      const y = pad.top + plotH - ((value - min) / spread) * plotH;
-      if (index === 0 || !Number.isFinite(item.values[index - 1])) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.stroke();
-  });
-
-  drawLegend(ctx, prepared, pad.left, 13, dark);
-  drawDateLabels(ctx, chartRows, width, height, pad, dark);
+function setupChartDefaults() {
+  Chart.register(refLinesPlugin);
+  Chart.defaults.font.family = "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif";
+  Chart.defaults.font.size = 11.5;
 }
 
-function setupCanvas(canvas) {
-  const ctx = canvas.getContext("2d");
-  const ratio = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * ratio;
-  canvas.height = rect.height * ratio;
-  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  return ctx;
-}
-
-function chartBase(canvas, ctx) {
-  const rect = canvas.getBoundingClientRect();
-  const width = rect.width;
-  const height = rect.height;
-  const dark = document.body.dataset.theme === "dark";
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = dark ? "#101814" : "#fbfcfa";
-  ctx.fillRect(0, 0, width, height);
-  ctx.font = "12px Inter, sans-serif";
-  ctx.lineWidth = 1;
-  return { width, height, dark };
-}
-
-function drawGrid(ctx, width, height, pad, min, max, m, dark) {
-  const plotH = height - pad.top - pad.bottom;
-  ctx.strokeStyle = dark ? "#2a3a32" : "#dfe6df";
-  ctx.fillStyle = dark ? "#a9b8af" : "#627169";
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
-  for (let i = 0; i <= 4; i++) {
-    const y = pad.top + plotH * (i / 4);
-    const value = max - (max - min) * (i / 4);
-    ctx.beginPath();
-    ctx.moveTo(pad.left, y);
-    ctx.lineTo(width - pad.right, y);
-    ctx.stroke();
-    ctx.fillText(format(value, m), pad.left - 8, y);
-  }
-}
-
-function drawLegend(ctx, items, xStart, y, dark) {
-  let x = xStart;
-  ctx.textAlign = "left";
-  ctx.textBaseline = "middle";
-  items.forEach(item => {
-    ctx.fillStyle = item.color;
-    ctx.fillRect(x, y - 5, 10, 10);
-    ctx.fillStyle = dark ? "#eff7f2" : "#111915";
-    ctx.fillText(item.label, x + 16, y);
-    x += ctx.measureText(item.label).width + 44;
-  });
-}
-
-function drawDateLabels(ctx, chartRows, width, height, pad, dark) {
-  if (!chartRows.length) return;
-  const plotW = width - pad.left - pad.right;
-  const labels = [0, Math.floor((chartRows.length - 1) / 2), chartRows.length - 1];
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.fillStyle = dark ? "#a9b8af" : "#627169";
-  [...new Set(labels)].forEach(index => {
-    const x = pad.left + (plotW * index) / Math.max(chartRows.length - 1, 1);
-    ctx.fillText(formatDate(chartRows[index].fecha).slice(3), x, height - pad.bottom + 14);
-  });
-}
-
-function emptyChart(ctx, width, height, message) {
-  ctx.fillStyle = document.body.dataset.theme === "dark" ? "#a9b8af" : "#627169";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(message, width / 2, height / 2);
-}
-
-function latestContextSummary() {
-  const contextRows = rows.filter(hasContext);
-  const latest = contextRows.at(-1) || rows.at(-1);
-  const week = sameWeekRows(latest.fecha).filter(hasContext);
-  const group = week.length ? week : [latest];
+function baseOptions() {
   return {
-    nutricion: average(group.map(row => row.nutricion)),
-    deporte: average(group.map(row => row.deporte)),
-    emocional: average(group.map(row => row.emocional)),
-    score: average(group.map(row => contextScore(row))) || 0
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 350 },
+    layout: { padding: { top: 4, right: 6 } }
   };
 }
 
-function monthlyContext(contextRows) {
-  const groups = contextRows.reduce((acc, row) => {
-    const key = row.fecha.slice(0, 7);
-    acc[key] ||= [];
-    acc[key].push(row);
-    return acc;
-  }, {});
-  return Object.entries(groups).map(([key, group]) => {
-    const first = group[0];
-    const last = group.at(-1);
-    const baseline = previousBefore(first.fecha) || first;
-    return {
-      key,
-      label: new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" }).format(dateValue(`${key}-01`)),
-      count: group.length,
-      baseline,
-      last,
-      pesoDelta: delta(last, baseline, "peso"),
-      grasaDelta: delta(last, baseline, "grasa"),
-      musculoDelta: delta(last, baseline, "musculo"),
-      visceralDelta: delta(last, baseline, "visceral"),
-      nutricion: average(group.map(row => row.nutricion)),
-      deporte: average(group.map(row => row.deporte)),
-      emocional: average(group.map(row => row.emocional))
-    };
-  });
-}
-
-function trendStats(sourceRows) {
-  const clean = sourceRows.filter(row => Number.isFinite(row.peso));
-  const first = clean[0] || rows[0];
-  const last = clean.at(-1) || rows.at(-1);
-  const days = Math.max(1, (dateValue(last.fecha) - dateValue(first.fecha)) / 86400000);
+function tooltipTheme(c) {
   return {
-    first,
-    last,
-    pesoDelta: delta(last, first, "peso"),
-    grasaDelta: delta(last, first, "grasa"),
-    musculoDelta: delta(last, first, "musculo"),
-    visceralDelta: delta(last, first, "visceral"),
-    pace: (delta(last, first, "peso") / days) * 7
+    backgroundColor: c.raised,
+    borderColor: c.line,
+    borderWidth: 1,
+    titleColor: c.text,
+    bodyColor: c.text2,
+    padding: 10,
+    cornerRadius: 8,
+    displayColors: false,
+    caretSize: 5,
+    titleFont: { weight: "600" }
   };
 }
 
-function contextComparableRows() {
-  return rows.filter(hasContext).map(row => {
-    const previous = previousOf(row);
-    return {
-      ...row,
-      previous,
-      pesoDelta: previous ? delta(row, previous, "peso") : null,
-      grasaDelta: previous ? delta(row, previous, "grasa") : null,
-      musculoDelta: previous ? delta(row, previous, "musculo") : null
-    };
-  }).filter(row => row.previous && Number.isFinite(row.pesoDelta));
+function colors() {
+  const s = getComputedStyle(document.documentElement);
+  const v = name => s.getPropertyValue(name).trim();
+  return {
+    ink: v("--chart-ink"),
+    dot: v("--chart-dot"),
+    grid: v("--chart-grid"),
+    axis: v("--chart-axis"),
+    accent: v("--accent"),
+    good: v("--good"),
+    bad: v("--bad"),
+    neutral: v("--neutral-bar"),
+    faint: v("--faint"),
+    raised: v("--raised"),
+    line: v("--line-strong"),
+    text: v("--ink"),
+    text2: v("--ink-2")
+  };
 }
 
-function rangeRows(rangeKey) {
-  const option = RANGE_OPTIONS.find(item => item.key === rangeKey);
-  if (!option || !option.days) return rows;
-  const lastDate = dateValue(rows.at(-1).fecha);
-  const start = new Date(lastDate);
-  start.setDate(start.getDate() - option.days);
-  return rows.filter(row => dateValue(row.fecha) >= start);
+function makeChart(id, config) {
+  destroyChart(id);
+  const canvas = $(id);
+  if (canvas) charts[id] = new Chart(canvas, config);
 }
 
-function contextRowsInRange(rangeKey) {
-  return rangeRows(rangeKey).filter(hasContext);
+function destroyChart(id) {
+  if (charts[id]) {
+    charts[id].destroy();
+    delete charts[id];
+  }
 }
 
-function sameWeekRows(fecha) {
-  const key = weekKey(fecha);
-  return rows.filter(row => weekKey(row.fecha) === key);
-}
-
-function weekKey(fecha) {
-  const date = dateValue(fecha);
-  const day = (date.getDay() + 6) % 7;
-  date.setDate(date.getDate() - day);
-  return toIsoDate(date);
-}
-
-function hasContext(row) {
-  return Number.isFinite(row.nutricion) || Number.isFinite(row.deporte) || Number.isFinite(row.emocional);
-}
-
-function contextScore(row) {
-  const parts = [
-    Number.isFinite(row.nutricion) ? { value: row.nutricion / 10, weight: 0.45 } : null,
-    Number.isFinite(row.deporte) ? { value: row.deporte / 7, weight: 0.35 } : null,
-    Number.isFinite(row.emocional) ? { value: row.emocional / 10, weight: 0.2 } : null
-  ].filter(Boolean);
-  if (!parts.length) return null;
-  return parts.reduce((sum, part) => sum + part.value * part.weight, 0) / parts.reduce((sum, part) => sum + part.weight, 0);
-}
-
-function previousOf(row) {
-  const index = rows.indexOf(row);
-  return index > 0 ? rows[index - 1] : null;
-}
-
-function previousBefore(fecha) {
-  return rows.filter(row => dateValue(row.fecha) < dateValue(fecha)).at(-1) || null;
-}
-
-function delta(current, previous, key) {
-  if (!current || !previous || !Number.isFinite(current[key]) || !Number.isFinite(previous[key])) return null;
-  return current[key] - previous[key];
-}
-
-function metric(key) {
-  return METRICS.find(item => item.key === key);
-}
-
-function minRow(sourceRows, key) {
-  return sourceRows.reduce((best, row) => row[key] < best[key] ? row : best, sourceRows[0]);
-}
-
-function maxRow(sourceRows, key) {
-  return sourceRows.reduce((best, row) => row[key] > best[key] ? row : best, sourceRows[0]);
-}
-
-function average(values) {
-  const valid = values.filter(Number.isFinite);
-  if (!valid.length) return null;
-  return valid.reduce((sum, value) => sum + value, 0) / valid.length;
-}
-
-function correlation(xs, ys) {
-  const pairs = xs.map((x, index) => [x, ys[index]]).filter(pair => pair.every(Number.isFinite));
-  if (pairs.length < 3) return null;
-  const xAvg = average(pairs.map(pair => pair[0]));
-  const yAvg = average(pairs.map(pair => pair[1]));
-  let numerator = 0;
-  let xSpread = 0;
-  let ySpread = 0;
-  pairs.forEach(([x, y]) => {
-    const dx = x - xAvg;
-    const dy = y - yAvg;
-    numerator += dx * dy;
-    xSpread += dx * dx;
-    ySpread += dy * dy;
-  });
-  if (!xSpread || !ySpread) return null;
-  return numerator / Math.sqrt(xSpread * ySpread);
-}
-
-function format(value, m) {
-  if (!Number.isFinite(Number(value))) return "--";
-  const formatted = Number(value).toLocaleString("es-ES", {
-    minimumFractionDigits: m.decimals,
-    maximumFractionDigits: m.decimals
-  });
-  return `${formatted}${m.unit ? ` ${m.unit}` : ""}`;
-}
-
-function formatSigned(value, m) {
-  if (!Number.isFinite(Number(value))) return "--";
-  if (Number(value) === 0) return "Sin cambio";
-  const sign = Number(value) > 0 ? "+" : "";
-  return `${sign}${format(value, m)}`;
-}
-
-function formatPlain(value, decimals) {
-  if (!Number.isFinite(Number(value))) return "--";
-  return Number(value).toLocaleString("es-ES", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals
+function chartFallback() {
+  document.querySelectorAll(".chart-box, .lane-box").forEach(box => {
+    if (!box.querySelector(".chart-fallback")) {
+      box.insertAdjacentHTML("beforeend", `<p class="chart-fallback" style="color:var(--faint);font-size:13px">No se pudo cargar la librería de gráficas.</p>`);
+    }
   });
 }
 
-function formatDate(value) {
-  return new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }).format(dateValue(value));
-}
+/* ---------- Cálculos ---------- */
 
-function deltaClass(value, m) {
-  if (!Number.isFinite(Number(value)) || Number(value) === 0) return "";
-  const good = m.lowerIsGood ? Number(value) < 0 : Number(value) > 0;
-  return good ? "good" : "bad";
-}
-
-function thresholdClass(value, min) {
-  if (!Number.isFinite(Number(value))) return "";
-  return Number(value) < min ? "bad" : "good";
-}
-
-function percentage(value, max) {
-  if (!Number.isFinite(Number(value))) return 0;
-  return clamp((Number(value) / max) * 100, 0, 100);
-}
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
-}
-
-function number(value) {
-  if (value === "" || value === null || value === undefined) return null;
-  const parsed = Number(String(value).replace(",", "."));
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function boundedNumber(value, min, max) {
-  const parsed = number(value);
-  if (!Number.isFinite(parsed)) return null;
-  return clamp(parsed, min, max);
-}
-
-function emotionalValue(value) {
-  if (value === "" || value === null || value === undefined) return null;
-  const parsed = number(value);
-  if (Number.isFinite(parsed)) return clamp(parsed, 0, 10);
-  const normalized = String(value).trim().toLowerCase();
-  if (["bien", "bueno", "good"].includes(normalized)) return 8;
-  if (["regular", "medio", "ok"].includes(normalized)) return 5;
-  if (["mal", "malo", "bad"].includes(normalized)) return 2;
+function weightPace() {
+  const rows = state.rows;
+  const lastT = rows.at(-1).t;
+  for (const days of [56, 90]) {
+    const pts = rows.filter(r => r.t >= lastT - days * DAY);
+    if (pts.length >= 3) {
+      const slope = regressionSlope(pts.map(r => [(r.t - lastT) / DAY, r.peso]));
+      if (isNum(slope)) return { rate: slope * 7, weeks: Math.round(days / 7) };
+    }
+  }
   return null;
 }
 
-function firstValue(...values) {
-  return values.find(value => value !== "" && value !== null && value !== undefined);
+function regressionSlope(points) {
+  const n = points.length;
+  if (n < 2) return null;
+  const mx = mean(points.map(p => p[0]));
+  const my = mean(points.map(p => p[1]));
+  let num_ = 0;
+  let den = 0;
+  points.forEach(([x, y]) => { num_ += (x - mx) * (y - my); den += (x - mx) ** 2; });
+  return den ? num_ / den : null;
 }
 
-function toIsoDate(value) {
-  if (!value) return "";
-  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-  if (typeof value === "string" && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(value)) {
-    const [day, month, year] = value.split("/").map(Number);
-    return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  }
-  const date = new Date(value);
-  if (!Number.isNaN(date.getTime())) {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-  }
-  return "";
+function previousWith(row, key) {
+  let p = row.prev;
+  while (p && !isNum(p[key])) p = p.prev;
+  return p;
 }
 
-function dateValue(value) {
-  if (value instanceof Date) return new Date(value.getFullYear(), value.getMonth(), value.getDate());
-  const iso = toIsoDate(value);
-  const [year, month, day] = iso.split("-").map(Number);
-  return new Date(year, month - 1, day);
+function latestValue(key) {
+  const r = [...state.rows].reverse().find(x => isNum(x[key]));
+  return r ? r[key] : null;
+}
+
+// Extremo de una métrica; en empates se queda con la fecha más reciente.
+function extreme(rows, key, kind) {
+  return rows.filter(r => isNum(r[key])).reduce((best, r) => {
+    if (!best) return r;
+    return kind === "min" ? (r[key] <= best[key] ? r : best) : (r[key] >= best[key] ? r : best);
+  }, null);
+}
+
+function hasContext(r) {
+  return isNum(r.nutricion) || isNum(r.deporte) || isNum(r.emocional);
+}
+
+function mean(values) {
+  const v = values.filter(isNum);
+  return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+}
+
+function median(values) {
+  const v = values.filter(isNum).sort((a, b) => a - b);
+  if (!v.length) return null;
+  const mid = Math.floor(v.length / 2);
+  return v.length % 2 ? v[mid] : (v[mid - 1] + v[mid]) / 2;
+}
+
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
+}
+
+function round(v, dec) {
+  const f = 10 ** dec;
+  return Math.round(v * f) / f + 0;
+}
+
+function isNum(v) {
+  return typeof v === "number" && Number.isFinite(v);
+}
+
+/* ---------- Formato ---------- */
+
+function fmtNum(v, dec) {
+  if (!isNum(Number(v))) return "—";
+  return Number(v).toLocaleString("es-ES", { minimumFractionDigits: dec, maximumFractionDigits: dec }).replace("-", "−");
+}
+
+function unitSuffix(m) {
+  return m.unit ? ` ${m.unit}` : "";
+}
+
+function fmt(v, key) {
+  const m = META[key];
+  if (!isNum(v)) return "—";
+  return `${fmtNum(v, m.dec)}${unitSuffix(m)}`;
+}
+
+function fmtDelta(v, key) {
+  return fmtDeltaDec(v, key, META[key].dec);
+}
+
+function fmtDeltaDec(v, key, dec) {
+  const m = META[key];
+  if (!isNum(v)) return "—";
+  const r = round(v, dec);
+  if (r === 0) return "Sin cambio";
+  return `${r > 0 ? "+" : "−"}${fmtNum(Math.abs(r), dec)}${unitSuffix(m)}`;
+}
+
+function fmtSigned(v, dec) {
+  const r = round(v, dec);
+  if (r === 0) return "0";
+  return `${r > 0 ? "+" : "−"}${fmtNum(Math.abs(r), dec)}`;
+}
+
+function fmtRate(v) {
+  if (!isNum(v)) return "—";
+  const r = round(v, 1);
+  if (r === 0) return "Sin cambio";
+  return `${r > 0 ? "+" : "−"}${fmtNum(Math.abs(r), 1)} kg/sem`;
+}
+
+function tone(v, key) {
+  const m = META[key];
+  if (!isNum(v) || !m || m.dir === 0) return "flat";
+  const r = round(v, m.dec);
+  if (r === 0) return "flat";
+  return r * m.dir > 0 ? "good" : "bad";
+}
+
+function labelOf(key) {
+  return key === "visceral" ? "Grasa visceral" : META[key].label;
+}
+
+function joinList(items) {
+  if (items.length <= 1) return items.join("");
+  return `${items.slice(0, -1).join(", ")} y ${items.at(-1)}`;
+}
+
+function capitalize(s) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+
+const dfDate = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", year: "numeric" });
+const dfShort = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short" });
+const dfMonth = new Intl.DateTimeFormat("es-ES", { month: "short" });
+const dfMonthYear = new Intl.DateTimeFormat("es-ES", { month: "short", year: "2-digit" });
+const dfMonthLong = new Intl.DateTimeFormat("es-ES", { month: "long", year: "numeric" });
+const dfDateTime = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+
+function clean(s) {
+  return s.replace(/\./g, "").replace(/ de /g, " ");
+}
+
+function fmtDate(iso) {
+  return clean(dfDate.format(parseDate(iso)));
+}
+
+function fmtShort(t) {
+  return clean(dfShort.format(new Date(t)));
+}
+
+function fmtMonthYear(t) {
+  return clean(dfMonthYear.format(new Date(t)));
+}
+
+function fmtMonthLong(d) {
+  return clean(dfMonthLong.format(d));
+}
+
+function fmtMonthKey(key) {
+  return fmtMonthLong(parseDate(`${key}-01`));
+}
+
+function fmtAxisMonth(t, spanDays) {
+  const d = new Date(t);
+  return spanDays > 300 || d.getMonth() === 0 ? clean(dfMonthYear.format(d)) : clean(dfMonth.format(d));
+}
+
+function fmtDateTime(iso) {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : clean(dfDateTime.format(d)).replace(",", " ·");
+}
+
+function parseDate(iso) {
+  const [y, m, d] = String(iso).split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function isoFromT(t) {
+  const d = new Date(t);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 function todayIso() {
-  return toIsoDate(new Date());
+  return isoFromT(Date.now());
 }
+
+function daysAgo(iso) {
+  const today = parseDate(todayIso()).getTime();
+  return Math.max(0, Math.round((today - parseDate(iso).getTime()) / DAY));
+}
+
+/* ---------- Parseo ---------- */
+
+function first(...values) {
+  return values.find(v => v !== "" && v !== null && v !== undefined);
+}
+
+function num(v) {
+  if (v === "" || v === null || v === undefined) return null;
+  const parsed = Number(String(v).replace(",", "."));
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function bounded(v, min, max) {
+  const parsed = num(v);
+  return isNum(parsed) ? clamp(parsed, min, max) : null;
+}
+
+function emotional(v) {
+  if (v === "" || v === null || v === undefined) return null;
+  const parsed = num(v);
+  if (isNum(parsed)) return clamp(parsed, 0, 10);
+  const s = String(v).trim().toLowerCase();
+  if (["bien", "bueno", "good"].includes(s)) return 8;
+  if (["regular", "medio", "ok"].includes(s)) return 5;
+  if (["mal", "malo", "bad"].includes(s)) return 2;
+  return null;
+}
+
+function toIso(v) {
+  if (!v) return "";
+  if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  if (typeof v === "string" && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v)) {
+    const [d, m, y] = v.split("/").map(Number);
+    return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  }
+  const date = new Date(v);
+  return Number.isNaN(date.getTime()) ? "" : isoFromT(date.getTime());
+}
+
+/* ---------- Arranque ---------- */
+
+init();

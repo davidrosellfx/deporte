@@ -4,12 +4,21 @@ Web estatica para GitHub Pages con seguimiento visual de peso, composicion corpo
 
 ## Que muestra
 
-- Estado actual con ultimo peso, objetivo editable y diferencia.
-- Lectura de la ultima medicion con cambios de peso, grasa, musculo y grasa visceral.
-- Tendencias por 4 semanas, 8 semanas o todo el historial.
-- Graficas separadas de peso, grasa, musculo, grasa visceral, contexto y actividad semanal.
-- Analisis de contexto por meses desde que hay datos de nutricion, deporte y emocional.
-- Historial completo con boton **Editar** para corregir una fila desde la propia web.
+La pagina sigue una jerarquia editorial: primero progreso y tendencia, despues interpretacion y al final detalle e historial.
+
+- **Cabecera**: ultimo peso, fecha y dias desde la ultima medicion (aviso si pasan mas de 10), objetivo editable, progreso desde el pico y ritmo estimado.
+- **Estado actual**: peso, grasa, musculo, grasa visceral, IMC y calorias con cambio frente a la medicion anterior y mini tendencia de las 12 ultimas.
+- **01 Progreso acumulado**: dato actual frente al primer registro y frente al peor pico de peso.
+- **02 Tendencia**: graficas independientes (Chart.js) de peso con linea de objetivo, grasa, musculo y grasa visceral. Puntos = lecturas; linea = media de 3 mediciones para filtrar el ruido de la bioimpedancia.
+- **03 Que dice el dato**: que mejora, que se estanca, que habitos acompanan a las mejores semanas y siguiente foco razonable, junto con el resumen de la ultima medicion.
+- **04 Habitos y actividad**: nutricion, deporte y emocional con su minimo; calorias quemadas, km y ritmo de peso coloreados segun si esa semana bajo o subio el peso. Tabla que compara el ritmo tipico (mediana, kg/semana) entre semanas altas y bajas de cada habito.
+- **05 Mes a mes**: desplegable con medias del mes, comparacion con el mes anterior y lectura prudente.
+- **06 Marcas**: mejor, peor, ultimo y distancia a la mejor marca.
+- **07 Historial**: tabla completa con boton **Editar** por fila.
+
+El formulario de medicion se abre en un panel desde **Nueva medicion** o desde **Editar**.
+
+Si no hay conexion con el Apps Script, la web muestra una copia de respaldo de los datos (incluida en `app.js`) y lo indica con un aviso.
 
 ## Columnas esperadas en Google Sheets
 
